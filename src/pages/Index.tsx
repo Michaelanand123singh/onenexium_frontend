@@ -1,5 +1,5 @@
 import Navbar from "./index/_components/Navbar.tsx";
-import HeroSection from "./index/_components/HeroSection.tsx";
+import PromptHero from "./index/_components/PromptHero.tsx";
 import FeatureSection from "./index/_components/FeatureSection.tsx";
 import ProductDemo from "./index/_components/ProductDemo.tsx";
 import PlatformCapabilities from "./index/_components/PlatformCapabilities.tsx";
@@ -12,7 +12,7 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
-      <HeroSection />
+      <PromptHero />
       <FeatureSection />
       <ProductDemo />
       <PlatformCapabilities />
