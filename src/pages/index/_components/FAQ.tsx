@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Minus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
@@ -40,28 +40,36 @@ function FAQItem({
   answer,
   isOpen,
   onToggle,
+  index,
 }: {
   question: string;
   answer: string;
   isOpen: boolean;
   onToggle: () => void;
+  index: number;
 }) {
   return (
-    <div className="border-b border-border">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ duration: 0.4, delay: index * 0.06 }}
+      className="border-b border-border"
+    >
       <button
         onClick={onToggle}
-        className="flex items-center justify-between w-full py-5 text-left cursor-pointer group"
+        className="flex items-center justify-between w-full py-6 text-left cursor-pointer group"
       >
-        <h3 className="text-base font-semibold pr-4 group-hover:text-foreground/80 transition-colors">
+        <h3 className="text-base font-semibold pr-4 group-hover:text-[#3D4EF0] dark:group-hover:text-[#23A0FF] transition-colors duration-200">
           {question}
         </h3>
-        <div className="flex-shrink-0">
-          {isOpen ? (
-            <Minus className="w-5 h-5 text-muted-foreground" />
-          ) : (
-            <Plus className="w-5 h-5 text-muted-foreground" />
-          )}
-        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="flex-shrink-0 w-8 h-8 rounded-full bg-[#3D4EF0]/8 flex items-center justify-center"
+        >
+          <ChevronDown className="w-4 h-4 text-[#3D4EF0] dark:text-[#23A0FF]" />
+        </motion.div>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -69,16 +77,24 @@ function FAQItem({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{
+              height: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+              opacity: { duration: 0.25 },
+            }}
             className="overflow-hidden"
           >
-            <p className="text-muted-foreground text-sm leading-relaxed pb-5">
+            <motion.p
+              initial={{ y: -8 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.25 }}
+              className="text-muted-foreground text-sm leading-relaxed pb-6"
+            >
               {answer}
-            </p>
+            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
 
@@ -86,13 +102,23 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-20 md:py-28 bg-secondary">
-      <div className="max-w-[700px] mx-auto px-6">
+    <section id="faq" className="py-20 md:py-28 bg-secondary relative overflow-hidden">
+      {/* Decorative gradient orb */}
+      <motion.div
+        animate={{
+          x: [0, 40, 0],
+          y: [0, -20, 0],
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-[#3D4EF0]/5 rounded-full blur-[120px] pointer-events-none"
+      />
+
+      <div className="max-w-[700px] mx-auto px-6 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7 }}
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
@@ -103,12 +129,7 @@ export default function FAQ() {
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
+        <div>
           {faqs.map((faq, index) => (
             <FAQItem
               key={faq.question}
@@ -118,9 +139,10 @@ export default function FAQ() {
               onToggle={() =>
                 setOpenIndex(openIndex === index ? null : index)
               }
+              index={index}
             />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
