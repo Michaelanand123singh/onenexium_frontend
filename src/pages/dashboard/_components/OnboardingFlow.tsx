@@ -13,8 +13,7 @@ import {
   ArrowLeft,
   Sparkles,
 } from "lucide-react";
-
-const BRAND_GRADIENT = "linear-gradient(135deg, #3D4EF0, #23A0FF)";
+import { BRAND_GRADIENT } from "@/lib/brand.ts";
 
 const ROLES = [
   { id: "founder", label: "Founder / CEO", icon: "🚀" },

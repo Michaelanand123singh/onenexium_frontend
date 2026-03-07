@@ -8,75 +8,10 @@ import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth.ts";
 import { Loader2 } from "lucide-react";
-
-const BRAND_GRADIENT = "linear-gradient(135deg, #3D4EF0, #23A0FF)";
-
-function FloatingOrb({ className }: { className: string }) {
-  return (
-    <motion.div
-      className={`absolute rounded-full blur-3xl opacity-10 pointer-events-none ${className}`}
-      animate={{
-        y: [0, -30, 0],
-        x: [0, 15, 0],
-        scale: [1, 1.1, 1],
-      }}
-      transition={{
-        duration: 8,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-    />
-  );
-}
-
-function Particle({ delay, x, y }: { delay: number; x: string; y: string }) {
-  return (
-    <motion.div
-      className="absolute w-1 h-1 rounded-full bg-[#3D4EF0]/20"
-      style={{ left: x, top: y }}
-      animate={{
-        opacity: [0, 0.5, 0],
-        scale: [0, 1.5, 0],
-        y: [0, -40, -80],
-      }}
-      transition={{
-        duration: 4,
-        delay,
-        repeat: Infinity,
-        ease: "easeOut",
-      }}
-    />
-  );
-}
-
-function AuthenticatedNav() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="absolute top-6 right-6 z-20 flex items-center gap-3"
-    >
-      <button
-        onClick={() => navigate("/dashboard")}
-        className="px-4 py-2 rounded-lg text-sm font-semibold text-white cursor-pointer transition-all hover:shadow-lg hover:shadow-[#3D4EF0]/25"
-        style={{ background: BRAND_GRADIENT }}
-      >
-        Go to Dashboard
-      </button>
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3D4EF0]/5 border border-[#3D4EF0]/15">
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3D4EF0] to-[#23A0FF] flex items-center justify-center text-white text-xs font-bold">
-          {user?.profile?.name?.charAt(0)?.toUpperCase() || "U"}
-        </div>
-        <span className="text-sm text-[#0C0F18] font-medium">
-          {user?.profile?.name || "User"}
-        </span>
-      </div>
-    </motion.div>
-  );
-}
+import { BRAND_GRADIENT, LOGO_URL } from "@/lib/brand.ts";
+import FloatingOrb from "./index/_components/floating-orb.tsx";
+import Particle from "./index/_components/particle.tsx";
+import AuthenticatedNav from "./index/_components/authenticated-nav.tsx";
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -225,7 +160,7 @@ export default function Index() {
         >
           <div className="flex items-center gap-3">
             <motion.img
-              src="https://cdn.hercules.app/file_GpEbTAUqPZSaqCQvtLDKCwlF"
+              src={LOGO_URL}
               alt="OneNexium"
               className="h-16 w-auto"
               animate={{

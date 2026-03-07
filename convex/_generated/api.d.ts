@@ -10,6 +10,9 @@
 
 import type * as projectMessages from "../projectMessages.js";
 import type * as projects from "../projects.js";
+import type * as schema_projects from "../schema/projects.js";
+import type * as schema_users from "../schema/users.js";
+import type * as schema_waitlist from "../schema/waitlist.js";
 import type * as users from "../users.js";
 import type * as waitlist from "../waitlist.js";
 
@@ -22,6 +25,9 @@ import type {
 declare const fullApi: ApiFromModules<{
   projectMessages: typeof projectMessages;
   projects: typeof projects;
+  "schema/projects": typeof schema_projects;
+  "schema/users": typeof schema_users;
+  "schema/waitlist": typeof schema_waitlist;
   users: typeof users;
   waitlist: typeof waitlist;
 }>;

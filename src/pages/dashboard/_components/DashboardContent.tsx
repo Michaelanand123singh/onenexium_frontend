@@ -12,8 +12,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import PromptInput from "./PromptInput.tsx";
 import ProjectGrid from "./ProjectGrid.tsx";
-
-const BRAND_GRADIENT = "linear-gradient(135deg, #3D4EF0, #23A0FF)";
+import { BRAND_GRADIENT, LOGO_URL } from "@/lib/brand.ts";
 
 export default function DashboardContent() {
   const user = useQuery(api.users.getCurrentUser, {});
@@ -54,7 +53,7 @@ export default function DashboardContent() {
               className="flex items-center gap-2.5 cursor-pointer"
             >
               <img
-                src="https://cdn.hercules.app/file_GpEbTAUqPZSaqCQvtLDKCwlF"
+                src={LOGO_URL}
                 alt="OneNexium"
                 className="h-7 w-auto"
               />

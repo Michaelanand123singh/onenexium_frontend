@@ -7,7 +7,7 @@ import EditorNavbar from "./EditorNavbar.tsx";
 import EditorSidebar from "./EditorSidebar.tsx";
 import EditorChat from "./EditorChat.tsx";
 import EditorPreview from "./EditorPreview.tsx";
-import SidebarPanel from "./SidebarPanels.tsx";
+import SidebarPanel from "./panels/index.tsx";
 import type { SidebarTab } from "./EditorSidebar.tsx";
 import {
   ErrorState,

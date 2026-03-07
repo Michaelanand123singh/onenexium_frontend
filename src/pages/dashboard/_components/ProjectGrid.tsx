@@ -22,8 +22,7 @@ import {
   EmptyTitle,
   EmptyDescription,
 } from "@/components/ui/empty.tsx";
-
-const BRAND_GRADIENT = "linear-gradient(135deg, #3D4EF0, #23A0FF)";
+import { BRAND_GRADIENT } from "@/lib/brand.ts";
 
 // Generate a deterministic gradient background for project cards
 function getProjectGradient(index: number): string {
