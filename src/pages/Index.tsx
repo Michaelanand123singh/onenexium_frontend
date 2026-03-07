@@ -88,7 +88,7 @@ export default function Index() {
 
       {/* Grid overlay */}
       <div
-        className="absolute inset-0 opacity-[0.02]"
+        className="absolute inset-0 opacity-[0.06]"
         style={{
           backgroundImage:
             "linear-gradient(#3D4EF0 1px, transparent 1px), linear-gradient(90deg, #3D4EF0 1px, transparent 1px)",
@@ -100,20 +100,35 @@ export default function Index() {
       <div className="relative z-10 flex flex-col items-center px-6 max-w-2xl text-center">
         {/* Logo / Brand */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
           className="mb-8"
         >
           <div className="flex items-center gap-3">
-            <img
+            <motion.img
               src="https://cdn.hercules.app/file_GpEbTAUqPZSaqCQvtLDKCwlF"
               alt="OneNexium"
               className="h-16 w-auto"
+              animate={{
+                rotateY: [0, 360],
+              }}
+              transition={{
+                duration: 3,
+                delay: 1,
+                repeat: Infinity,
+                repeatDelay: 5,
+                ease: "easeInOut",
+              }}
             />
-            <span className="text-3xl font-bold text-[#0C0F18] tracking-tight">
+            <motion.span
+              className="text-3xl font-bold text-[#0C0F18] tracking-tight"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
               OneNexium
-            </span>
+            </motion.span>
           </div>
         </motion.div>
 
