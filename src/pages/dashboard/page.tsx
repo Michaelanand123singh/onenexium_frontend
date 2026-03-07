@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import DashboardContent from "./_components/DashboardContent.tsx";
+import OnboardingGate from "./_components/OnboardingGate.tsx";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -39,7 +40,9 @@ export default function DashboardPage() {
         </div>
       </Unauthenticated>
       <Authenticated>
-        <DashboardContent />
+        <OnboardingGate>
+          <DashboardContent />
+        </OnboardingGate>
       </Authenticated>
     </>
   );
