@@ -36,7 +36,7 @@ function ChatBubble({ message }: { message: Message }) {
       <div
         className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center ${
           isUser
-            ? "bg-white/10 text-white/60"
+            ? "bg-[#0C0F18]/5 text-[#0C0F18]/50"
             : "text-white"
         }`}
         style={!isUser ? { background: BRAND_GRADIENT } : undefined}
@@ -52,14 +52,14 @@ function ChatBubble({ message }: { message: Message }) {
       <div
         className={`max-w-[85%] px-3.5 py-2.5 rounded-xl text-[13px] leading-relaxed ${
           isUser
-            ? "bg-[#3D4EF0]/20 text-white/80 rounded-tr-sm"
-            : "bg-white/[0.04] text-white/60 rounded-tl-sm border border-white/5"
+            ? "bg-[#3D4EF0]/10 text-[#0C0F18]/70 rounded-tr-sm"
+            : "bg-[#F9FAFB] text-[#0C0F18]/60 rounded-tl-sm border border-[#0C0F18]/5"
         }`}
       >
         <p className="whitespace-pre-wrap break-words">{message.content}</p>
         <p
           className={`text-[10px] mt-1.5 ${
-            isUser ? "text-white/25 text-right" : "text-white/20"
+            isUser ? "text-[#0C0F18]/25 text-right" : "text-[#0C0F18]/20"
           }`}
         >
           {timeAgo}
@@ -127,9 +127,9 @@ export default function EditorChat({
   const hasMessages = messages && messages.length > 0;
 
   return (
-    <div className="w-[380px] shrink-0 border-r border-white/5 bg-[#0B0D13] flex flex-col">
+    <div className="w-[380px] shrink-0 border-r border-[#0C0F18]/5 bg-white flex flex-col">
       {/* Chat header */}
-      <div className="h-11 shrink-0 border-b border-white/5 flex items-center justify-between px-4">
+      <div className="h-11 shrink-0 border-b border-[#0C0F18]/5 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <div
             className="w-5 h-5 rounded flex items-center justify-center text-white"
@@ -137,13 +137,13 @@ export default function EditorChat({
           >
             <Sparkles className="w-3 h-3" />
           </div>
-          <span className="text-xs font-semibold text-white/50">
+          <span className="text-xs font-semibold text-[#0C0F18]/50">
             AI Chat
           </span>
         </div>
         <button
           onClick={() => toast.info("Coming soon in a future milestone!")}
-          className="w-6 h-6 rounded flex items-center justify-center text-white/20 hover:text-white/50 hover:bg-white/5 transition-colors cursor-pointer"
+          className="w-6 h-6 rounded flex items-center justify-center text-[#0C0F18]/20 hover:text-[#0C0F18]/50 hover:bg-[#0C0F18]/5 transition-colors cursor-pointer"
           title="New chat"
         >
           <Plus className="w-3.5 h-3.5" />
@@ -164,12 +164,12 @@ export default function EditorChat({
             >
               <Sparkles className="w-6 h-6" />
             </div>
-            <h3 className="text-sm font-semibold text-white/60 mb-1">
+            <h3 className="text-sm font-semibold text-[#0C0F18]/60 mb-1">
               Start building
             </h3>
-            <p className="text-xs text-white/25 max-w-[220px] leading-relaxed mb-6">
+            <p className="text-xs text-[#0C0F18]/30 max-w-[220px] leading-relaxed mb-6">
               Tell me what changes you want to make to{" "}
-              <span className="text-white/40 font-medium">{projectName}</span>
+              <span className="text-[#0C0F18]/50 font-medium">{projectName}</span>
             </p>
 
             {/* Quick action pills */}
@@ -178,7 +178,7 @@ export default function EditorChat({
                 <button
                   key={action}
                   onClick={() => handleSend(action)}
-                  className="px-3 py-1.5 rounded-full text-[11px] font-medium text-white/30 bg-white/[0.03] border border-white/5 hover:bg-[#3D4EF0]/10 hover:border-[#3D4EF0]/20 hover:text-[#23A0FF]/70 transition-all cursor-pointer"
+                  className="px-3 py-1.5 rounded-full text-[11px] font-medium text-[#0C0F18]/35 bg-[#0C0F18]/[0.02] border border-[#0C0F18]/5 hover:bg-[#3D4EF0]/5 hover:border-[#3D4EF0]/15 hover:text-[#3D4EF0] transition-all cursor-pointer"
                 >
                   {action}
                 </button>
@@ -197,7 +197,7 @@ export default function EditorChat({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center gap-2 text-xs text-[#23A0FF]/50"
+            className="flex items-center gap-2 text-xs text-[#3D4EF0]/60"
           >
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
             <span>Thinking...</span>
@@ -206,8 +206,8 @@ export default function EditorChat({
       </div>
 
       {/* Input area */}
-      <div className="shrink-0 border-t border-white/5 p-3">
-        <div className="relative bg-white/[0.03] border border-white/5 rounded-xl overflow-hidden focus-within:border-[#3D4EF0]/20 transition-colors">
+      <div className="shrink-0 border-t border-[#0C0F18]/5 p-3">
+        <div className="relative bg-[#0C0F18]/[0.02] border border-[#0C0F18]/8 rounded-xl overflow-hidden focus-within:border-[#3D4EF0]/30 transition-colors">
           <textarea
             ref={textareaRef}
             value={input}
@@ -216,7 +216,7 @@ export default function EditorChat({
             placeholder="Describe what you want to change..."
             rows={2}
             disabled={isSending}
-            className="w-full resize-none bg-transparent text-white/70 text-[13px] leading-relaxed placeholder:text-white/15 outline-none p-3 pr-12 disabled:opacity-40"
+            className="w-full resize-none bg-transparent text-[#0C0F18]/70 text-[13px] leading-relaxed placeholder:text-[#0C0F18]/20 outline-none p-3 pr-12 disabled:opacity-40"
           />
           <button
             onClick={() => handleSend()}
@@ -231,7 +231,7 @@ export default function EditorChat({
             )}
           </button>
         </div>
-        <p className="text-[10px] text-white/15 text-center mt-2">
+        <p className="text-[10px] text-[#0C0F18]/20 text-center mt-2">
           Press Enter to send, Shift+Enter for new line
         </p>
       </div>

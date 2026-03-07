@@ -55,12 +55,12 @@ function PanelShell({
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.15 }}
-      className="w-[320px] shrink-0 border-r border-white/5 bg-[#0B0D13] flex flex-col h-full"
+      className="w-[320px] shrink-0 border-r border-[#0C0F18]/5 bg-white flex flex-col h-full"
     >
-      <div className="h-11 shrink-0 border-b border-white/5 flex items-center justify-between px-4">
+      <div className="h-11 shrink-0 border-b border-[#0C0F18]/5 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <Icon className="w-4 h-4 text-white/30" />
-          <span className="text-xs font-semibold text-white/50">{title}</span>
+          <Icon className="w-4 h-4 text-[#0C0F18]/30" />
+          <span className="text-xs font-semibold text-[#0C0F18]/50">{title}</span>
         </div>
         {action}
       </div>
@@ -84,16 +84,16 @@ function ListRow({
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.03] transition-colors cursor-pointer group"
+      className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#0C0F18]/[0.02] transition-colors cursor-pointer group"
     >
-      <Icon className="w-4 h-4 text-white/20 shrink-0" />
+      <Icon className="w-4 h-4 text-[#0C0F18]/20 shrink-0" />
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] text-white/60 truncate">{label}</p>
+        <p className="text-[13px] text-[#0C0F18]/60 truncate">{label}</p>
         {detail && (
-          <p className="text-[10px] text-white/20 truncate">{detail}</p>
+          <p className="text-[10px] text-[#0C0F18]/25 truncate">{detail}</p>
         )}
       </div>
-      <ChevronRight className="w-3.5 h-3.5 text-white/10 group-hover:text-white/25 transition-colors" />
+      <ChevronRight className="w-3.5 h-3.5 text-[#0C0F18]/10 group-hover:text-[#0C0F18]/25 transition-colors" />
     </button>
   );
 }
@@ -117,13 +117,13 @@ function VersionsPanel() {
             key={v.id}
             className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer ${
               v.active
-                ? "bg-[#3D4EF0]/10 border-l-2 border-[#3D4EF0]"
-                : "hover:bg-white/[0.03] border-l-2 border-transparent"
+                ? "bg-[#3D4EF0]/5 border-l-2 border-[#3D4EF0]"
+                : "hover:bg-[#0C0F18]/[0.02] border-l-2 border-transparent"
             }`}
           >
             <div
               className={`w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                v.active ? "text-white" : "bg-white/5 text-white/30"
+                v.active ? "text-white" : "bg-[#0C0F18]/5 text-[#0C0F18]/30"
               }`}
               style={v.active ? { background: BRAND_GRADIENT } : undefined}
             >
@@ -132,14 +132,14 @@ function VersionsPanel() {
             <div className="flex-1 min-w-0">
               <p
                 className={`text-[13px] truncate ${
-                  v.active ? "text-white/80 font-medium" : "text-white/50"
+                  v.active ? "text-[#0C0F18]/80 font-medium" : "text-[#0C0F18]/50"
                 }`}
               >
                 {v.label}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <Clock className="w-3 h-3 text-white/15" />
-                <span className="text-[10px] text-white/20">{v.time}</span>
+                <Clock className="w-3 h-3 text-[#0C0F18]/15" />
+                <span className="text-[10px] text-[#0C0F18]/25">{v.time}</span>
               </div>
             </div>
           </button>
@@ -165,7 +165,7 @@ function CodePanel() {
       icon={Code2}
       title="Code"
       action={
-        <button className="w-6 h-6 rounded flex items-center justify-center text-white/20 hover:text-white/50 hover:bg-white/5 transition-colors cursor-pointer">
+        <button className="w-6 h-6 rounded flex items-center justify-center text-[#0C0F18]/20 hover:text-[#0C0F18]/50 hover:bg-[#0C0F18]/5 transition-colors cursor-pointer">
           <Plus className="w-3.5 h-3.5" />
         </button>
       }
@@ -180,8 +180,8 @@ function CodePanel() {
           />
         ))}
       </div>
-      <div className="border-t border-white/5 px-4 py-3">
-        <p className="text-[10px] text-white/15 text-center">
+      <div className="border-t border-[#0C0F18]/5 px-4 py-3">
+        <p className="text-[10px] text-[#0C0F18]/20 text-center">
           Edit code directly in the editor
         </p>
       </div>
@@ -207,13 +207,13 @@ function FilesPanel() {
       }
     >
       <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12">
-        <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center mb-4">
-          <Image className="w-6 h-6 text-white/15" />
+        <div className="w-12 h-12 rounded-xl bg-[#0C0F18]/[0.02] border border-[#0C0F18]/5 flex items-center justify-center mb-4">
+          <Image className="w-6 h-6 text-[#0C0F18]/15" />
         </div>
-        <p className="text-sm font-medium text-white/40 mb-1">
+        <p className="text-sm font-medium text-[#0C0F18]/40 mb-1">
           No files uploaded
         </p>
-        <p className="text-[11px] text-white/20 leading-relaxed max-w-[200px] mb-5">
+        <p className="text-[11px] text-[#0C0F18]/25 leading-relaxed max-w-[200px] mb-5">
           Upload images, videos, documents, and other assets for your project
         </p>
         <button
@@ -243,7 +243,7 @@ function DatabasePanel() {
       icon={Database}
       title="Database"
       action={
-        <button className="w-6 h-6 rounded flex items-center justify-center text-white/20 hover:text-white/50 hover:bg-white/5 transition-colors cursor-pointer">
+        <button className="w-6 h-6 rounded flex items-center justify-center text-[#0C0F18]/20 hover:text-[#0C0F18]/50 hover:bg-[#0C0F18]/5 transition-colors cursor-pointer">
           <Plus className="w-3.5 h-3.5" />
         </button>
       }
@@ -252,20 +252,20 @@ function DatabasePanel() {
         {tables.map((table) => (
           <button
             key={table.name}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.03] transition-colors cursor-pointer group"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#0C0F18]/[0.02] transition-colors cursor-pointer group"
           >
-            <table.icon className="w-4 h-4 text-white/20 shrink-0" />
+            <table.icon className="w-4 h-4 text-[#0C0F18]/20 shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] text-white/60 font-mono">{table.name}</p>
+              <p className="text-[13px] text-[#0C0F18]/60 font-mono">{table.name}</p>
             </div>
-            <span className="text-[10px] text-white/15 font-medium px-1.5 py-0.5 rounded bg-white/[0.03]">
+            <span className="text-[10px] text-[#0C0F18]/20 font-medium px-1.5 py-0.5 rounded bg-[#0C0F18]/[0.03]">
               {table.rows} {table.rows === 1 ? "row" : "rows"}
             </span>
           </button>
         ))}
       </div>
-      <div className="border-t border-white/5 px-4 py-3">
-        <div className="flex items-center gap-2 text-[10px] text-white/15">
+      <div className="border-t border-[#0C0F18]/5 px-4 py-3">
+        <div className="flex items-center gap-2 text-[10px] text-[#0C0F18]/20">
           <HardDrive className="w-3 h-3" />
           <span>4 tables, 4 documents</span>
         </div>
@@ -303,10 +303,10 @@ function SecretsPanel() {
         {secrets.map((secret) => (
           <div
             key={secret.key}
-            className="px-4 py-3 hover:bg-white/[0.02] transition-colors"
+            className="px-4 py-3 hover:bg-[#0C0F18]/[0.01] transition-colors"
           >
             <div className="flex items-center justify-between mb-1.5">
-              <p className="text-[12px] font-mono font-medium text-white/50">
+              <p className="text-[12px] font-mono font-medium text-[#0C0F18]/50">
                 {secret.key}
               </p>
               <div className="flex items-center gap-1">
@@ -317,7 +317,7 @@ function SecretsPanel() {
                       [secret.key]: !r[secret.key],
                     }))
                   }
-                  className="w-5 h-5 rounded flex items-center justify-center text-white/15 hover:text-white/40 cursor-pointer"
+                  className="w-5 h-5 rounded flex items-center justify-center text-[#0C0F18]/20 hover:text-[#0C0F18]/50 cursor-pointer"
                 >
                   {revealed[secret.key] ? (
                     <EyeOff className="w-3 h-3" />
@@ -325,12 +325,12 @@ function SecretsPanel() {
                     <Eye className="w-3 h-3" />
                   )}
                 </button>
-                <button className="w-5 h-5 rounded flex items-center justify-center text-white/15 hover:text-red-400 cursor-pointer">
+                <button className="w-5 h-5 rounded flex items-center justify-center text-[#0C0F18]/20 hover:text-red-500 cursor-pointer">
                   <Trash2 className="w-3 h-3" />
                 </button>
               </div>
             </div>
-            <div className="bg-white/[0.03] rounded-md px-2.5 py-1.5 text-[11px] font-mono text-white/25 border border-white/5">
+            <div className="bg-[#0C0F18]/[0.02] rounded-md px-2.5 py-1.5 text-[11px] font-mono text-[#0C0F18]/30 border border-[#0C0F18]/5">
               {revealed[secret.key]
                 ? secret.value
                 : "••••••••••••••••••••"}
@@ -338,8 +338,8 @@ function SecretsPanel() {
           </div>
         ))}
       </div>
-      <div className="border-t border-white/5 px-4 py-3">
-        <div className="flex items-center gap-2 text-[10px] text-white/15">
+      <div className="border-t border-[#0C0F18]/5 px-4 py-3">
+        <div className="flex items-center gap-2 text-[10px] text-[#0C0F18]/20">
           <Shield className="w-3 h-3" />
           <span>Secrets are encrypted at rest</span>
         </div>
@@ -367,21 +367,21 @@ function DomainsPanel() {
     >
       <div className="py-2">
         {/* Default domain */}
-        <div className="px-4 py-3 border-b border-white/5">
+        <div className="px-4 py-3 border-b border-[#0C0F18]/5">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-400" />
-              <p className="text-[12px] font-medium text-white/60">
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <p className="text-[12px] font-medium text-[#0C0F18]/60">
                 Default Domain
               </p>
             </div>
-            <button className="w-5 h-5 rounded flex items-center justify-center text-white/15 hover:text-white/40 cursor-pointer">
+            <button className="w-5 h-5 rounded flex items-center justify-center text-[#0C0F18]/20 hover:text-[#0C0F18]/50 cursor-pointer">
               <ExternalLink className="w-3 h-3" />
             </button>
           </div>
-          <div className="flex items-center gap-2 bg-white/[0.03] rounded-md px-2.5 py-1.5 border border-white/5">
-            <Link className="w-3 h-3 text-white/15" />
-            <span className="text-[11px] font-mono text-[#23A0FF]/60">
+          <div className="flex items-center gap-2 bg-[#0C0F18]/[0.02] rounded-md px-2.5 py-1.5 border border-[#0C0F18]/5">
+            <Link className="w-3 h-3 text-[#0C0F18]/20" />
+            <span className="text-[11px] font-mono text-[#3D4EF0]/70">
               my-project.onenexium.app
             </span>
           </div>
@@ -389,13 +389,13 @@ function DomainsPanel() {
 
         {/* Add custom domain */}
         <div className="flex flex-col items-center text-center px-6 py-8">
-          <div className="w-10 h-10 rounded-lg bg-white/[0.03] border border-white/5 flex items-center justify-center mb-3">
-            <Globe className="w-5 h-5 text-white/15" />
+          <div className="w-10 h-10 rounded-lg bg-[#0C0F18]/[0.02] border border-[#0C0F18]/5 flex items-center justify-center mb-3">
+            <Globe className="w-5 h-5 text-[#0C0F18]/15" />
           </div>
-          <p className="text-[12px] text-white/40 mb-1 font-medium">
+          <p className="text-[12px] text-[#0C0F18]/40 mb-1 font-medium">
             Custom Domain
           </p>
-          <p className="text-[11px] text-white/20 leading-relaxed max-w-[200px] mb-4">
+          <p className="text-[11px] text-[#0C0F18]/25 leading-relaxed max-w-[200px] mb-4">
             Connect your own domain for a professional look
           </p>
           <button
@@ -432,14 +432,14 @@ function MonetizePanel() {
           />
         ))}
       </div>
-      <div className="border-t border-white/5 px-4 py-4">
+      <div className="border-t border-[#0C0F18]/5 px-4 py-4">
         <button
           className="w-full h-9 rounded-lg text-xs font-semibold text-white cursor-pointer hover:shadow-md hover:shadow-[#3D4EF0]/20 transition-all"
           style={{ background: BRAND_GRADIENT }}
         >
           Set Up Payments
         </button>
-        <p className="text-[10px] text-white/15 text-center mt-2">
+        <p className="text-[10px] text-[#0C0F18]/20 text-center mt-2">
           Start accepting payments in minutes
         </p>
       </div>
@@ -471,8 +471,8 @@ function BrandingPanel() {
       </div>
 
       {/* Color preview */}
-      <div className="border-t border-white/5 px-4 py-4">
-        <p className="text-[11px] text-white/30 font-medium mb-3">
+      <div className="border-t border-[#0C0F18]/5 px-4 py-4">
+        <p className="text-[11px] text-[#0C0F18]/30 font-medium mb-3">
           Brand Colors
         </p>
         <div className="flex gap-2">
@@ -480,7 +480,7 @@ function BrandingPanel() {
             (color) => (
               <div
                 key={color}
-                className="w-8 h-8 rounded-lg border border-white/10 cursor-pointer hover:scale-110 transition-transform"
+                className="w-8 h-8 rounded-lg border border-[#0C0F18]/10 cursor-pointer hover:scale-110 transition-transform"
                 style={{ background: color }}
               />
             )
@@ -518,7 +518,7 @@ function MorePanel() {
       <div className="py-2">
         {sections.map((section) => (
           <div key={section.title}>
-            <p className="text-[10px] uppercase tracking-wider text-white/15 font-semibold px-4 py-2 mt-2">
+            <p className="text-[10px] uppercase tracking-wider text-[#0C0F18]/15 font-semibold px-4 py-2 mt-2">
               {section.title}
             </p>
             {section.items.map((item) => (

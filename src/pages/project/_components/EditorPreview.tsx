@@ -43,11 +43,11 @@ export default function EditorPreview({
   ];
 
   return (
-    <div className="flex-1 flex flex-col bg-[#0F1117] overflow-hidden">
+    <div className="flex-1 flex flex-col bg-[#F9FAFB] overflow-hidden">
       {/* Preview toolbar */}
-      <div className="h-11 shrink-0 border-b border-white/5 flex items-center justify-between px-4">
+      <div className="h-11 shrink-0 border-b border-[#0C0F18]/5 bg-white flex items-center justify-between px-4">
         {/* View mode tabs */}
-        <div className="flex items-center gap-0.5 bg-white/[0.03] rounded-lg p-0.5">
+        <div className="flex items-center gap-0.5 bg-[#0C0F18]/[0.03] rounded-lg p-0.5">
           {views.map((v) => (
             <button
               key={v.id}
@@ -60,8 +60,8 @@ export default function EditorPreview({
               }}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer ${
                 viewMode === v.id
-                  ? "bg-white/8 text-white/70"
-                  : "text-white/25 hover:text-white/45"
+                  ? "bg-white text-[#0C0F18]/70 shadow-sm"
+                  : "text-[#0C0F18]/30 hover:text-[#0C0F18]/50"
               }`}
             >
               <v.icon className="w-3 h-3" />
@@ -78,8 +78,8 @@ export default function EditorPreview({
               onClick={() => setDevice(d.id)}
               className={`w-7 h-7 rounded-md flex items-center justify-center transition-all cursor-pointer ${
                 device === d.id
-                  ? "bg-white/8 text-white/60"
-                  : "text-white/15 hover:text-white/40 hover:bg-white/[0.03]"
+                  ? "bg-[#0C0F18]/[0.06] text-[#0C0F18]/60"
+                  : "text-[#0C0F18]/20 hover:text-[#0C0F18]/40 hover:bg-[#0C0F18]/[0.03]"
               }`}
               title={d.label}
             >
@@ -87,18 +87,18 @@ export default function EditorPreview({
             </button>
           ))}
 
-          <div className="w-px h-4 bg-white/5 mx-1.5" />
+          <div className="w-px h-4 bg-[#0C0F18]/8 mx-1.5" />
 
           <button
             onClick={() => toast.info("Coming soon in a future milestone!")}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-white/15 hover:text-white/40 hover:bg-white/[0.03] transition-all cursor-pointer"
+            className="w-7 h-7 rounded-md flex items-center justify-center text-[#0C0F18]/20 hover:text-[#0C0F18]/40 hover:bg-[#0C0F18]/[0.03] transition-all cursor-pointer"
             title="Refresh preview"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => toast.info("Coming soon in a future milestone!")}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-white/15 hover:text-white/40 hover:bg-white/[0.03] transition-all cursor-pointer"
+            className="w-7 h-7 rounded-md flex items-center justify-center text-[#0C0F18]/20 hover:text-[#0C0F18]/40 hover:bg-[#0C0F18]/[0.03] transition-all cursor-pointer"
             title="Open in new tab"
           >
             <ExternalLink className="w-3.5 h-3.5" />
@@ -111,7 +111,7 @@ export default function EditorPreview({
         <motion.div
           layout
           transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-          className="bg-white rounded-xl overflow-hidden shadow-2xl shadow-black/30 border border-white/5"
+          className="bg-white rounded-xl overflow-hidden shadow-lg shadow-[#0C0F18]/8 border border-[#0C0F18]/5"
           style={{
             width: DEVICE_WIDTHS[device],
             maxWidth: "100%",

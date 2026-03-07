@@ -51,7 +51,7 @@ export default function EditorSidebar({
   onTabChange: (tab: SidebarTab | null) => void;
 }) {
   return (
-    <div className="w-12 shrink-0 bg-[#0B0D13] border-r border-white/5 flex flex-col items-center py-2 gap-0.5">
+    <div className="w-12 shrink-0 bg-[#F9FAFB] border-r border-[#0C0F18]/5 flex flex-col items-center py-2 gap-0.5">
       {SIDEBAR_TABS.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
@@ -60,8 +60,8 @@ export default function EditorSidebar({
               onClick={() => onTabChange(isActive ? null : tab.id)}
               className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
                 isActive
-                  ? "text-white"
-                  : "text-white/25 hover:text-white/50 hover:bg-white/[0.04]"
+                  ? "text-white shadow-sm"
+                  : "text-[#0C0F18]/25 hover:text-[#0C0F18]/50 hover:bg-[#0C0F18]/[0.04]"
               }`}
               style={isActive ? { background: BRAND_GRADIENT } : undefined}
             >
@@ -69,7 +69,7 @@ export default function EditorSidebar({
             </button>
 
             {/* Tooltip */}
-            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded-md bg-white/10 backdrop-blur-md text-[11px] font-medium text-white/80 whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
+            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded-md bg-[#0C0F18] text-[11px] font-medium text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
               {tab.label}
             </div>
           </div>
@@ -81,10 +81,10 @@ export default function EditorSidebar({
 
       {/* Report issue */}
       <div className="relative group">
-        <button className="w-9 h-9 rounded-lg flex items-center justify-center text-white/15 hover:text-white/40 hover:bg-white/[0.04] transition-all cursor-pointer">
+        <button className="w-9 h-9 rounded-lg flex items-center justify-center text-[#0C0F18]/15 hover:text-[#0C0F18]/40 hover:bg-[#0C0F18]/[0.04] transition-all cursor-pointer">
           <Bug className="w-4 h-4" />
         </button>
-        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded-md bg-white/10 backdrop-blur-md text-[11px] font-medium text-white/80 whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded-md bg-[#0C0F18] text-[11px] font-medium text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
           Report an Issue
         </div>
       </div>

@@ -59,24 +59,24 @@ export default function EditorNavbar({
   };
 
   return (
-    <header className="h-12 shrink-0 border-b border-white/5 bg-[#0F1117] flex items-center px-3 gap-2">
+    <header className="h-12 shrink-0 border-b border-[#0C0F18]/5 bg-white/80 backdrop-blur-xl flex items-center px-3 gap-2">
       {/* Left section */}
       <div className="flex items-center gap-2">
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-white/30 hover:text-white/70 hover:bg-white/5 transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#0C0F18]/30 hover:text-[#0C0F18]/70 hover:bg-[#0C0F18]/[0.03] transition-colors cursor-pointer"
           title="Back to dashboard"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
 
-        <div className="w-px h-5 bg-white/8 mx-1" />
+        <div className="w-px h-5 bg-[#0C0F18]/8 mx-1" />
 
         {/* Logo */}
         <img
           src="https://cdn.hercules.app/file_GpEbTAUqPZSaqCQvtLDKCwlF"
           alt="OneNexium"
-          className="h-5 w-auto opacity-60"
+          className="h-5 w-auto"
         />
       </div>
 
@@ -89,12 +89,12 @@ export default function EditorNavbar({
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="bg-white/5 border border-white/10 rounded-md px-2.5 py-1 text-sm text-white/80 outline-none focus:border-[#3D4EF0]/50 w-48"
+              className="bg-[#0C0F18]/[0.03] border border-[#0C0F18]/10 rounded-md px-2.5 py-1 text-sm text-[#0C0F18]/80 outline-none focus:border-[#3D4EF0]/50 w-48"
               autoFocus
             />
             <button
               onClick={handleRename}
-              className="w-6 h-6 rounded flex items-center justify-center text-green-400 hover:bg-white/5 cursor-pointer"
+              className="w-6 h-6 rounded flex items-center justify-center text-green-600 hover:bg-[#0C0F18]/5 cursor-pointer"
             >
               <Check className="w-3.5 h-3.5" />
             </button>
@@ -103,7 +103,7 @@ export default function EditorNavbar({
                 setNameInput(project.name);
                 setIsRenaming(false);
               }}
-              className="w-6 h-6 rounded flex items-center justify-center text-white/30 hover:text-white/60 hover:bg-white/5 cursor-pointer"
+              className="w-6 h-6 rounded flex items-center justify-center text-[#0C0F18]/30 hover:text-[#0C0F18]/60 hover:bg-[#0C0F18]/5 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -111,16 +111,16 @@ export default function EditorNavbar({
         ) : (
           <button
             onClick={() => setIsRenaming(true)}
-            className="flex items-center gap-2 px-2.5 py-1 rounded-md hover:bg-white/5 transition-colors cursor-pointer group"
+            className="flex items-center gap-2 px-2.5 py-1 rounded-md hover:bg-[#0C0F18]/[0.03] transition-colors cursor-pointer group"
           >
-            <span className="text-sm font-medium text-white/70 truncate max-w-[200px]">
+            <span className="text-sm font-medium text-[#0C0F18]/70 truncate max-w-[200px]">
               {project.name}
             </span>
-            <Pencil className="w-3 h-3 text-white/20 group-hover:text-white/50 transition-colors" />
+            <Pencil className="w-3 h-3 text-[#0C0F18]/20 group-hover:text-[#0C0F18]/50 transition-colors" />
           </button>
         )}
 
-        <div className="flex items-center gap-1 text-[10px] text-white/25 font-medium">
+        <div className="flex items-center gap-1 text-[10px] text-[#0C0F18]/25 font-medium">
           {project.visibility === "public" ? (
             <Globe className="w-3 h-3" />
           ) : (
@@ -133,7 +133,7 @@ export default function EditorNavbar({
       <div className="flex items-center gap-2">
         <button
           onClick={() => toast.info("Coming soon in a future milestone!")}
-          className="h-7 px-3 rounded-lg flex items-center gap-1.5 text-xs font-medium text-white/40 hover:text-white/70 hover:bg-white/5 transition-colors cursor-pointer"
+          className="h-7 px-3 rounded-lg flex items-center gap-1.5 text-xs font-medium text-[#0C0F18]/40 hover:text-[#0C0F18]/70 hover:bg-[#0C0F18]/[0.03] transition-colors cursor-pointer"
         >
           <Share2 className="w-3.5 h-3.5" />
           Share

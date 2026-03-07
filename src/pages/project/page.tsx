@@ -17,16 +17,16 @@ export default function ProjectEditorPage() {
   return (
     <>
       <AuthLoading>
-        <div className="h-screen bg-[#0C0F18] flex items-center justify-center">
+        <div className="h-screen bg-white flex items-center justify-center">
           <div className="space-y-4 w-full max-w-md px-6">
-            <Skeleton className="h-10 w-48 bg-white/5" />
-            <Skeleton className="h-64 w-full bg-white/5" />
+            <Skeleton className="h-10 w-48" />
+            <Skeleton className="h-64 w-full" />
           </div>
         </div>
       </AuthLoading>
       <Unauthenticated>
-        <div className="h-screen bg-[#0C0F18] flex flex-col items-center justify-center gap-4">
-          <p className="text-white/50 text-sm">Sign in to access your project</p>
+        <div className="h-screen bg-white flex flex-col items-center justify-center gap-4">
+          <p className="text-[#0C0F18]/50 text-sm">Sign in to access your project</p>
           <SignInButton
             signInText="Sign In"
             className="text-white"
@@ -34,7 +34,7 @@ export default function ProjectEditorPage() {
           />
           <button
             onClick={() => navigate("/dashboard")}
-            className="text-xs text-white/30 hover:text-white/60 cursor-pointer"
+            className="text-xs text-[#3D4EF0] hover:underline cursor-pointer"
           >
             Back to dashboard
           </button>
