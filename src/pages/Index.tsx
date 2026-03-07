@@ -108,7 +108,7 @@ export default function Index() {
           <img
             src="https://cdn.hercules.app/file_f2vIrpKf7g8jkc7l5WyHLSqq"
             alt="OneNexium"
-            className="h-10 w-auto"
+            className="h-20 w-auto"
           />
         </motion.div>
 
