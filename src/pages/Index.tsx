@@ -105,12 +105,11 @@ export default function Index() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-[#3D4EF0]/30"
-            style={{ background: BRAND_GRADIENT }}
-          >
-            N
-          </div>
+          <img
+            src="https://cdn.hercules.app/file_qNE6Md0JviOW4L3bg48b9nwa"
+            alt="OneNexium"
+            className="w-14 h-14 rounded-2xl shadow-lg shadow-[#3D4EF0]/30"
+          />
         </motion.div>
 
         {/* Badge */}
