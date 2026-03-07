@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ConvexError } from "convex/values";
 import {
@@ -48,6 +49,7 @@ function ProjectCard({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const removeProject = useMutation(api.projects.remove);
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     setMenuOpen(false);
@@ -65,7 +67,7 @@ function ProjectCard({
   };
 
   const handleOpen = () => {
-    toast.info("Coming soon in a future milestone!");
+    navigate(`/project/${project._id}`);
   };
 
   const timeAgo = formatDistanceToNow(new Date(project.lastEditedAt), {

@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ConvexError } from "convex/values";
 import {
@@ -35,6 +36,7 @@ export default function PromptInput({ userName }: { userName: string }) {
   const [status, setStatus] = useState<"idle" | "generating" | "done">("idle");
   const [steps, setSteps] = useState<GeneratingStep[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate();
 
   const createProject = useMutation(api.projects.create);
 
@@ -61,7 +63,7 @@ export default function PromptInput({ userName }: { userName: string }) {
 
     // Create the project
     try {
-      await createProject({
+      const projectId = await createProject({
         name: prompt.trim().slice(0, 60),
         description: prompt.trim(),
         prompt: prompt.trim(),
@@ -69,10 +71,8 @@ export default function PromptInput({ userName }: { userName: string }) {
       });
       setStatus("done");
       setTimeout(() => {
-        setStatus("idle");
-        setPrompt("");
-        setSteps([]);
-      }, 2000);
+        navigate(`/project/${projectId}`);
+      }, 1200);
     } catch (error) {
       setStatus("idle");
       setSteps([]);

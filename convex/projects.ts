@@ -77,6 +77,84 @@ export const listByUser = query({
   },
 });
 
+export const getById = query({
+  args: { projectId: v.id("projects") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError({
+        code: "UNAUTHENTICATED",
+        message: "User not logged in",
+      });
+    }
+
+    const project = await ctx.db.get(args.projectId);
+    if (!project) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Project not found",
+      });
+    }
+
+    // Verify ownership
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier),
+      )
+      .unique();
+
+    if (!user || project.userId !== user._id) {
+      throw new ConvexError({
+        code: "FORBIDDEN",
+        message: "You do not have access to this project",
+      });
+    }
+
+    return project;
+  },
+});
+
+export const rename = mutation({
+  args: { projectId: v.id("projects"), name: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError({
+        code: "UNAUTHENTICATED",
+        message: "User not logged in",
+      });
+    }
+
+    const project = await ctx.db.get(args.projectId);
+    if (!project) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Project not found",
+      });
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier),
+      )
+      .unique();
+
+    if (!user || project.userId !== user._id) {
+      throw new ConvexError({
+        code: "FORBIDDEN",
+        message: "You do not have permission",
+      });
+    }
+
+    await ctx.db.patch(args.projectId, {
+      name: args.name.trim(),
+      lastEditedAt: new Date().toISOString(),
+    });
+  },
+});
+
 export const remove = mutation({
   args: { projectId: v.id("projects") },
   handler: async (ctx, args) => {

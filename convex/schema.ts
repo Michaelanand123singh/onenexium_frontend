@@ -27,4 +27,11 @@ export default defineSchema({
     visibility: v.union(v.literal("public"), v.literal("private")),
     lastEditedAt: v.string(),
   }).index("by_user", ["userId"]),
+
+  projectMessages: defineTable({
+    projectId: v.id("projects"),
+    role: v.union(v.literal("user"), v.literal("assistant")),
+    content: v.string(),
+    sentAt: v.string(),
+  }).index("by_project", ["projectId"]),
 });
