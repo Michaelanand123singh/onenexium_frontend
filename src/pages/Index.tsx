@@ -106,7 +106,7 @@ export default function Index() {
           className="mb-8"
         >
           <img
-            src="https://cdn.hercules.app/file_f2vIrpKf7g8jkc7l5WyHLSqq"
+            src="https://cdn.hercules.app/file_GpEbTAUqPZSaqCQvtLDKCwlF"
             alt="OneNexium"
             className="h-20 w-auto"
           />
