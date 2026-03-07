@@ -20,6 +20,11 @@ export const updateCurrentUser = mutation({
       )
       .unique();
     if (user !== null) {
+      // Update name/email if changed
+      await ctx.db.patch(user._id, {
+        name: identity.name,
+        email: identity.email,
+      });
       return user._id;
     }
     // If it's a new identity, create a new User.
@@ -27,6 +32,7 @@ export const updateCurrentUser = mutation({
       name: identity.name,
       email: identity.email,
       tokenIdentifier: identity.tokenIdentifier,
+      hasCompletedOnboarding: false,
     });
   },
 });

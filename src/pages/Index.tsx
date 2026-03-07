@@ -1,6 +1,14 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api.js";
+import { ConvexError } from "convex/values";
+import { SignInButton } from "@/components/ui/signin.tsx";
+import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/use-auth.ts";
+import { Loader2 } from "lucide-react";
 
 const BRAND_GRADIENT = "linear-gradient(135deg, #3D4EF0, #23A0FF)";
 
@@ -42,23 +50,84 @@ function Particle({ delay, x, y }: { delay: number; x: string; y: string }) {
   );
 }
 
+function AuthenticatedNav() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="absolute top-6 right-6 z-20 flex items-center gap-3"
+    >
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="px-4 py-2 rounded-lg text-sm font-semibold text-white cursor-pointer transition-all hover:shadow-lg hover:shadow-[#3D4EF0]/25"
+        style={{ background: BRAND_GRADIENT }}
+      >
+        Go to Dashboard
+      </button>
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3D4EF0]/5 border border-[#3D4EF0]/15">
+        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3D4EF0] to-[#23A0FF] flex items-center justify-center text-white text-xs font-bold">
+          {user?.profile?.name?.charAt(0)?.toUpperCase() || "U"}
+        </div>
+        <span className="text-sm text-[#0C0F18] font-medium">
+          {user?.profile?.name || "User"}
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Index() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const joinWaitlist = useMutation(api.waitlist.join);
 
-  const handleNotify = (e: React.FormEvent) => {
+  const handleNotify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      await joinWaitlist({ email: email.trim() });
       toast.success("You're on the list! We'll notify you when we launch.");
       setEmail("");
+    } catch (error) {
+      if (error instanceof ConvexError) {
+        const { message } = error.data as { code: string; message: string };
+        toast.error(message);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   };
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
+      {/* Top-right auth area */}
+      <div className="absolute top-6 right-6 z-20">
+        <Unauthenticated>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <SignInButton
+              signInText="Sign In"
+              className="text-sm font-semibold text-white cursor-pointer hover:shadow-lg hover:shadow-[#3D4EF0]/25"
+              style={{ background: BRAND_GRADIENT }}
+            />
+          </motion.div>
+        </Unauthenticated>
+        <AuthLoading>
+          <Loader2 className="w-5 h-5 animate-spin text-[#3D4EF0]" />
+        </AuthLoading>
+      </div>
+      <Authenticated>
+        <AuthenticatedNav />
+      </Authenticated>
+
       {/* Background gradient wash */}
       <div
         className="absolute inset-0 opacity-[0.04]"
