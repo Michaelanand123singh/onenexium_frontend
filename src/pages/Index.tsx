@@ -7,7 +7,7 @@ const BRAND_GRADIENT = "linear-gradient(135deg, #3D4EF0, #23A0FF)";
 function FloatingOrb({ className }: { className: string }) {
   return (
     <motion.div
-      className={`absolute rounded-full blur-3xl opacity-20 pointer-events-none ${className}`}
+      className={`absolute rounded-full blur-3xl opacity-10 pointer-events-none ${className}`}
       animate={{
         y: [0, -30, 0],
         x: [0, 15, 0],
@@ -25,10 +25,10 @@ function FloatingOrb({ className }: { className: string }) {
 function Particle({ delay, x, y }: { delay: number; x: string; y: string }) {
   return (
     <motion.div
-      className="absolute w-1 h-1 rounded-full bg-white/30"
+      className="absolute w-1 h-1 rounded-full bg-[#3D4EF0]/20"
       style={{ left: x, top: y }}
       animate={{
-        opacity: [0, 0.6, 0],
+        opacity: [0, 0.5, 0],
         scale: [0, 1.5, 0],
         y: [0, -40, -80],
       }}
@@ -58,10 +58,10 @@ export default function Index() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0C0F18]">
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
       {/* Background gradient wash */}
       <div
-        className="absolute inset-0 opacity-[0.07]"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           background:
             "radial-gradient(ellipse 80% 60% at 50% 40%, #3D4EF0, transparent)",
@@ -71,7 +71,7 @@ export default function Index() {
       {/* Floating orbs */}
       <FloatingOrb className="w-[500px] h-[500px] -top-40 -left-40 bg-[#3D4EF0]" />
       <FloatingOrb className="w-[400px] h-[400px] -bottom-32 -right-32 bg-[#23A0FF]" />
-      <FloatingOrb className="w-[300px] h-[300px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#3D4EF0]/50" />
+      <FloatingOrb className="w-[300px] h-[300px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#3D4EF0]/30" />
 
       {/* Particles */}
       {[
@@ -88,10 +88,10 @@ export default function Index() {
 
       {/* Grid overlay */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
+            "linear-gradient(#3D4EF0 1px, transparent 1px), linear-gradient(90deg, #3D4EF0 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
@@ -119,7 +119,7 @@ export default function Index() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mb-6"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-white/10 bg-white/5 text-white/60">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-[#3D4EF0]/15 bg-[#3D4EF0]/5 text-[#3D4EF0]">
             <motion.span
               className="w-1.5 h-1.5 rounded-full bg-[#23A0FF]"
               animate={{ opacity: [1, 0.3, 1] }}
@@ -134,7 +134,7 @@ export default function Index() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.35 }}
-          className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight tracking-tight text-balance"
+          className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#0C0F18] leading-tight tracking-tight text-balance"
         >
           Something{" "}
           <span
@@ -151,7 +151,7 @@ export default function Index() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.55 }}
-          className="mt-5 text-base sm:text-lg text-white/50 max-w-md leading-relaxed"
+          className="mt-5 text-base sm:text-lg text-[#0C0F18]/50 max-w-md leading-relaxed"
         >
           We're crafting a new experience. Be the first to know when we launch.
         </motion.p>
@@ -170,14 +170,14 @@ export default function Index() {
               className="absolute -inset-[1px] rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-sm"
               style={{ background: BRAND_GRADIENT }}
             />
-            <div className="relative flex items-center bg-white/[0.06] border border-white/10 rounded-xl backdrop-blur-sm overflow-hidden">
+            <div className="relative flex items-center bg-white border border-[#0C0F18]/10 rounded-xl shadow-sm overflow-hidden">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="flex-1 bg-transparent text-white placeholder:text-white/30 text-sm px-4 py-3.5 outline-none"
+                className="flex-1 bg-transparent text-[#0C0F18] placeholder:text-[#0C0F18]/30 text-sm px-4 py-3.5 outline-none"
               />
               <button
                 type="submit"
@@ -198,7 +198,7 @@ export default function Index() {
               </button>
             </div>
           </div>
-          <p className="mt-3 text-xs text-white/25">
+          <p className="mt-3 text-xs text-[#0C0F18]/30">
             No spam, ever. We'll only email you once when we go live.
           </p>
         </motion.form>
@@ -220,11 +220,11 @@ export default function Index() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.1 + i * 0.1 }}
-                className="text-2xl sm:text-3xl font-bold text-white/80 tabular-nums"
+                className="text-2xl sm:text-3xl font-bold text-[#0C0F18]/80 tabular-nums"
               >
                 {item.value}
               </motion.span>
-              <span className="text-[10px] uppercase tracking-widest text-white/30 mt-1">
+              <span className="text-[10px] uppercase tracking-widest text-[#0C0F18]/30 mt-1">
                 {item.label}
               </span>
             </div>
@@ -246,7 +246,7 @@ export default function Index() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-5 text-[11px] text-white/20 tracking-wide"
+        className="absolute bottom-5 text-[11px] text-[#0C0F18]/25 tracking-wide"
       >
         &copy; {new Date().getFullYear()} OneNexium. All rights reserved.
       </motion.p>
