@@ -105,11 +105,16 @@ export default function Index() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <img
-            src="https://cdn.hercules.app/file_GpEbTAUqPZSaqCQvtLDKCwlF"
-            alt="OneNexium"
-            className="h-20 w-auto"
-          />
+          <div className="flex items-center gap-3">
+            <img
+              src="https://cdn.hercules.app/file_GpEbTAUqPZSaqCQvtLDKCwlF"
+              alt="OneNexium"
+              className="h-16 w-auto"
+            />
+            <span className="text-3xl font-bold text-[#0C0F18] tracking-tight">
+              OneNexium
+            </span>
+          </div>
         </motion.div>
 
         {/* Badge */}
