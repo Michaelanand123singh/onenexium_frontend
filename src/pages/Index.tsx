@@ -86,15 +86,62 @@ export default function Index() {
         <Particle key={i} {...p} />
       ))}
 
-      {/* Grid overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.06]"
+      {/* Grid overlay - animated */}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.08 }}
+        transition={{ duration: 2 }}
         style={{
           backgroundImage:
             "linear-gradient(#3D4EF0 1px, transparent 1px), linear-gradient(90deg, #3D4EF0 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
+      {/* Grid pulse layer */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{ opacity: [0, 0.04, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        style={{
+          backgroundImage:
+            "linear-gradient(#23A0FF 1px, transparent 1px), linear-gradient(90deg, #23A0FF 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      {/* Floating emojis */}
+      {[
+        { emoji: "\u{1F680}", x: "8%", y: "18%", delay: 0, duration: 6 },
+        { emoji: "\u{2728}", x: "88%", y: "22%", delay: 1, duration: 7 },
+        { emoji: "\u{1F4A1}", x: "12%", y: "72%", delay: 0.5, duration: 5.5 },
+        { emoji: "\u{26A1}", x: "85%", y: "68%", delay: 1.5, duration: 6.5 },
+        { emoji: "\u{1F30D}", x: "5%", y: "45%", delay: 2, duration: 7.5 },
+        { emoji: "\u{1F525}", x: "92%", y: "45%", delay: 0.8, duration: 5 },
+        { emoji: "\u{1F389}", x: "18%", y: "88%", delay: 1.2, duration: 6.2 },
+        { emoji: "\u{1F4AB}", x: "78%", y: "85%", delay: 2.5, duration: 5.8 },
+      ].map((item, i) => (
+        <motion.span
+          key={i}
+          className="absolute text-2xl sm:text-3xl pointer-events-none select-none"
+          style={{ left: item.x, top: item.y }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{
+            opacity: [0, 0.6, 0.4, 0.6, 0],
+            scale: [0, 1, 1.1, 1, 0],
+            y: [0, -20, -10, -25, -40],
+            rotate: [0, 10, -10, 5, 0],
+          }}
+          transition={{
+            duration: item.duration,
+            delay: item.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          {item.emoji}
+        </motion.span>
+      ))}
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center px-6 max-w-2xl text-center">
