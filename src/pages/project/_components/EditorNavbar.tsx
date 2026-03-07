@@ -6,8 +6,6 @@ import { toast } from "sonner";
 import { ConvexError } from "convex/values";
 import {
   ArrowLeft,
-  PanelLeftClose,
-  PanelLeft,
   Globe,
   Lock,
   Pencil,
@@ -22,12 +20,8 @@ const BRAND_GRADIENT = "linear-gradient(135deg, #3D4EF0, #23A0FF)";
 
 export default function EditorNavbar({
   project,
-  chatCollapsed,
-  onToggleChat,
 }: {
   project: Doc<"projects">;
-  chatCollapsed: boolean;
-  onToggleChat: () => void;
 }) {
   const navigate = useNavigate();
   const renameProject = useMutation(api.projects.rename);
@@ -74,18 +68,6 @@ export default function EditorNavbar({
           title="Back to dashboard"
         >
           <ArrowLeft className="w-4 h-4" />
-        </button>
-
-        <button
-          onClick={onToggleChat}
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-white/30 hover:text-white/70 hover:bg-white/5 transition-colors cursor-pointer"
-          title={chatCollapsed ? "Show chat" : "Hide chat"}
-        >
-          {chatCollapsed ? (
-            <PanelLeft className="w-4 h-4" />
-          ) : (
-            <PanelLeftClose className="w-4 h-4" />
-          )}
         </button>
 
         <div className="w-px h-5 bg-white/8 mx-1" />

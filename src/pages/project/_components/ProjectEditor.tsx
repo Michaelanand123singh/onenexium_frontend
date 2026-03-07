@@ -4,8 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import type { Id } from "@/convex/_generated/dataModel.d.ts";
 import EditorNavbar from "./EditorNavbar.tsx";
+import EditorSidebar from "./EditorSidebar.tsx";
 import EditorChat from "./EditorChat.tsx";
 import EditorPreview from "./EditorPreview.tsx";
+import SidebarPanel from "./SidebarPanels.tsx";
+import type { SidebarTab } from "./EditorSidebar.tsx";
 import {
   ErrorState,
   ErrorStateHeader,
@@ -17,6 +20,7 @@ import {
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
+import { AnimatePresence } from "motion/react";
 
 export default function ProjectEditor({
   projectId,
@@ -24,7 +28,7 @@ export default function ProjectEditor({
   projectId: Id<"projects">;
 }) {
   const navigate = useNavigate();
-  const [chatCollapsed, setChatCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState<SidebarTab | null>("chat");
   const project = useQuery(api.projects.getById, { projectId });
 
   // Loading
@@ -40,6 +44,7 @@ export default function ProjectEditor({
           </div>
         </div>
         <div className="flex flex-1">
+          <div className="w-12 bg-[#0B0D13] border-r border-white/5" />
           <div className="w-[380px] border-r border-white/5 p-4 space-y-3">
             <Skeleton className="h-10 w-full bg-white/5 rounded-lg" />
             <Skeleton className="h-20 w-3/4 bg-white/5 rounded-lg" />
@@ -53,7 +58,7 @@ export default function ProjectEditor({
     );
   }
 
-  // Error / not found (query threw or returned null)
+  // Error / not found
   if (project === null) {
     return (
       <div className="h-screen bg-[#0F1117] flex items-center justify-center">
@@ -88,17 +93,25 @@ export default function ProjectEditor({
 
   return (
     <div className="h-screen bg-[#0F1117] flex flex-col overflow-hidden">
-      <EditorNavbar
-        project={project}
-        chatCollapsed={chatCollapsed}
-        onToggleChat={() => setChatCollapsed(!chatCollapsed)}
-      />
+      <EditorNavbar project={project} />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Chat sidebar */}
-        {!chatCollapsed && (
-          <EditorChat projectId={projectId} projectName={project.name} />
-        )}
+        {/* Icon sidebar */}
+        <EditorSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {/* Panel area */}
+        <AnimatePresence mode="wait">
+          {activeTab === "chat" && (
+            <EditorChat
+              key="chat"
+              projectId={projectId}
+              projectName={project.name}
+            />
+          )}
+          {activeTab && activeTab !== "chat" && (
+            <SidebarPanel key={activeTab} tab={activeTab} />
+          )}
+        </AnimatePresence>
 
         {/* Preview */}
         <EditorPreview project={project} />
