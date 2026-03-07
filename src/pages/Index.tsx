@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { ConvexError } from "convex/values";
-import { SignInButton } from "@/components/ui/signin.tsx";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth.ts";
@@ -83,6 +82,7 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const joinWaitlist = useMutation(api.waitlist.join);
+  const navigate = useNavigate();
 
   const handleNotify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,11 +113,13 @@ export default function Index() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <SignInButton
-              signInText="Sign In"
-              className="text-sm font-semibold text-white cursor-pointer hover:shadow-lg hover:shadow-[#3D4EF0]/25"
+            <button
+              onClick={() => navigate("/login")}
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-white cursor-pointer hover:shadow-lg hover:shadow-[#3D4EF0]/25 transition-all"
               style={{ background: BRAND_GRADIENT }}
-            />
+            >
+              Sign In
+            </button>
           </motion.div>
         </Unauthenticated>
         <AuthLoading>
