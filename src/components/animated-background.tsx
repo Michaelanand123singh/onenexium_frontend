@@ -49,12 +49,22 @@ export default function AnimatedBackground() {
         <Particle key={i} {...p} />
       ))}
 
-      {/* Dot grid — radial dots that fade from center */}
+      {/* Dot grid — radial dots that drift slowly */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2 }}
+        animate={{
+          opacity: 1,
+          backgroundPosition: ["0px 0px", "28px 28px"],
+        }}
+        transition={{
+          opacity: { duration: 2 },
+          backgroundPosition: {
+            duration: 12,
+            repeat: Infinity,
+            ease: "linear",
+          },
+        }}
         style={{
           backgroundImage:
             "radial-gradient(circle, #3D4EF0 1.5px, transparent 1.5px)",
@@ -66,16 +76,25 @@ export default function AnimatedBackground() {
         }}
       />
 
-      {/* Dot grid pulse — secondary colour breathing layer */}
+      {/* Dot grid pulse — offset dots drifting opposite direction */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        animate={{ opacity: [0, 1, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        animate={{
+          opacity: [0, 1, 0],
+          backgroundPosition: ["14px 14px", "-14px -14px"],
+        }}
+        transition={{
+          opacity: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          backgroundPosition: {
+            duration: 18,
+            repeat: Infinity,
+            ease: "linear",
+          },
+        }}
         style={{
           backgroundImage:
             "radial-gradient(circle, #23A0FF 1.5px, transparent 1.5px)",
           backgroundSize: "28px 28px",
-          backgroundPosition: "14px 14px",
           maskImage:
             "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.2) 0%, transparent 70%)",
           WebkitMaskImage:
