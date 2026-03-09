@@ -133,7 +133,8 @@ export default function Index() {
             style={{ backgroundImage: BRAND_GRADIENT }}
           >
             extraordinary
-          </span>{" "}
+          </span>
+          <br />
           is on the way
         </motion.h1>
 
