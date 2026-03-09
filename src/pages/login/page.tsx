@@ -69,7 +69,7 @@ function LoginContent() {
           transition={{ duration: 0.5 }}
           className="relative z-10 flex items-center gap-3"
         >
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-10 h-10 bg-background rounded-xl flex items-center justify-center shadow-lg">
             <BoltIcon className="w-5 h-5 text-[#3D4EF0]" />
           </div>
           <span className="text-white text-2xl font-bold tracking-tight">
@@ -119,7 +119,7 @@ function LoginContent() {
           <div className="w-8 h-8 bg-[#3D4EF0] rounded-lg flex items-center justify-center">
             <BoltIcon className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="text-[#0C0F18] font-bold">OneNexium</span>
+          <span className="text-foreground font-bold">OneNexium</span>
         </div>
 
         {/* Login card */}
@@ -139,7 +139,7 @@ function LoginContent() {
           >
             {/* Header */}
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-[#0C0F18] mb-2">
+              <h2 className="text-3xl font-bold text-foreground mb-2">
                 Sign in
               </h2>
               <p className="text-[#64748b]">
@@ -218,7 +218,7 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <div
-      className="min-h-screen bg-[#F5F8FF] text-[#0C0F18] antialiased"
+      className="min-h-screen bg-[#F5F8FF] text-foreground antialiased"
       style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
     >
       <Authenticated>

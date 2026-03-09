@@ -48,7 +48,7 @@ function StepIndicator({ currentStep }: { currentStep: OnboardingStep }) {
             className="w-2 h-2 rounded-full transition-all duration-300"
             style={{
               background:
-                i <= currentIndex ? BRAND_GRADIENT : "rgba(12,15,24,0.1)",
+                i <= currentIndex ? BRAND_GRADIENT : "var(--border)",
               transform: i === currentIndex ? "scale(1.3)" : "scale(1)",
             }}
           />
@@ -59,7 +59,7 @@ function StepIndicator({ currentStep }: { currentStep: OnboardingStep }) {
                 background:
                   i < currentIndex
                     ? "linear-gradient(90deg, #3D4EF0, #23A0FF)"
-                    : "rgba(12,15,24,0.08)",
+                    : "var(--border)",
               }}
             />
           )}
@@ -116,7 +116,7 @@ export default function OnboardingFlow({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
       {/* Background effects */}
       <div
         className="absolute inset-0 opacity-[0.03]"
@@ -166,10 +166,10 @@ export default function OnboardingFlow({
               >
                 <Sparkles className="w-10 h-10" />
               </motion.div>
-              <h1 className="text-3xl font-bold text-[#0C0F18] mb-3">
+              <h1 className="text-3xl font-bold text-foreground mb-3">
                 Welcome to OneNexium
               </h1>
-              <p className="text-[#0C0F18]/50 mb-10 max-w-sm mx-auto leading-relaxed">
+              <p className="text-foreground/50 mb-10 max-w-sm mx-auto leading-relaxed">
                 Let's set up your account in just a few quick steps so we can
                 personalize your experience.
               </p>
@@ -200,10 +200,10 @@ export default function OnboardingFlow({
               >
                 <User className="w-7 h-7" />
               </div>
-              <h2 className="text-2xl font-bold text-[#0C0F18] mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 What should we call you?
               </h2>
-              <p className="text-[#0C0F18]/40 mb-8 text-sm">
+              <p className="text-foreground/40 mb-8 text-sm">
                 This is how you'll appear across OneNexium
               </p>
               <input
@@ -211,13 +211,13 @@ export default function OnboardingFlow({
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Your name"
-                className="w-full max-w-xs mx-auto block bg-white border border-[#0C0F18]/10 rounded-xl px-4 py-3 text-[#0C0F18] text-center text-lg font-medium placeholder:text-[#0C0F18]/25 outline-none focus:border-[#3D4EF0]/40 focus:shadow-sm focus:shadow-[#3D4EF0]/10 transition-all"
+                className="w-full max-w-xs mx-auto block bg-background border border-foreground/10 rounded-xl px-4 py-3 text-foreground text-center text-lg font-medium placeholder:text-foreground/25 outline-none focus:border-[#3D4EF0]/40 focus:shadow-sm focus:shadow-[#3D4EF0]/10 transition-all"
                 autoFocus
               />
               <div className="flex items-center justify-center gap-3 mt-10">
                 <button
                   onClick={goBack}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-[#0C0F18]/50 hover:text-[#0C0F18] hover:bg-[#0C0F18]/5 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back
@@ -251,10 +251,10 @@ export default function OnboardingFlow({
               >
                 <Briefcase className="w-7 h-7" />
               </div>
-              <h2 className="text-2xl font-bold text-[#0C0F18] mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 What best describes you?
               </h2>
-              <p className="text-[#0C0F18]/40 mb-8 text-sm">
+              <p className="text-foreground/40 mb-8 text-sm">
                 This helps us tailor your experience
               </p>
               <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
@@ -265,7 +265,7 @@ export default function OnboardingFlow({
                     className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all cursor-pointer ${
                       selectedRole === role.id
                         ? "border-[#3D4EF0]/40 bg-[#3D4EF0]/5 text-[#3D4EF0] shadow-sm shadow-[#3D4EF0]/10"
-                        : "border-[#0C0F18]/8 text-[#0C0F18]/70 hover:border-[#0C0F18]/15 hover:bg-[#0C0F18]/[0.02]"
+                        : "border-[#0C0F18]/8 text-foreground/70 hover:border-[#0C0F18]/15 hover:bg-[#0C0F18]/[0.02]"
                     }`}
                   >
                     <span className="text-lg">{role.icon}</span>
@@ -276,7 +276,7 @@ export default function OnboardingFlow({
               <div className="flex items-center justify-center gap-3 mt-10">
                 <button
                   onClick={goBack}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-[#0C0F18]/50 hover:text-[#0C0F18] hover:bg-[#0C0F18]/5 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back
@@ -310,10 +310,10 @@ export default function OnboardingFlow({
               >
                 <Rocket className="w-7 h-7" />
               </div>
-              <h2 className="text-2xl font-bold text-[#0C0F18] mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 What's your main goal?
               </h2>
-              <p className="text-[#0C0F18]/40 mb-8 text-sm">
+              <p className="text-foreground/40 mb-8 text-sm">
                 We'll customize your workspace accordingly
               </p>
               <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
@@ -324,7 +324,7 @@ export default function OnboardingFlow({
                     className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all cursor-pointer ${
                       selectedGoal === goal.id
                         ? "border-[#3D4EF0]/40 bg-[#3D4EF0]/5 text-[#3D4EF0] shadow-sm shadow-[#3D4EF0]/10"
-                        : "border-[#0C0F18]/8 text-[#0C0F18]/70 hover:border-[#0C0F18]/15 hover:bg-[#0C0F18]/[0.02]"
+                        : "border-[#0C0F18]/8 text-foreground/70 hover:border-[#0C0F18]/15 hover:bg-[#0C0F18]/[0.02]"
                     }`}
                   >
                     <span className="text-lg">{goal.icon}</span>
@@ -335,7 +335,7 @@ export default function OnboardingFlow({
               <div className="flex items-center justify-center gap-3 mt-10">
                 <button
                   onClick={goBack}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-[#0C0F18]/50 hover:text-[#0C0F18] hover:bg-[#0C0F18]/5 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back
@@ -371,10 +371,10 @@ export default function OnboardingFlow({
               >
                 <Check className="w-10 h-10" />
               </motion.div>
-              <h2 className="text-3xl font-bold text-[#0C0F18] mb-3">
+              <h2 className="text-3xl font-bold text-foreground mb-3">
                 You're all set, {displayName.split(" ")[0]}!
               </h2>
-              <p className="text-[#0C0F18]/50 mb-10 max-w-sm mx-auto leading-relaxed">
+              <p className="text-foreground/50 mb-10 max-w-sm mx-auto leading-relaxed">
                 Your account is ready. Let's start building something
                 extraordinary.
               </p>

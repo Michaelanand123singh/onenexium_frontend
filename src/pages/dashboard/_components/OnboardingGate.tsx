@@ -15,7 +15,7 @@ export default function OnboardingGate({
   // Loading state
   if (user === undefined) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-full max-w-4xl px-6 space-y-6">
           <Skeleton className="h-12 w-64" />
           <Skeleton className="h-48 w-full" />

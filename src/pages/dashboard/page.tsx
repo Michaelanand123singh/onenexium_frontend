@@ -11,7 +11,7 @@ export default function DashboardPage() {
   return (
     <>
       <AuthLoading>
-        <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="w-full max-w-4xl px-6 space-y-6">
             <Skeleton className="h-12 w-64" />
             <Skeleton className="h-48 w-full" />
@@ -24,8 +24,8 @@ export default function DashboardPage() {
         </div>
       </AuthLoading>
       <Unauthenticated>
-        <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
-          <p className="text-[#0C0F18]/60 text-lg">Please sign in to access the dashboard</p>
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+          <p className="text-foreground/60 text-lg">Please sign in to access the dashboard</p>
           <SignInButton
             signInText="Sign In"
             className="text-white"

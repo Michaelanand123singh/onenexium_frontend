@@ -111,7 +111,7 @@ export default function PromptInput({ userName }: { userName: string }) {
           style={{ background: BRAND_GRADIENT }}
         />
 
-        <div className="relative bg-white rounded-2xl border border-[#0C0F18]/8 shadow-sm shadow-[#3D4EF0]/5 overflow-hidden transition-all focus-within:border-[#3D4EF0]/25 focus-within:shadow-md focus-within:shadow-[#3D4EF0]/10">
+        <div className="relative bg-background rounded-2xl border border-foreground/8 shadow-sm shadow-[#3D4EF0]/5 overflow-hidden transition-all focus-within:border-[#3D4EF0]/25 focus-within:shadow-md focus-within:shadow-[#3D4EF0]/10">
           <div className="flex items-start gap-3 p-4">
             <div
               className="mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0"
@@ -127,7 +127,7 @@ export default function PromptInput({ userName }: { userName: string }) {
               placeholder={`Ask OneNexium to create a landing page for my...`}
               rows={2}
               disabled={status !== "idle"}
-              className="flex-1 resize-none bg-transparent text-[#0C0F18] text-sm md:text-[15px] leading-relaxed placeholder:text-[#0C0F18]/25 outline-none disabled:opacity-50 min-h-[52px]"
+              className="flex-1 resize-none bg-transparent text-foreground text-sm md:text-[15px] leading-relaxed placeholder:text-foreground/25 outline-none disabled:opacity-50 min-h-[52px]"
             />
           </div>
 
@@ -139,7 +139,7 @@ export default function PromptInput({ userName }: { userName: string }) {
                 setVisibility((v) => (v === "public" ? "private" : "public"))
               }
               disabled={status !== "idle"}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-[#0C0F18]/40 hover:text-[#0C0F18]/60 hover:bg-[#0C0F18]/[0.03] transition-colors cursor-pointer disabled:opacity-40"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-foreground/40 hover:text-foreground/60 hover:bg-foreground/[0.03] transition-colors cursor-pointer disabled:opacity-40"
             >
               {visibility === "public" ? (
                 <Globe className="w-3.5 h-3.5" />
@@ -197,7 +197,7 @@ export default function PromptInput({ userName }: { userName: string }) {
                 )}
                 <span
                   className={
-                    step.done ? "text-[#0C0F18]/60" : "text-[#3D4EF0] font-medium"
+                    step.done ? "text-foreground/60" : "text-[#3D4EF0] font-medium"
                   }
                 >
                   {step.label}
@@ -234,7 +234,7 @@ export default function PromptInput({ userName }: { userName: string }) {
             transition={{ delay: 0.4 }}
             className="flex flex-wrap items-center justify-center gap-2 mt-5"
           >
-            <span className="text-xs text-[#0C0F18]/25 mr-1">Try one</span>
+            <span className="text-xs text-foreground/25 mr-1">Try one</span>
             {SUGGESTIONS.map((s, i) => (
               <motion.button
                 key={s.label}
@@ -242,7 +242,7 @@ export default function PromptInput({ userName }: { userName: string }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.45 + i * 0.05 }}
                 onClick={() => handleSuggestionClick(s.label)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0C0F18]/[0.03] border border-[#0C0F18]/5 text-xs font-medium text-[#0C0F18]/50 hover:bg-[#3D4EF0]/5 hover:border-[#3D4EF0]/15 hover:text-[#3D4EF0] transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground/[0.03] border border-foreground/5 text-xs font-medium text-foreground/50 hover:bg-[#3D4EF0]/5 hover:border-[#3D4EF0]/15 hover:text-[#3D4EF0] transition-all cursor-pointer"
               >
                 <span>{s.icon}</span>
                 {s.label}

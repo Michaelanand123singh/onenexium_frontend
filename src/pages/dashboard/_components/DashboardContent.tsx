@@ -22,9 +22,9 @@ export default function DashboardContent() {
 
   if (user === undefined) {
     return (
-      <div className="relative min-h-screen bg-white overflow-hidden">
+      <div className="relative min-h-screen bg-background overflow-hidden">
         <AnimatedBackground />
-        <div className="relative z-10 border-b border-[#0C0F18]/5 bg-white/60 backdrop-blur-xl px-6 py-3">
+        <div className="relative z-10 border-b border-foreground/5 bg-background/60 backdrop-blur-xl px-6 py-3">
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <Skeleton className="h-8 w-32" />
             <Skeleton className="h-8 w-24" />
@@ -44,7 +44,7 @@ export default function DashboardContent() {
   }
 
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       {/* Animated background — same as landing page */}
       <AnimatedBackground />
 
@@ -53,7 +53,7 @@ export default function DashboardContent() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="sticky top-0 z-50 border-b border-[#0C0F18]/5 bg-white/60 backdrop-blur-xl"
+        className="sticky top-0 z-50 border-b border-foreground/5 bg-background/60 backdrop-blur-xl"
       >
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -75,7 +75,7 @@ export default function DashboardContent() {
                   ease: "easeInOut",
                 }}
               />
-              <span className="text-[15px] font-bold text-[#0C0F18] tracking-tight">
+              <span className="text-[15px] font-bold text-foreground tracking-tight">
                 OneNexium
               </span>
             </button>
@@ -88,7 +88,7 @@ export default function DashboardContent() {
             className="flex items-center gap-3"
           >
             {/* User menu */}
-            <button className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-[#0C0F18]/[0.03] transition-colors cursor-pointer">
+            <button className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-foreground/[0.03] transition-colors cursor-pointer">
               <motion.div
                 className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
                 style={{ background: BRAND_GRADIENT }}
@@ -97,16 +97,16 @@ export default function DashboardContent() {
               >
                 {user?.name?.charAt(0)?.toUpperCase() || "U"}
               </motion.div>
-              <span className="text-sm text-[#0C0F18] font-medium hidden sm:block">
+              <span className="text-sm text-foreground font-medium hidden sm:block">
                 {user?.name?.split(" ")[0] || "User"}
               </span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#0C0F18]/40" />
+              <ChevronDown className="w-3.5 h-3.5 text-foreground/40" />
             </button>
             <SignInButton
               signOutText="Sign Out"
               variant="ghost"
               size="sm"
-              className="text-[#0C0F18]/40 text-xs cursor-pointer"
+              className="text-foreground/40 text-xs cursor-pointer"
             />
           </motion.div>
         </div>
@@ -144,7 +144,7 @@ export default function DashboardContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.6 }}
-              className="text-3xl md:text-[42px] font-bold text-[#0C0F18] leading-tight tracking-tight text-balance"
+              className="text-3xl md:text-[42px] font-bold text-foreground leading-tight tracking-tight text-balance"
             >
               What can OneNexium build
               <br />
@@ -163,7 +163,7 @@ export default function DashboardContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="mt-3 text-[#0C0F18]/40 text-sm md:text-base max-w-md mx-auto"
+              className="mt-3 text-foreground/40 text-sm md:text-base max-w-md mx-auto"
             >
               Build stunning websites, SaaS apps, and more by chatting with AI
             </motion.p>
@@ -177,7 +177,7 @@ export default function DashboardContent() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="flex items-center justify-center gap-2 mt-8 text-xs text-[#0C0F18]/30"
+            className="flex items-center justify-center gap-2 mt-8 text-xs text-foreground/30"
           >
             <Globe className="w-3.5 h-3.5" />
             <span>Trusted by 100k+ users</span>
@@ -205,7 +205,7 @@ export default function DashboardContent() {
               initial={{ opacity: 0, x: -15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.7 }}
-              className="text-lg font-semibold text-[#0C0F18]"
+              className="text-lg font-semibold text-foreground"
             >
               Your Projects
             </motion.h2>

@@ -32,7 +32,7 @@ export default function AnimatedBackground() {
     <>
       {/* Background gradient wash */}
       <div
-        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        className="absolute inset-0 opacity-[0.04] dark:opacity-[0.08] pointer-events-none"
         style={{
           background:
             "radial-gradient(ellipse 80% 60% at 50% 40%, #3D4EF0, transparent)",
@@ -70,9 +70,9 @@ export default function AnimatedBackground() {
             "radial-gradient(circle, #3D4EF0 1.5px, transparent 1.5px)",
           backgroundSize: "28px 28px",
           maskImage:
-            "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,0.35) 0%, transparent 75%)",
+            "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,0.4) 0%, transparent 75%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,0.35) 0%, transparent 75%)",
+            "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,0.4) 0%, transparent 75%)",
         }}
       />
 
@@ -96,9 +96,9 @@ export default function AnimatedBackground() {
             "radial-gradient(circle, #23A0FF 1.5px, transparent 1.5px)",
           backgroundSize: "28px 28px",
           maskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.2) 0%, transparent 70%)",
+            "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.25) 0%, transparent 70%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.2) 0%, transparent 70%)",
+            "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.25) 0%, transparent 70%)",
         }}
       />
 

@@ -78,7 +78,7 @@ function ProjectCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="group relative bg-white rounded-xl border border-[#0C0F18]/5 overflow-hidden hover:shadow-lg hover:shadow-[#3D4EF0]/5 hover:border-[#3D4EF0]/15 transition-all cursor-pointer"
+      className="group relative bg-background rounded-xl border border-foreground/5 overflow-hidden hover:shadow-lg hover:shadow-[#3D4EF0]/5 hover:border-[#3D4EF0]/15 transition-all cursor-pointer"
       onClick={handleOpen}
     >
       {/* Project preview area */}
@@ -86,7 +86,7 @@ function ProjectCard({
         className="h-32 relative flex items-center justify-center"
         style={{ background: getProjectGradient(index) }}
       >
-        {/* Decorative mock elements */}
+        {/* Decorative mock elements — white/XX kept as overlay colors on gradient */}
         <div className="absolute inset-4 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20">
           <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/10">
             <div className="w-2 h-2 rounded-full bg-white/30" />
@@ -109,10 +109,10 @@ function ProjectCard({
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-semibold text-[#0C0F18] truncate">
+            <h3 className="text-sm font-semibold text-foreground truncate">
               {project.name}
             </h3>
-            <p className="text-xs text-[#0C0F18]/35 mt-0.5 truncate">
+            <p className="text-xs text-foreground/35 mt-0.5 truncate">
               Edited {timeAgo}
             </p>
           </div>
@@ -124,7 +124,7 @@ function ProjectCard({
                 e.stopPropagation();
                 setMenuOpen(!menuOpen);
               }}
-              className="w-7 h-7 rounded-md flex items-center justify-center text-[#0C0F18]/25 hover:text-[#0C0F18]/60 hover:bg-[#0C0F18]/5 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+              className="w-7 h-7 rounded-md flex items-center justify-center text-foreground/25 hover:text-foreground/60 hover:bg-foreground/5 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
             >
               <MoreHorizontal className="w-4 h-4" />
             </button>
@@ -138,14 +138,14 @@ function ProjectCard({
                     setMenuOpen(false);
                   }}
                 />
-                <div className="absolute right-0 top-8 z-50 w-40 bg-white rounded-lg border border-[#0C0F18]/8 shadow-lg shadow-[#0C0F18]/5 py-1">
+                <div className="absolute right-0 top-8 z-50 w-40 bg-background rounded-lg border border-foreground/8 shadow-lg shadow-foreground/5 py-1">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpen();
                       setMenuOpen(false);
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-[#0C0F18]/70 hover:bg-[#0C0F18]/[0.03] transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-foreground/70 hover:bg-foreground/[0.03] transition-colors cursor-pointer"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     Open
@@ -167,8 +167,8 @@ function ProjectCard({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#0C0F18]/5">
-          <div className="flex items-center gap-1 text-[10px] text-[#0C0F18]/30 font-medium">
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-foreground/5">
+          <div className="flex items-center gap-1 text-[10px] text-foreground/30 font-medium">
             {project.visibility === "public" ? (
               <Globe className="w-3 h-3" />
             ) : (
