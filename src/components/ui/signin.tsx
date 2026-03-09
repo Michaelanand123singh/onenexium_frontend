@@ -129,8 +129,14 @@ export const SignInButton = forwardRef<HTMLButtonElement, SignInButtonProps>(
         aria-describedby={error ? "auth-error" : undefined}
         {...props}
       >
-        {showIcon && icon}
-        {buttonText}
+        {props.children ? (
+          props.children
+        ) : (
+          <>
+            {showIcon && icon}
+            {buttonText}
+          </>
+        )}
       </Button>
     );
   },
