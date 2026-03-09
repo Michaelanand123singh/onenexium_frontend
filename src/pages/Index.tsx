@@ -125,15 +125,15 @@ export default function Index() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.35 }}
-          className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#0C0F18] leading-tight tracking-tight text-balance"
+          className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#0C0F18] leading-tight tracking-tight"
         >
-          Something{" "}
+          <span className="whitespace-nowrap">Something{" "}
           <span
             className="bg-clip-text text-transparent"
             style={{ backgroundImage: BRAND_GRADIENT }}
           >
             extraordinary
-          </span>
+          </span></span>
           <br />
           is on the way
         </motion.h1>
