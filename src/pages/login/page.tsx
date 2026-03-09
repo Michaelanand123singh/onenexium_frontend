@@ -35,13 +35,13 @@ function DotGrid({ variant }: { variant: "light" | "blue" }) {
         transition={{
           opacity: { duration: 2, delay: 0.5 },
           backgroundPosition: {
-            duration: 14,
+            duration: 12,
             repeat: Infinity,
             ease: "linear",
           },
         }}
         style={{
-          backgroundImage: `radial-gradient(circle, ${dotColor} 1.2px, transparent 1.2px)`,
+          backgroundImage: `radial-gradient(circle, ${dotColor} 1.5px, transparent 1.5px)`,
           backgroundSize: "28px 28px",
           maskImage: `radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,${maskOpacity}) 0%, transparent 75%)`,
           WebkitMaskImage: `radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,${maskOpacity}) 0%, transparent 75%)`,
@@ -56,13 +56,13 @@ function DotGrid({ variant }: { variant: "light" | "blue" }) {
         transition={{
           opacity: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 },
           backgroundPosition: {
-            duration: 20,
+            duration: 18,
             repeat: Infinity,
             ease: "linear",
           },
         }}
         style={{
-          backgroundImage: `radial-gradient(circle, ${pulseColor} 1.2px, transparent 1.2px)`,
+          backgroundImage: `radial-gradient(circle, ${pulseColor} 1.5px, transparent 1.5px)`,
           backgroundSize: "28px 28px",
           maskImage: `radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.25) 0%, transparent 70%)`,
           WebkitMaskImage: `radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.25) 0%, transparent 70%)`,
