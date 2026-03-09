@@ -69,7 +69,7 @@ function LoginContent() {
           transition={{ duration: 0.5 }}
           className="relative z-10 flex items-center gap-3"
         >
-          <img src={LOGO_URL} alt="OneNexium" className="h-10 w-auto" />
+          <img src={LOGO_URL} alt="OneNexium" className="h-10 w-auto brightness-0 invert" />
           <span className="text-white text-2xl font-bold tracking-tight">
             OneNexium
           </span>
