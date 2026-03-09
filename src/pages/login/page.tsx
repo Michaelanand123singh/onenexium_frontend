@@ -5,8 +5,8 @@ import { motion } from "motion/react";
 import { Shield, Sparkles, Globe } from "lucide-react";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
-import { BRAND_GRADIENT, BG_GRADIENT } from "@/lib/brand.ts";
-import { BoltIcon, GoogleIcon, MicrosoftIcon } from "./_components/social-icons.tsx";
+import { BRAND_GRADIENT, BG_GRADIENT, LOGO_URL } from "@/lib/brand.ts";
+import { GoogleIcon, MicrosoftIcon } from "./_components/social-icons.tsx";
 import { TrustedLogos } from "./_components/trusted-logos.tsx";
 
 function RedirectIfAuthenticated() {
@@ -69,9 +69,7 @@ function LoginContent() {
           transition={{ duration: 0.5 }}
           className="relative z-10 flex items-center gap-3"
         >
-          <div className="w-10 h-10 bg-background rounded-xl flex items-center justify-center shadow-lg">
-            <BoltIcon className="w-5 h-5 text-[#3D4EF0]" />
-          </div>
+          <img src={LOGO_URL} alt="OneNexium" className="h-10 w-auto" />
           <span className="text-white text-2xl font-bold tracking-tight">
             OneNexium
           </span>
@@ -116,9 +114,7 @@ function LoginContent() {
       <section className="flex-1 flex items-center justify-center py-24 px-6 md:px-24 bg-[#F5F8FF] relative">
         {/* Mobile logo (top-left) */}
         <div className="absolute top-8 left-8 flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#3D4EF0] rounded-lg flex items-center justify-center">
-            <BoltIcon className="w-3.5 h-3.5 text-white" />
-          </div>
+          <img src={LOGO_URL} alt="OneNexium" className="h-8 w-auto" />
           <span className="text-foreground font-bold">OneNexium</span>
         </div>
 
