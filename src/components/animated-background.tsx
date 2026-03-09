@@ -57,12 +57,12 @@ export default function AnimatedBackground() {
         transition={{ duration: 2 }}
         style={{
           backgroundImage:
-            "radial-gradient(circle, #3D4EF0 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
+            "radial-gradient(circle, #3D4EF0 1.5px, transparent 1.5px)",
+          backgroundSize: "28px 28px",
           maskImage:
-            "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0,0,0,0.12) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,0.35) 0%, transparent 75%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0,0,0,0.12) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,0.35) 0%, transparent 75%)",
         }}
       />
 
@@ -73,13 +73,13 @@ export default function AnimatedBackground() {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         style={{
           backgroundImage:
-            "radial-gradient(circle, #23A0FF 1.2px, transparent 1.2px)",
-          backgroundSize: "32px 32px",
-          backgroundPosition: "16px 16px",
+            "radial-gradient(circle, #23A0FF 1.5px, transparent 1.5px)",
+          backgroundSize: "28px 28px",
+          backgroundPosition: "14px 14px",
           maskImage:
-            "radial-gradient(ellipse 60% 45% at 50% 45%, rgba(0,0,0,0.06) 0%, transparent 65%)",
+            "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.2) 0%, transparent 70%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse 60% 45% at 50% 45%, rgba(0,0,0,0.06) 0%, transparent 65%)",
+            "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.2) 0%, transparent 70%)",
         }}
       />
 
