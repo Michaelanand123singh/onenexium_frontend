@@ -49,28 +49,37 @@ export default function AnimatedBackground() {
         <Particle key={i} {...p} />
       ))}
 
-      {/* Grid overlay - animated */}
+      {/* Dot grid — radial dots that fade from center */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.06 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 2 }}
         style={{
           backgroundImage:
-            "linear-gradient(#3D4EF0 1px, transparent 1px), linear-gradient(90deg, #3D4EF0 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+            "radial-gradient(circle, #3D4EF0 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+          maskImage:
+            "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0,0,0,0.12) 0%, transparent 70%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0,0,0,0.12) 0%, transparent 70%)",
         }}
       />
 
-      {/* Grid pulse layer */}
+      {/* Dot grid pulse — secondary colour breathing layer */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        animate={{ opacity: [0, 0.03, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         style={{
           backgroundImage:
-            "linear-gradient(#23A0FF 1px, transparent 1px), linear-gradient(90deg, #23A0FF 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+            "radial-gradient(circle, #23A0FF 1.2px, transparent 1.2px)",
+          backgroundSize: "32px 32px",
+          backgroundPosition: "16px 16px",
+          maskImage:
+            "radial-gradient(ellipse 60% 45% at 50% 45%, rgba(0,0,0,0.06) 0%, transparent 65%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 60% 45% at 50% 45%, rgba(0,0,0,0.06) 0%, transparent 65%)",
         }}
       />
 
