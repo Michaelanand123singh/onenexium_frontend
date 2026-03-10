@@ -55,7 +55,7 @@ export default function Index() {
             transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
             className="mb-4">
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-0 bg-white rounded-xl px-3 py-1.5">
               <motion.img
                 src={LOGO_URL}
                 alt="OneNexium"
@@ -70,7 +70,7 @@ export default function Index() {
                 }} />
               
               <motion.span
-                className="text-3xl font-bold text-[#0C0F18] dark:text-white tracking-tight"
+                className="text-3xl font-bold text-[#0C0F18] tracking-tight"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}>One Nexium
