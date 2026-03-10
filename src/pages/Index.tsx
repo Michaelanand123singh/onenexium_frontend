@@ -10,7 +10,6 @@ import DemoGenerator from "./index/_components/demo-generator.tsx";
 import HowItWorks from "./index/_components/how-it-works.tsx";
 import AIPromptExamples from "./index/_components/ai-prompt-examples.tsx";
 import TemplatesGallery from "./index/_components/templates-gallery.tsx";
-import PromptToProduct from "./index/_components/prompt-to-product.tsx";
 import Footer from "./index/_components/footer.tsx";
 
 export default function Index() {
@@ -235,7 +234,6 @@ export default function Index() {
       <HowItWorks />
       <AIPromptExamples />
       <TemplatesGallery />
-      <PromptToProduct />
 
       {/* Footer */}
       <Footer />
