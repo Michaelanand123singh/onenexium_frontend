@@ -3,345 +3,352 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { motion, AnimatePresence } from "motion/react";
 
-// ── Phase system ──
+// ── Three clear phases: Prompt → Code → App ──
 const CYCLE = 18;
-type Phase = "prompt" | "process" | "code" | "assemble" | "reveal";
+type Phase = "prompt" | "code" | "app";
 type PhaseInfo = { phase: Phase; progress: number };
 
-function computePhase(t: number): PhaseInfo {
-  const ct = t % CYCLE;
-  if (ct < 4) return { phase: "prompt", progress: ct / 4 };
-  if (ct < 8) return { phase: "process", progress: (ct - 4) / 4 };
-  if (ct < 12) return { phase: "code", progress: (ct - 8) / 4 };
-  if (ct < 15.5) return { phase: "assemble", progress: (ct - 12) / 3.5 };
-  return { phase: "reveal", progress: (ct - 15.5) / 2.5 };
+function getPhase(t: number): PhaseInfo {
+  const raw = t % CYCLE;
+  if (raw < 6) return { phase: "prompt", progress: raw / 6 };
+  if (raw < 12) return { phase: "code", progress: (raw - 6) / 6 };
+  return { phase: "app", progress: (raw - 12) / 6 };
 }
 
-// ── Soft gradient backdrop spheres ──
-function GradientSpheres() {
-  const g1 = useRef<THREE.Mesh>(null);
-  const g2 = useRef<THREE.Mesh>(null);
-  const g3 = useRef<THREE.Mesh>(null);
-
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    if (g1.current) {
-      g1.current.position.x = Math.sin(t * 0.15) * 2 - 3;
-      g1.current.position.y = Math.cos(t * 0.12) * 1.5 + 1;
-    }
-    if (g2.current) {
-      g2.current.position.x = Math.cos(t * 0.1) * 2 + 3;
-      g2.current.position.y = Math.sin(t * 0.13) * 1.5 - 0.5;
-    }
-    if (g3.current) {
-      g3.current.position.x = Math.sin(t * 0.08 + 2) * 1.5;
-      g3.current.position.y = Math.cos(t * 0.1 + 1) * 2 - 1;
-    }
-  });
-
-  return (
-    <>
-      <mesh ref={g1} position={[-3, 1, -6]}>
-        <sphereGeometry args={[3.5, 32, 32]} />
-        <meshBasicMaterial color="#3D4EF0" transparent opacity={0.06} />
-      </mesh>
-      <mesh ref={g2} position={[3, -0.5, -5]}>
-        <sphereGeometry args={[3, 32, 32]} />
-        <meshBasicMaterial color="#23A0FF" transparent opacity={0.05} />
-      </mesh>
-      <mesh ref={g3} position={[0, -1, -7]}>
-        <sphereGeometry args={[4, 32, 32]} />
-        <meshBasicMaterial color="#6366f1" transparent opacity={0.04} />
-      </mesh>
-    </>
-  );
+function ease(x: number): number {
+  return x * x * (3 - 2 * x);
 }
 
-// ── Connected constellation network ──
-const NODE_COUNT = 120;
-const CONNECT_DIST = 2.2;
+// ── Brand palette ──
+const BLUE = new THREE.Color("#3D4EF0");
+const CYAN = new THREE.Color("#23A0FF");
+const VIOLET = new THREE.Color("#6366f1");
+const GREEN = new THREE.Color("#10B981");
+const TEAL = new THREE.Color("#14b8a6");
 
-function ConstellationNetwork() {
-  const pointsRef = useRef<THREE.Points>(null);
-  const linesRef = useRef<THREE.LineSegments>(null);
+// ── Main morphing particle system ──
+const COUNT = 500;
 
-  // Base positions for each phase target
-  const { basePositions, codeTargets, gridTargets } = useMemo(() => {
-    const base = new Float32Array(NODE_COUNT * 3);
-    const code = new Float32Array(NODE_COUNT * 3);
-    const grid = new Float32Array(NODE_COUNT * 3);
+function TransformParticles() {
+  const ref = useRef<THREE.Points>(null);
 
-    for (let i = 0; i < NODE_COUNT; i++) {
-      // Ambient: scattered in a wide ellipsoid
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = 1.5 + Math.random() * 4;
-      base[i * 3] = r * Math.sin(phi) * Math.cos(theta) * 1.4;
-      base[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.8;
-      base[i * 3 + 2] = r * Math.cos(phi) * 0.6 - 1;
+  const { nebula, columns, appFrame, delays } = useMemo(() => {
+    const neb = new Float32Array(COUNT * 3);
+    const col = new Float32Array(COUNT * 3);
+    const app = new Float32Array(COUNT * 3);
+    const del = new Float32Array(COUNT);
 
-      // Code: vertical columns
-      const col = i % 8;
-      const row = Math.floor(i / 8);
-      code[i * 3] = (col - 3.5) * 0.9;
-      code[i * 3 + 1] = 4 - row * 0.55;
-      code[i * 3 + 2] = -1 + Math.random() * 0.3;
+    for (let i = 0; i < COUNT; i++) {
+      // NEBULA: toroidal disc galaxy shape
+      const angle = Math.random() * Math.PI * 2;
+      const arm = Math.floor(Math.random() * 3); // 3 spiral arms
+      const armAngle = angle + (arm * Math.PI * 2) / 3;
+      const r = 1.2 + Math.random() * 3.8;
+      const spread = (1 - r / 5) * 0.8;
+      neb[i * 3] = Math.cos(armAngle + r * 0.3) * r;
+      neb[i * 3 + 1] = (Math.random() - 0.5) * spread;
+      neb[i * 3 + 2] = Math.sin(armAngle + r * 0.3) * r - 1;
 
-      // Grid: rectangular UI layout
-      const gCol = i % 12;
-      const gRow = Math.floor(i / 12);
-      grid[i * 3] = (gCol - 5.5) * 0.7;
-      grid[i * 3 + 1] = (5 - gRow) * 0.65;
-      grid[i * 3 + 2] = -0.5;
-    }
-    return { basePositions: base, codeTargets: code, gridTargets: grid };
-  }, []);
+      // CODE: vertical streaming columns
+      const cIdx = i % 12;
+      const cRow = Math.floor(i / 12);
+      col[i * 3] = (cIdx - 5.5) * 0.75;
+      col[i * 3 + 1] = 5.5 - (cRow % 42) * 0.28;
+      col[i * 3 + 2] = -1 + (Math.random() - 0.5) * 0.4;
 
-  // Line buffer (max possible connections)
-  const maxLines = NODE_COUNT * 6;
-  const linePositions = useMemo(() => new Float32Array(maxLines * 6), [maxLines]);
-  const lineColors = useMemo(() => new Float32Array(maxLines * 6), [maxLines]);
-
-  const driftSeeds = useMemo(() => {
-    const s = new Float32Array(NODE_COUNT * 3);
-    for (let i = 0; i < NODE_COUNT * 3; i++) s[i] = Math.random() * 100;
-    return s;
-  }, []);
-
-  useFrame(({ clock }) => {
-    if (!pointsRef.current || !linesRef.current) return;
-    const t = clock.getElapsedTime();
-    const { phase, progress } = computePhase(t);
-
-    const posAttr = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute;
-    const pos = posAttr.array as Float32Array;
-
-    // Determine target positions and lerp speed
-    let lerpSpeed = 0.012;
-    const eased = progress * progress * (3 - 2 * progress); // smoothstep
-
-    for (let i = 0; i < NODE_COUNT; i++) {
-      const ix = i * 3;
-      let tx: number, ty: number, tz: number;
-
-      if (phase === "prompt" || phase === "reveal") {
-        tx = basePositions[ix];
-        ty = basePositions[ix + 1];
-        tz = basePositions[ix + 2];
-        lerpSpeed = phase === "reveal" ? 0.015 * eased : 0.008;
-      } else if (phase === "process") {
-        // Pull toward center
-        const pullFactor = 1 - eased * 0.7;
-        tx = basePositions[ix] * pullFactor;
-        ty = basePositions[ix + 1] * pullFactor;
-        tz = basePositions[ix + 2] * pullFactor;
-        lerpSpeed = 0.02;
-      } else if (phase === "code") {
-        tx = codeTargets[ix];
-        ty = codeTargets[ix + 1];
-        tz = codeTargets[ix + 2];
-        lerpSpeed = 0.025 * eased;
+      // APP: UI layout frame
+      const sec = i % 100;
+      if (sec < 20) {
+        // Outer rectangle border
+        const side = sec % 4;
+        if (side === 0) { app[i * 3] = (Math.random() - 0.5) * 6; app[i * 3 + 1] = 2.8; }
+        else if (side === 1) { app[i * 3] = (Math.random() - 0.5) * 6; app[i * 3 + 1] = -2.8; }
+        else if (side === 2) { app[i * 3] = -3; app[i * 3 + 1] = (Math.random() - 0.5) * 5.6; }
+        else { app[i * 3] = 3; app[i * 3 + 1] = (Math.random() - 0.5) * 5.6; }
+        app[i * 3 + 2] = -0.5;
+      } else if (sec < 35) {
+        // Sidebar
+        app[i * 3] = -2.2 + Math.random() * 0.7;
+        app[i * 3 + 1] = (Math.random() - 0.5) * 4.5;
+        app[i * 3 + 2] = -0.3;
+      } else if (sec < 50) {
+        // Top nav bar
+        app[i * 3] = -1 + Math.random() * 4;
+        app[i * 3 + 1] = 2.1 + Math.random() * 0.4;
+        app[i * 3 + 2] = -0.3;
+      } else if (sec < 75) {
+        // Content cards (3 cards in a row)
+        const card = Math.floor((sec - 50) / 8);
+        const cardX = [-0.3, 1.2, 2.7][card % 3] ?? 1.2;
+        app[i * 3] = cardX + (Math.random() - 0.5) * 0.9;
+        app[i * 3 + 1] = 0.5 + (Math.random() - 0.5) * 1.2;
+        app[i * 3 + 2] = -0.2;
       } else {
-        tx = gridTargets[ix];
-        ty = gridTargets[ix + 1];
-        tz = gridTargets[ix + 2];
-        lerpSpeed = 0.02 * eased;
+        // Bottom chart area
+        app[i * 3] = -0.5 + Math.random() * 3.5;
+        app[i * 3 + 1] = -1.5 + (Math.random() - 0.5) * 1.8;
+        app[i * 3 + 2] = -0.2;
       }
 
-      // Add gentle drift
-      const dx = Math.sin(t * 0.3 + driftSeeds[ix]) * 0.08;
-      const dy = Math.cos(t * 0.25 + driftSeeds[ix + 1]) * 0.06;
-
-      pos[ix] = THREE.MathUtils.lerp(pos[ix], tx + dx, lerpSpeed);
-      pos[ix + 1] = THREE.MathUtils.lerp(pos[ix + 1], ty + dy, lerpSpeed);
-      pos[ix + 2] = THREE.MathUtils.lerp(pos[ix + 2], tz, lerpSpeed);
+      // Wave delay: particles near center transition first
+      del[i] = Math.sqrt(neb[i * 3] ** 2 + neb[i * 3 + 1] ** 2) * 0.06;
     }
-    posAttr.needsUpdate = true;
+    return { nebula: neb, columns: col, appFrame: app, delays: del };
+  }, []);
 
-    // Slow global rotation
-    pointsRef.current.rotation.y = Math.sin(t * 0.04) * 0.15;
-    pointsRef.current.rotation.x = Math.sin(t * 0.03) * 0.05;
-
-    // Rebuild connections
-    let lineIdx = 0;
-    const connectDist = phase === "process" ? CONNECT_DIST * 1.5 : CONNECT_DIST;
-
-    const cPrimary = new THREE.Color("#3D4EF0");
-    const cSecondary = new THREE.Color("#23A0FF");
-    const cCode = new THREE.Color("#10B981");
-    const lineColor = phase === "code" ? cCode : phase === "process" ? cSecondary : cPrimary;
-
-    for (let i = 0; i < NODE_COUNT; i++) {
-      const ax = pos[i * 3], ay = pos[i * 3 + 1], az = pos[i * 3 + 2];
-      for (let j = i + 1; j < NODE_COUNT; j++) {
-        if (lineIdx >= maxLines) break;
-        const bx = pos[j * 3], by = pos[j * 3 + 1], bz = pos[j * 3 + 2];
-        const dx = ax - bx, dy = ay - by, dz = az - bz;
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-        if (dist < connectDist) {
-          const alpha = 1 - dist / connectDist;
-          const base6 = lineIdx * 6;
-          linePositions[base6] = ax;
-          linePositions[base6 + 1] = ay;
-          linePositions[base6 + 2] = az;
-          linePositions[base6 + 3] = bx;
-          linePositions[base6 + 4] = by;
-          linePositions[base6 + 5] = bz;
-          lineColors[base6] = lineColor.r * alpha;
-          lineColors[base6 + 1] = lineColor.g * alpha;
-          lineColors[base6 + 2] = lineColor.b * alpha;
-          lineColors[base6 + 3] = lineColor.r * alpha;
-          lineColors[base6 + 4] = lineColor.g * alpha;
-          lineColors[base6 + 5] = lineColor.b * alpha;
-          lineIdx++;
-        }
-      }
-    }
-
-    // Zero out unused lines
-    for (let k = lineIdx * 6; k < linePositions.length; k++) {
-      linePositions[k] = 0;
-      lineColors[k] = 0;
-    }
-
-    const lPosAttr = linesRef.current.geometry.attributes.position as THREE.BufferAttribute;
-    const lColAttr = linesRef.current.geometry.attributes.color as THREE.BufferAttribute;
-    (lPosAttr.array as Float32Array).set(linePositions);
-    (lColAttr.array as Float32Array).set(lineColors);
-    lPosAttr.needsUpdate = true;
-    lColAttr.needsUpdate = true;
-
-    linesRef.current.rotation.copy(pointsRef.current.rotation);
-  });
-
-  // Initial node colors
-  const nodeColors = useMemo(() => {
-    const c = new Float32Array(NODE_COUNT * 3);
-    const colors = [
-      new THREE.Color("#3D4EF0"),
-      new THREE.Color("#23A0FF"),
-      new THREE.Color("#6366f1"),
-    ];
-    for (let i = 0; i < NODE_COUNT; i++) {
-      const col = colors[i % 3];
-      c[i * 3] = col.r;
-      c[i * 3 + 1] = col.g;
-      c[i * 3 + 2] = col.b;
+  const positions = useMemo(() => nebula.slice(), [nebula]);
+  const colors = useMemo(() => {
+    const c = new Float32Array(COUNT * 3);
+    for (let i = 0; i < COUNT; i++) {
+      const b = i % 3 === 0 ? BLUE : i % 3 === 1 ? CYAN : VIOLET;
+      c[i * 3] = b.r; c[i * 3 + 1] = b.g; c[i * 3 + 2] = b.b;
     }
     return c;
   }, []);
 
-  return (
-    <>
-      <points ref={pointsRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[basePositions.slice(), 3]} />
-          <bufferAttribute attach="attributes-color" args={[nodeColors, 3]} />
-        </bufferGeometry>
-        <pointsMaterial size={0.08} vertexColors transparent opacity={0.7} sizeAttenuation depthWrite={false} />
-      </points>
-      <lineSegments ref={linesRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[linePositions, 3]} />
-          <bufferAttribute attach="attributes-color" args={[lineColors, 3]} />
-        </bufferGeometry>
-        <lineBasicMaterial vertexColors transparent opacity={0.2} depthWrite={false} />
-      </lineSegments>
-    </>
-  );
-}
-
-// ── Floating translucent shapes ──
-const SHAPES: { pos: [number, number, number]; speed: number; rotSpeed: number; color: string; geo: "oct" | "tet" | "ico" }[] = [
-  { pos: [-4.5, 2.5, -2], speed: 0.3, rotSpeed: 0.4, color: "#3D4EF0", geo: "oct" },
-  { pos: [4.8, -1.8, -1.5], speed: 0.25, rotSpeed: 0.5, color: "#23A0FF", geo: "tet" },
-  { pos: [-3.2, -2.8, -3], speed: 0.35, rotSpeed: 0.35, color: "#6366f1", geo: "ico" },
-  { pos: [3.5, 3.2, -2.5], speed: 0.28, rotSpeed: 0.6, color: "#23A0FF", geo: "oct" },
-  { pos: [-5.5, 0.3, -1], speed: 0.22, rotSpeed: 0.45, color: "#3D4EF0", geo: "tet" },
-  { pos: [5.2, 1.2, -3.5], speed: 0.4, rotSpeed: 0.3, color: "#6366f1", geo: "ico" },
-];
-
-function FloatingShape({ pos, speed, rotSpeed, color, geo }: typeof SHAPES[number]) {
-  const ref = useRef<THREE.Mesh>(null);
-
   useFrame(({ clock }) => {
     if (!ref.current) return;
-    const t = clock.getElapsedTime() * speed;
-    ref.current.position.y = pos[1] + Math.sin(t) * 0.6;
-    ref.current.position.x = pos[0] + Math.cos(t * 0.7) * 0.25;
-    ref.current.rotation.x = t * rotSpeed;
-    ref.current.rotation.z = t * rotSpeed * 0.6;
+    const t = clock.getElapsedTime();
+    const { phase, progress } = getPhase(t);
+    const pa = ref.current.geometry.attributes.position as THREE.BufferAttribute;
+    const ca = ref.current.geometry.attributes.color as THREE.BufferAttribute;
+    const p = pa.array as Float32Array;
+    const c = ca.array as Float32Array;
+
+    for (let i = 0; i < COUNT; i++) {
+      const ix = i * 3;
+      const d = delays[i];
+      let tx: number, ty: number, tz: number;
+      let tc: THREE.Color;
+      let spd = 0.035;
+
+      if (phase === "prompt") {
+        // Rotating nebula
+        const rot = t * 0.06 + d;
+        const bx = nebula[ix], bz = nebula[ix + 2];
+        tx = bx * Math.cos(rot) - bz * Math.sin(rot);
+        ty = nebula[ix + 1] + Math.sin(t * 0.4 + i * 0.015) * 0.12;
+        tz = bx * Math.sin(rot) + bz * Math.cos(rot);
+        tc = i % 3 === 0 ? BLUE : i % 3 === 1 ? CYAN : VIOLET;
+
+        // Pre-transition pull toward columns in last 15%
+        if (progress > 0.85) {
+          const blend = Math.max(0, ease((progress - 0.85) / 0.15) - d * 1.5);
+          tx = THREE.MathUtils.lerp(tx, columns[ix], blend);
+          ty = THREE.MathUtils.lerp(ty, columns[ix + 1], blend);
+          tz = THREE.MathUtils.lerp(tz, columns[ix + 2], blend);
+          spd = 0.05;
+        }
+      } else if (phase === "code") {
+        // Cascading code columns
+        const cascade = ((progress * 8 + d * 3 + i * 0.003) % 11) - 5.5;
+        tx = columns[ix];
+        ty = cascade;
+        tz = columns[ix + 2];
+        tc = i % 3 === 0 ? GREEN : i % 3 === 1 ? TEAL : CYAN;
+        spd = 0.06;
+
+        // Pre-transition snap toward app frame in last 15%
+        if (progress > 0.85) {
+          const blend = Math.max(0, ease((progress - 0.85) / 0.15) - d * 1.5);
+          tx = THREE.MathUtils.lerp(tx, appFrame[ix], blend);
+          ty = THREE.MathUtils.lerp(ty, appFrame[ix + 1], blend);
+          tz = THREE.MathUtils.lerp(tz, appFrame[ix + 2], blend);
+        }
+      } else {
+        // App UI layout with gentle float
+        tx = appFrame[ix] + Math.sin(t * 0.25 + i * 0.008) * 0.025;
+        ty = appFrame[ix + 1] + Math.cos(t * 0.2 + i * 0.008) * 0.02;
+        tz = appFrame[ix + 2];
+        tc = i % 3 === 0 ? BLUE : i % 3 === 1 ? CYAN : VIOLET;
+        spd = 0.04;
+
+        // Dissolve back to nebula in last 20%
+        if (progress > 0.8) {
+          const blend = Math.max(0, ease((progress - 0.8) / 0.2) - d * 1.2);
+          const rot = t * 0.06 + d;
+          const bx = nebula[ix], bz = nebula[ix + 2];
+          const nx = bx * Math.cos(rot) - bz * Math.sin(rot);
+          const nz = bx * Math.sin(rot) + bz * Math.cos(rot);
+          tx = THREE.MathUtils.lerp(tx, nx, blend);
+          ty = THREE.MathUtils.lerp(ty, nebula[ix + 1], blend);
+          tz = THREE.MathUtils.lerp(tz, nz, blend);
+        }
+      }
+
+      p[ix] = THREE.MathUtils.lerp(p[ix], tx, spd);
+      p[ix + 1] = THREE.MathUtils.lerp(p[ix + 1], ty, spd);
+      p[ix + 2] = THREE.MathUtils.lerp(p[ix + 2], tz, spd);
+
+      c[ix] = THREE.MathUtils.lerp(c[ix], tc.r, 0.02);
+      c[ix + 1] = THREE.MathUtils.lerp(c[ix + 1], tc.g, 0.02);
+      c[ix + 2] = THREE.MathUtils.lerp(c[ix + 2], tc.b, 0.02);
+    }
+
+    pa.needsUpdate = true;
+    ca.needsUpdate = true;
   });
 
-  const Geo = geo === "oct"
-    ? <octahedronGeometry args={[0.2, 0]} />
-    : geo === "tet"
-      ? <tetrahedronGeometry args={[0.22, 0]} />
-      : <icosahedronGeometry args={[0.18, 0]} />;
-
   return (
-    <mesh ref={ref} position={pos}>
-      {Geo}
-      <meshStandardMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={0.3}
-        transparent
-        opacity={0.35}
-        metalness={0.2}
-        roughness={0.6}
-        wireframe
-      />
-    </mesh>
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
+      </bufferGeometry>
+      <pointsMaterial size={0.09} vertexColors transparent opacity={0.8} sizeAttenuation depthWrite={false} />
+    </points>
   );
 }
 
-// ── Orbital rings with traveling dots ──
-function OrbitalRing({ radius, tilt, speed, color }: { radius: number; tilt: number; speed: number; color: string }) {
-  const ringRef = useRef<THREE.Mesh>(null);
-  const dotRef = useRef<THREE.Mesh>(null);
+// ── Central glow orb ──
+function CentralOrb() {
+  const inner = useRef<THREE.Mesh>(null);
+  const outer = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
-    const t = clock.getElapsedTime() * speed;
-    if (dotRef.current) {
-      dotRef.current.position.x = Math.cos(t) * radius;
-      dotRef.current.position.z = Math.sin(t) * radius;
+    const t = clock.getElapsedTime();
+    const { phase, progress } = getPhase(t);
+    const pulse = 1 + Math.sin(t * 2.5) * 0.12;
+
+    if (inner.current) {
+      const base = phase === "code" ? 0.5 + progress * 0.3 : phase === "app" ? 0.6 : 0.35;
+      inner.current.scale.setScalar(base * pulse);
+      const mat = inner.current.material as THREE.MeshStandardMaterial;
+      mat.emissive = phase === "code" ? GREEN : BLUE;
+      mat.emissiveIntensity = phase === "code" ? 4 + progress * 3 : 2.5;
+    }
+    if (outer.current) {
+      const haloBase = phase === "code" ? 2.5 : phase === "app" ? 1.5 : 1.8;
+      outer.current.scale.setScalar(haloBase * (1 + Math.sin(t * 1.8) * 0.1));
+      const mat = outer.current.material as THREE.MeshBasicMaterial;
+      mat.color = phase === "code" ? GREEN : BLUE;
+      mat.opacity = phase === "code" ? 0.06 + progress * 0.04 : 0.04;
     }
   });
 
   return (
-    <group rotation={[tilt, 0, tilt * 0.5]}>
-      <mesh ref={ringRef} rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[radius - 0.01, radius + 0.01, 128]} />
-        <meshBasicMaterial color={color} transparent opacity={0.12} side={THREE.DoubleSide} depthWrite={false} />
+    <>
+      <mesh ref={inner}>
+        <sphereGeometry args={[0.35, 32, 32]} />
+        <meshStandardMaterial color="#fff" emissive="#3D4EF0" emissiveIntensity={2.5} toneMapped={false} />
       </mesh>
-      <mesh ref={dotRef}>
-        <sphereGeometry args={[0.06, 16, 16]} />
-        <meshBasicMaterial color={color} transparent opacity={0.6} />
+      <mesh ref={outer}>
+        <sphereGeometry args={[1.5, 32, 32]} />
+        <meshBasicMaterial color="#3D4EF0" transparent opacity={0.04} side={THREE.BackSide} depthWrite={false} />
+      </mesh>
+    </>
+  );
+}
+
+// ── Transition shockwave rings ──
+function ShockwaveRings() {
+  const group = useRef<THREE.Group>(null);
+  const geo = useMemo(() => new THREE.RingGeometry(0.9, 1.05, 80), []);
+
+  useFrame(({ clock }) => {
+    if (!group.current) return;
+    const t = clock.getElapsedTime();
+    const raw = t % CYCLE;
+    // Trigger near phase transitions at t=6, t=12
+    const triggers = [6, 12, 0];
+
+    group.current.children.forEach((child, i) => {
+      const m = child as THREE.Mesh;
+      const trigger = triggers[i];
+      const dt = ((raw - trigger + CYCLE) % CYCLE);
+      if (dt < 2) {
+        m.visible = true;
+        const p = dt / 2;
+        m.scale.setScalar(p * 6);
+        (m.material as THREE.MeshBasicMaterial).opacity = Math.max(0, 0.2 * (1 - p));
+      } else {
+        m.visible = false;
+      }
+    });
+  });
+
+  return (
+    <group ref={group}>
+      {[0, 1, 2].map((i) => (
+        <mesh key={i} geometry={geo} rotation={[Math.PI / 2, 0, 0]}>
+          <meshBasicMaterial color="#3D4EF0" transparent opacity={0} side={THREE.DoubleSide} depthWrite={false} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// ── Ambient floating dust for depth ──
+function AmbientDust({ count = 200 }: { count?: number }) {
+  const ref = useRef<THREE.Points>(null);
+  const positions = useMemo(() => {
+    const p = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      p[i * 3] = (Math.random() - 0.5) * 18;
+      p[i * 3 + 1] = (Math.random() - 0.5) * 12;
+      p[i * 3 + 2] = (Math.random() - 0.5) * 10 - 3;
+    }
+    return p;
+  }, [count]);
+
+  useFrame(({ clock }) => {
+    if (!ref.current) return;
+    ref.current.rotation.y = clock.getElapsedTime() * 0.005;
+    ref.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.008) * 0.03;
+  });
+
+  return (
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial size={0.03} color="#3D4EF0" transparent opacity={0.2} sizeAttenuation depthWrite={false} />
+    </points>
+  );
+}
+
+// ── Orbital accent rings ──
+function OrbitalRing({ radius, tilt, speed, color }: { radius: number; tilt: number; speed: number; color: string }) {
+  const dot = useRef<THREE.Mesh>(null);
+
+  useFrame(({ clock }) => {
+    const a = clock.getElapsedTime() * speed;
+    if (dot.current) {
+      dot.current.position.x = Math.cos(a) * radius;
+      dot.current.position.z = Math.sin(a) * radius;
+    }
+  });
+
+  return (
+    <group rotation={[tilt, 0, tilt * 0.4]}>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[radius - 0.008, radius + 0.008, 128]} />
+        <meshBasicMaterial color={color} transparent opacity={0.1} side={THREE.DoubleSide} depthWrite={false} />
+      </mesh>
+      <mesh ref={dot}>
+        <sphereGeometry args={[0.05, 12, 12]} />
+        <meshBasicMaterial color={color} transparent opacity={0.5} />
       </mesh>
     </group>
   );
 }
 
-// ── Scene ──
+// ── Scene composition ──
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.8} />
-      <directionalLight position={[5, 5, 5]} intensity={0.4} color="#3D4EF0" />
-      <directionalLight position={[-3, -2, 4]} intensity={0.3} color="#23A0FF" />
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[5, 4, 5]} intensity={0.3} color="#3D4EF0" />
+      <directionalLight position={[-4, -2, 4]} intensity={0.2} color="#23A0FF" />
 
-      <GradientSpheres />
-      <ConstellationNetwork />
+      <TransformParticles />
+      <CentralOrb />
+      <ShockwaveRings />
+      <AmbientDust />
 
-      {SHAPES.map((shape, i) => (
-        <FloatingShape key={`shape-${i}`} {...shape} />
-      ))}
-
-      <OrbitalRing radius={5} tilt={0.3} speed={0.15} color="#3D4EF0" />
-      <OrbitalRing radius={6.5} tilt={-0.5} speed={-0.1} color="#23A0FF" />
-      <OrbitalRing radius={4} tilt={0.8} speed={0.2} color="#6366f1" />
+      <OrbitalRing radius={5.5} tilt={0.25} speed={0.12} color="#3D4EF0" />
+      <OrbitalRing radius={7} tilt={-0.45} speed={-0.08} color="#23A0FF" />
+      <OrbitalRing radius={4.2} tilt={0.7} speed={0.18} color="#6366f1" />
     </>
   );
 }
@@ -352,10 +359,13 @@ const PROMPT_TEXT = "Build me a SaaS dashboard with real-time analytics...";
 const CODE_LINES = [
   { text: "export default function Dashboard() {", cls: "text-[#6366f1]" },
   { text: "  const data = useQuery(api.analytics);", cls: "text-[#3D4EF0]" },
-  { text: "  const charts = processMetrics(data);", cls: "text-[#10B981]" },
-  { text: "  return <DashboardLayout>", cls: "text-[#0C0F18]/60" },
-  { text: "    <MetricCards data={charts} />", cls: "text-[#3D4EF0]" },
-  { text: "  </DashboardLayout>;", cls: "text-[#0C0F18]/60" },
+  { text: "  const metrics = processData(data);", cls: "text-[#10B981]" },
+  { text: "  return (", cls: "text-[#0C0F18]/50" },
+  { text: "    <Layout sidebar={<NavMenu />}>", cls: "text-[#3D4EF0]" },
+  { text: "      <MetricCards data={metrics} />", cls: "text-[#14b8a6]" },
+  { text: "      <RevenueChart data={metrics} />", cls: "text-[#10B981]" },
+  { text: "    </Layout>", cls: "text-[#0C0F18]/50" },
+  { text: "  );", cls: "text-[#0C0F18]/50" },
   { text: "}", cls: "text-[#6366f1]" },
 ];
 
@@ -367,7 +377,7 @@ function PhaseOverlay() {
   useEffect(() => {
     const id = setInterval(() => {
       const elapsed = (Date.now() - mountRef.current) / 1000;
-      const info = computePhase(elapsed);
+      const info = getPhase(elapsed);
       setPhase(info.phase);
       if (info.phase === "prompt") {
         setTyped(PROMPT_TEXT.slice(0, Math.floor(info.progress * PROMPT_TEXT.length)));
@@ -382,46 +392,26 @@ function PhaseOverlay() {
         {phase === "prompt" && (
           <motion.div
             key="prompt"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white/70 backdrop-blur-xl border border-[#3D4EF0]/10 rounded-2xl px-8 py-5 max-w-lg shadow-xl shadow-[#3D4EF0]/8"
+            exit={{ opacity: 0, scale: 0.92, filter: "blur(8px)" }}
+            transition={{ duration: 0.6 }}
+            className="bg-white/75 backdrop-blur-xl border border-[#3D4EF0]/10 rounded-2xl px-8 py-5 max-w-lg shadow-xl shadow-[#3D4EF0]/6"
           >
             <div className="flex items-center gap-1.5 mb-3">
               <div className="w-2.5 h-2.5 rounded-full bg-[#FF6059]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
-              <span className="ml-2 text-[10px] text-[#0C0F18]/25 font-mono">prompt.ai</span>
+              <span className="ml-2 text-[10px] text-[#0C0F18]/20 font-mono tracking-wider">onenexium.ai</span>
             </div>
             <p className="text-[#0C0F18]/75 font-mono text-sm leading-relaxed">
-              <span className="text-[#3D4EF0] font-bold">{">"} </span>
+              <span className="text-[#3D4EF0] font-semibold">{">"} </span>
               {typed}
               <motion.span
                 animate={{ opacity: [1, 0] }}
-                transition={{ duration: 0.53, repeat: Infinity }}
-                className="inline-block w-1.5 h-4 bg-[#3D4EF0] ml-0.5 -mb-0.5 rounded-sm"
+                transition={{ duration: 0.5, repeat: Infinity }}
+                className="inline-block w-[7px] h-[17px] bg-[#3D4EF0] ml-0.5 -mb-[3px] rounded-[2px]"
               />
-            </p>
-          </motion.div>
-        )}
-
-        {phase === "process" && (
-          <motion.div
-            key="process"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.15 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col items-center gap-4"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
-              className="w-10 h-10 rounded-full border-2 border-[#3D4EF0]/60 border-t-transparent"
-            />
-            <p className="text-[#0C0F18]/40 text-sm font-mono tracking-wider uppercase">
-              AI is thinking...
             </p>
           </motion.div>
         )}
@@ -429,18 +419,22 @@ function PhaseOverlay() {
         {phase === "code" && (
           <motion.div
             key="code"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.4 }}
-            className="bg-white/70 backdrop-blur-xl border border-[#3D4EF0]/10 rounded-2xl px-6 py-4 max-w-md font-mono text-xs leading-relaxed shadow-xl shadow-[#3D4EF0]/8"
+            initial={{ opacity: 0, y: -24, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.92, filter: "blur(8px)" }}
+            transition={{ duration: 0.5 }}
+            className="bg-white/75 backdrop-blur-xl border border-[#10B981]/15 rounded-2xl px-6 py-4 max-w-md font-mono text-xs leading-[1.8] shadow-xl shadow-[#10B981]/6"
           >
+            <div className="flex items-center gap-1.5 mb-3">
+              <div className="w-2 h-2 rounded-full bg-[#10B981]" />
+              <span className="text-[10px] text-[#10B981]/60 font-mono tracking-wider">generating code...</span>
+            </div>
             {CODE_LINES.map((line, i) => (
               <motion.p
                 key={i}
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.12 }}
+                transition={{ delay: i * 0.1, duration: 0.3 }}
                 className={line.cls}
               >
                 {line.text}
@@ -449,39 +443,32 @@ function PhaseOverlay() {
           </motion.div>
         )}
 
-        {phase === "assemble" && (
+        {phase === "app" && (
           <motion.div
-            key="assemble"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col items-center gap-3"
-          >
-            <motion.p
-              className="text-[#0C0F18]/40 text-sm font-mono tracking-wider uppercase"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              Assembling your app...
-            </motion.p>
-          </motion.div>
-        )}
-
-        {phase === "reveal" && (
-          <motion.div
-            key="reveal"
+            key="app"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: [0, 1, 1, 0], scale: [0.85, 1, 1, 0.97] }}
-            transition={{ duration: 2.2, times: [0, 0.2, 0.7, 1] }}
-            className="flex flex-col items-center gap-2"
+            transition={{ duration: 5.5, times: [0, 0.15, 0.75, 1] }}
+            className="flex flex-col items-center gap-3"
           >
+            <motion.div
+              className="w-12 h-12 rounded-xl border-2 border-[#3D4EF0]/30 flex items-center justify-center"
+              animate={{ borderColor: ["rgba(61,78,240,0.3)", "rgba(35,160,255,0.5)", "rgba(61,78,240,0.3)"] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <motion.div
+                className="w-5 h-5 rounded-md bg-gradient-to-br from-[#3D4EF0] to-[#23A0FF]"
+                animate={{ scale: [0.8, 1, 0.8] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              />
+            </motion.div>
             <p
               className="text-lg font-bold text-transparent bg-clip-text"
               style={{ backgroundImage: "linear-gradient(135deg, #3D4EF0, #23A0FF)" }}
             >
               Your app is ready
             </p>
+            <p className="text-[#0C0F18]/35 text-xs font-mono">Dashboard deployed successfully</p>
           </motion.div>
         )}
       </AnimatePresence>
