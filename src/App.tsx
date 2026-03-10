@@ -4,6 +4,7 @@ import AuthCallback from "./pages/auth/Callback.tsx";
 import Index from "./pages/Index.tsx";
 import LoginPage from "./pages/login/page.tsx";
 import DashboardPage from "./pages/dashboard/page.tsx";
+import TemplatesPage from "./pages/templates/page.tsx";
 import ProjectEditorPage from "./pages/project/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/templates" element={<TemplatesPage />} />
           <Route path="/project/:projectId" element={<ProjectEditorPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

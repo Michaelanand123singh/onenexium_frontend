@@ -79,6 +79,21 @@ export default function DashboardContent() {
                 OneNexium
               </span>
             </button>
+
+            {/* Nav links */}
+            <nav className="hidden sm:flex items-center gap-1">
+              <button
+                className="px-3 py-1.5 rounded-lg text-sm text-foreground font-medium bg-foreground/5 cursor-default"
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => navigate("/templates")}
+                className="px-3 py-1.5 rounded-lg text-sm text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
+              >
+                Templates
+              </button>
+            </nav>
           </div>
 
           <motion.div
