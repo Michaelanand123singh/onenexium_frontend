@@ -12,6 +12,7 @@ import AIPromptExamples from "./index/_components/ai-prompt-examples.tsx";
 import TemplatesGallery from "./index/_components/templates-gallery.tsx";
 import PromptToProduct from "./index/_components/prompt-to-product.tsx";
 import MadeWithOneNexium from "./index/_components/made-with-onenexium.tsx";
+import Footer from "./index/_components/footer.tsx";
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -231,19 +232,7 @@ export default function Index() {
       <MadeWithOneNexium />
 
       {/* Footer */}
-      <div className="relative py-12 text-center">
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2 }}
-          className="mx-auto w-48 h-px mb-8"
-          style={{ background: BRAND_GRADIENT, opacity: 0.3 }}
-        />
-        <p className="text-[11px] text-foreground/25 tracking-wide">
-          &copy; {new Date().getFullYear()} OneNexium. All rights reserved.
-        </p>
-      </div>
+      <Footer />
     </div>
   );
 }
