@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { motion, AnimatePresence } from "motion/react";
 
-// ── Phase timing ──
+// ── Phase system ──
 const CYCLE = 18;
 type Phase = "prompt" | "code" | "app";
 type PhaseInfo = { phase: Phase; progress: number };
@@ -15,112 +15,79 @@ function getPhase(t: number): PhaseInfo {
   return { phase: "app", progress: (raw - 12) / 6 };
 }
 
-function ease(x: number): number {
-  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+function smooth(x: number): number {
+  return x * x * (3 - 2 * x);
 }
 
-// ── Palette ──
-const COL_BLUE = new THREE.Color("#3D4EF0");
-const COL_CYAN = new THREE.Color("#23A0FF");
-const COL_VIOLET = new THREE.Color("#8B5CF6");
-const COL_GREEN = new THREE.Color("#10B981");
-const COL_TEAL = new THREE.Color("#14b8a6");
-const COL_GOLD = new THREE.Color("#F59E0B");
+// ── Colors ──
+const BLUE = new THREE.Color("#3D4EF0");
+const CYAN = new THREE.Color("#23A0FF");
+const VIOLET = new THREE.Color("#8B5CF6");
+const GREEN = new THREE.Color("#10B981");
+const AMBER = new THREE.Color("#F59E0B");
 
-const N = 500;
+// ── Particle count ──
+const N = 600;
 
-function buildTargets() {
-  const rings = new Float32Array(N * 3);
-  const streams = new Float32Array(N * 3);
-  const dashboard = new Float32Array(N * 3);
-  const delays = new Float32Array(N);
+// ── Generate shape targets ──
+function generateShapes() {
+  const wave = new Float32Array(N * 3);
+  const helix = new Float32Array(N * 3);
+  const grid = new Float32Array(N * 3);
+  const stagger = new Float32Array(N);
 
   for (let i = 0; i < N; i++) {
-    // RINGS: 5 concentric tilted orbits (atom-like)
-    const ring = i % 5;
-    const posInRing = Math.floor(i / 5);
-    const angle = (posInRing / (N / 5)) * Math.PI * 2 + ring * 0.7;
-    const radius = 2.2 + ring * 0.6;
-    const tiltX = [0.3, -0.5, 0.8, -0.2, 0.6][ring];
-    const tiltZ = [0.1, 0.4, -0.3, 0.5, -0.1][ring];
+    // WAVE: flowing ocean-like surface
+    const row = Math.floor(i / 30);
+    const col = i % 30;
+    const wx = (col - 14.5) * 0.42;
+    const wy = (row - 10) * 0.42;
+    wave[i * 3] = wx;
+    wave[i * 3 + 1] = wy;
+    wave[i * 3 + 2] = 0;
 
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
-    // Apply tilt rotation
-    rings[i * 3] = x * Math.cos(tiltZ) - y * Math.sin(tiltZ) * Math.cos(tiltX);
-    rings[i * 3 + 1] = x * Math.sin(tiltZ) + y * Math.cos(tiltZ) * Math.cos(tiltX);
-    rings[i * 3 + 2] = y * Math.sin(tiltX);
+    // HELIX: double helix DNA strand
+    const strand = i % 2;
+    const idx = Math.floor(i / 2);
+    const theta = (idx / (N / 2)) * Math.PI * 6;
+    const hY = (idx / (N / 2)) * 10 - 5;
+    const hR = 1.8;
+    const offset = strand * Math.PI;
+    helix[i * 3] = Math.cos(theta + offset) * hR;
+    helix[i * 3 + 1] = hY;
+    helix[i * 3 + 2] = Math.sin(theta + offset) * hR - 1;
 
-    // STREAMS: vertical data waterfall columns
-    const col = i % 16;
-    const row = Math.floor(i / 16);
-    streams[i * 3] = (col - 7.5) * 0.6;
-    streams[i * 3 + 1] = 5 - (row % 32) * 0.35;
-    streams[i * 3 + 2] = -0.5 + (Math.random() - 0.5) * 0.5;
+    // GRID: 3D cube lattice
+    const side = Math.ceil(Math.cbrt(N));
+    const gi = i % side;
+    const gj = Math.floor(i / side) % side;
+    const gk = Math.floor(i / (side * side));
+    const spacing = 0.55;
+    grid[i * 3] = (gi - side / 2) * spacing;
+    grid[i * 3 + 1] = (gj - side / 2) * spacing;
+    grid[i * 3 + 2] = (gk - side / 2) * spacing - 1;
 
-    // DASHBOARD: isometric floating panels
-    const section = i % 100;
-    if (section < 12) {
-      // Top bar
-      dashboard[i * 3] = -3 + (section / 12) * 6;
-      dashboard[i * 3 + 1] = 2.5;
-      dashboard[i * 3 + 2] = 0;
-    } else if (section < 28) {
-      // Left sidebar
-      const s = section - 12;
-      dashboard[i * 3] = -2.8 + (Math.random() - 0.5) * 0.6;
-      dashboard[i * 3 + 1] = 2.2 - (s / 16) * 4.8;
-      dashboard[i * 3 + 2] = 0.1;
-    } else if (section < 48) {
-      // Main chart area (sine wave)
-      const s = section - 28;
-      const chartX = -1.5 + (s / 20) * 4.5;
-      dashboard[i * 3] = chartX;
-      dashboard[i * 3 + 1] = Math.sin(chartX * 1.5) * 0.6 + 0.5;
-      dashboard[i * 3 + 2] = 0.2;
-    } else if (section < 72) {
-      // 3 stat cards
-      const s = section - 48;
-      const card = Math.floor(s / 8);
-      const cardX = [-1, 0.8, 2.6][card % 3];
-      dashboard[i * 3] = cardX + (Math.random() - 0.5) * 1.2;
-      dashboard[i * 3 + 1] = -0.8 + (Math.random() - 0.5) * 0.8;
-      dashboard[i * 3 + 2] = 0.15;
-    } else {
-      // Bottom table rows
-      const s = section - 72;
-      const rowNum = Math.floor(s / 7);
-      dashboard[i * 3] = -1.5 + (s % 7) * 0.75;
-      dashboard[i * 3 + 1] = -1.8 - rowNum * 0.45;
-      dashboard[i * 3 + 2] = 0.1;
-    }
-
-    delays[i] = Math.sqrt(rings[i * 3] ** 2 + rings[i * 3 + 1] ** 2) * 0.035;
+    // Stagger delay based on distance from center
+    stagger[i] = Math.sqrt(wave[i * 3] ** 2 + wave[i * 3 + 1] ** 2) * 0.04;
   }
 
-  return { rings, streams, dashboard, delays };
+  return { wave, helix, grid, stagger };
 }
 
-// ── Morphing particle system ──
-function MorphSystem() {
+// ── Main particle system ──
+function MorphParticles() {
   const ref = useRef<THREE.Points>(null);
-  const { rings, streams, dashboard, delays } = useMemo(buildTargets, []);
+  const { wave, helix, grid, stagger } = useMemo(generateShapes, []);
 
-  const positions = useMemo(() => rings.slice(), [rings]);
+  const positions = useMemo(() => wave.slice(), [wave]);
   const colors = useMemo(() => {
     const c = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) {
-      const col = i % 3 === 0 ? COL_BLUE : i % 3 === 1 ? COL_CYAN : COL_VIOLET;
-      c[i * 3] = col.r;
-      c[i * 3 + 1] = col.g;
-      c[i * 3 + 2] = col.b;
+      c[i * 3] = BLUE.r;
+      c[i * 3 + 1] = BLUE.g;
+      c[i * 3 + 2] = BLUE.b;
     }
     return c;
-  }, []);
-  const sizes = useMemo(() => {
-    const s = new Float32Array(N);
-    for (let i = 0; i < N; i++) s[i] = 0.06 + Math.random() * 0.04;
-    return s;
   }, []);
 
   useFrame(({ clock }) => {
@@ -134,91 +101,88 @@ function MorphSystem() {
 
     for (let i = 0; i < N; i++) {
       const ix = i * 3;
-      const d = delays[i];
+      const d = stagger[i];
       let tx: number, ty: number, tz: number;
-      let tc: THREE.Color;
-      let spd = 0.04;
+      let col: THREE.Color;
+      let speed = 0.04;
 
       if (phase === "prompt") {
-        // Orbiting rings — each ring spins at its own speed
-        const ring = i % 5;
-        const speeds = [0.3, -0.25, 0.4, -0.18, 0.35];
-        const rot = t * speeds[ring];
-        const bx = rings[ix], by = rings[ix + 1], bz = rings[ix + 2];
-        // Rotate around Y
-        tx = bx * Math.cos(rot) - bz * Math.sin(rot);
-        ty = by + Math.sin(t * 0.5 + i * 0.012) * 0.08;
-        tz = bx * Math.sin(rot) + bz * Math.cos(rot);
+        // Animated ocean wave
+        const wx = wave[ix];
+        const wy = wave[ix + 1];
+        tx = wx;
+        ty = wy;
+        tz = Math.sin(wx * 1.2 + t * 0.8) * 0.4
+           + Math.cos(wy * 0.9 + t * 0.6) * 0.3
+           + Math.sin((wx + wy) * 0.7 + t * 1.1) * 0.2;
 
-        const ringBlend = (Math.sin(t * 0.4 + ring * 1.3) + 1) * 0.5;
-        tc = new THREE.Color().lerpColors(COL_BLUE, COL_VIOLET, ringBlend);
+        const blend3 = (Math.sin(t * 0.3 + i * 0.01) + 1) * 0.5;
+        col = new THREE.Color().lerpColors(BLUE, VIOLET, blend3);
 
-        // Pre-transition: pull into stream columns
+        // Transition to helix in last 18%
         if (progress > 0.82) {
-          const b = Math.max(0, ease((progress - 0.82) / 0.18) - d * 1.5);
-          tx = THREE.MathUtils.lerp(tx, streams[ix], b);
-          ty = THREE.MathUtils.lerp(ty, streams[ix + 1], b);
-          tz = THREE.MathUtils.lerp(tz, streams[ix + 2], b);
-          spd = 0.06;
+          const b = Math.max(0, smooth((progress - 0.82) / 0.18) - d * 1.2);
+          const ht = t * 0.3;
+          tx = THREE.MathUtils.lerp(tx, helix[ix] * Math.cos(ht) - helix[ix + 2] * Math.sin(ht), b);
+          ty = THREE.MathUtils.lerp(ty, helix[ix + 1], b);
+          tz = THREE.MathUtils.lerp(tz, helix[ix] * Math.sin(ht) + helix[ix + 2] * Math.cos(ht), b);
+          speed = 0.06;
         }
       } else if (phase === "code") {
-        // Falling data streams with horizontal scan
-        const fall = ((progress * 10 + d * 4 + i * 0.002) % 10) - 5;
-        tx = streams[ix] + Math.sin(t * 3 + i * 0.05) * 0.03;
-        ty = fall;
-        tz = streams[ix + 2];
+        // Spinning double helix
+        const spin = t * 0.5;
+        const rawX = helix[ix];
+        const rawZ = helix[ix + 2];
+        tx = rawX * Math.cos(spin) - rawZ * Math.sin(spin);
+        ty = helix[ix + 1] + Math.sin(t * 2 + i * 0.02) * 0.08;
+        tz = rawX * Math.sin(spin) + rawZ * Math.cos(spin);
 
-        // Horizontal scan line highlight
-        const scanY = Math.sin(t * 1.5) * 4;
-        const nearScan = Math.abs(ty - scanY) < 0.5;
-        tc = nearScan
-          ? COL_GOLD
-          : (i % 3 === 0 ? COL_GREEN : i % 3 === 1 ? COL_TEAL : COL_CYAN);
-        spd = 0.055;
+        const strand = i % 2;
+        col = strand === 0 ? GREEN : CYAN;
+        speed = 0.05;
 
-        // Pre-transition: fly to dashboard
+        // Transition to grid in last 18%
         if (progress > 0.82) {
-          const b = Math.max(0, ease((progress - 0.82) / 0.18) - d * 1.5);
-          tx = THREE.MathUtils.lerp(tx, dashboard[ix], b);
-          ty = THREE.MathUtils.lerp(ty, dashboard[ix + 1], b);
-          tz = THREE.MathUtils.lerp(tz, dashboard[ix + 2], b);
+          const b = Math.max(0, smooth((progress - 0.82) / 0.18) - d * 1.2);
+          tx = THREE.MathUtils.lerp(tx, grid[ix], b);
+          ty = THREE.MathUtils.lerp(ty, grid[ix + 1], b);
+          tz = THREE.MathUtils.lerp(tz, grid[ix + 2], b);
         }
       } else {
-        // Floating dashboard with gentle sway
-        tx = dashboard[ix] + Math.sin(t * 0.3 + i * 0.006) * 0.02;
-        ty = dashboard[ix + 1] + Math.cos(t * 0.25 + i * 0.006) * 0.015;
-        tz = dashboard[ix + 2];
+        // Breathing cube lattice
+        const breathe = 1 + Math.sin(t * 0.6) * 0.06;
+        const rot = t * 0.15;
+        const gx = grid[ix] * breathe;
+        const gy = grid[ix + 1] * breathe;
+        const gz = grid[ix + 2] * breathe;
+        // Rotate around Y axis
+        tx = gx * Math.cos(rot) - gz * Math.sin(rot);
+        ty = gy;
+        tz = gx * Math.sin(rot) + gz * Math.cos(rot);
 
-        const section = i % 100;
-        if (section < 12) tc = COL_VIOLET;
-        else if (section < 28) tc = new THREE.Color().lerpColors(COL_BLUE, COL_CYAN, 0.5);
-        else if (section < 48) tc = COL_CYAN;
-        else if (section < 72) tc = COL_BLUE;
-        else tc = new THREE.Color().lerpColors(COL_VIOLET, COL_BLUE, 0.6);
-        spd = 0.04;
+        const dist = Math.sqrt(gx ** 2 + gy ** 2 + gz ** 2);
+        col = new THREE.Color().lerpColors(BLUE, AMBER, Math.min(dist / 3, 1));
+        speed = 0.04;
 
-        // Dissolve back to rings
+        // Dissolve back to wave in last 22%
         if (progress > 0.78) {
-          const b = Math.max(0, ease((progress - 0.78) / 0.22) - d * 1.0);
-          const ring = i % 5;
-          const speeds = [0.3, -0.25, 0.4, -0.18, 0.35];
-          const rot = t * speeds[ring];
-          const bx = rings[ix], bz = rings[ix + 2];
-          const nx = bx * Math.cos(rot) - bz * Math.sin(rot);
-          const nz = bx * Math.sin(rot) + bz * Math.cos(rot);
-          tx = THREE.MathUtils.lerp(tx, nx, b);
-          ty = THREE.MathUtils.lerp(ty, rings[ix + 1], b);
-          tz = THREE.MathUtils.lerp(tz, nz, b);
+          const b = Math.max(0, smooth((progress - 0.78) / 0.22) - d * 1.0);
+          const wx = wave[ix];
+          const wy = wave[ix + 1];
+          const wz = Math.sin(wx * 1.2 + t * 0.8) * 0.4 + Math.cos(wy * 0.9 + t * 0.6) * 0.3;
+          tx = THREE.MathUtils.lerp(tx, wx, b);
+          ty = THREE.MathUtils.lerp(ty, wy, b);
+          tz = THREE.MathUtils.lerp(tz, wz, b);
         }
       }
 
-      p[ix] = THREE.MathUtils.lerp(p[ix], tx, spd);
-      p[ix + 1] = THREE.MathUtils.lerp(p[ix + 1], ty, spd);
-      p[ix + 2] = THREE.MathUtils.lerp(p[ix + 2], tz, spd);
+      p[ix] = THREE.MathUtils.lerp(p[ix], tx, speed);
+      p[ix + 1] = THREE.MathUtils.lerp(p[ix + 1], ty, speed);
+      p[ix + 2] = THREE.MathUtils.lerp(p[ix + 2], tz, speed);
 
-      c[ix] = THREE.MathUtils.lerp(c[ix], tc.r, 0.03);
-      c[ix + 1] = THREE.MathUtils.lerp(c[ix + 1], tc.g, 0.03);
-      c[ix + 2] = THREE.MathUtils.lerp(c[ix + 2], tc.b, 0.03);
+      c[ix] = THREE.MathUtils.lerp(c[ix], col.r, 0.025);
+      c[ix + 1] = THREE.MathUtils.lerp(c[ix + 1], col.g, 0.025);
+      c[ix + 2] = THREE.MathUtils.lerp(c[ix + 2], col.b, 0.025);
     }
 
     pa.needsUpdate = true;
@@ -230,13 +194,12 @@ function MorphSystem() {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.08}
+        size={0.07}
         vertexColors
         transparent
-        opacity={0.9}
+        opacity={0.85}
         sizeAttenuation
         depthWrite={false}
         blending={THREE.AdditiveBlending}
@@ -245,65 +208,102 @@ function MorphSystem() {
   );
 }
 
-// ── Glowing core nucleus ──
-function Nucleus() {
-  const inner = useRef<THREE.Mesh>(null);
-  const halo = useRef<THREE.Mesh>(null);
+// ── Connection lines between nearby particles ──
+function ConnectionLines() {
+  const lineRef = useRef<THREE.LineSegments>(null);
+  const MAX_LINES = 1200;
+  const positions = useMemo(() => new Float32Array(MAX_LINES * 6), []);
+  const lineColors = useMemo(() => new Float32Array(MAX_LINES * 6), []);
 
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    const { phase, progress } = getPhase(t);
-    const pulse = 1 + Math.sin(t * 2) * 0.15;
+  useFrame(() => {
+    if (!lineRef.current) return;
+    const parent = lineRef.current.parent;
+    if (!parent) return;
 
-    if (inner.current) {
-      const s = phase === "code" ? 0.4 + progress * 0.25 : phase === "app" ? 0.2 : 0.3;
-      inner.current.scale.setScalar(s * pulse);
-      const mat = inner.current.material as THREE.MeshStandardMaterial;
-      mat.emissive = phase === "code" ? COL_GREEN : COL_BLUE;
-      mat.emissiveIntensity = phase === "code" ? 5 + progress * 3 : 3;
+    // Find the points object to read positions
+    let pointsObj: THREE.Points | null = null;
+    parent.traverse((child) => {
+      if (child instanceof THREE.Points) pointsObj = child;
+    });
+    if (!pointsObj) return;
+
+    const pts = (pointsObj as THREE.Points).geometry.attributes.position as THREE.BufferAttribute;
+    const pArr = pts.array as Float32Array;
+    const threshold = 1.1;
+    const threshSq = threshold * threshold;
+
+    let lineIdx = 0;
+    // Sample subset for performance
+    const step = 4;
+    for (let i = 0; i < N && lineIdx < MAX_LINES; i += step) {
+      for (let j = i + step; j < N && lineIdx < MAX_LINES; j += step) {
+        const dx = pArr[i * 3] - pArr[j * 3];
+        const dy = pArr[i * 3 + 1] - pArr[j * 3 + 1];
+        const dz = pArr[i * 3 + 2] - pArr[j * 3 + 2];
+        const distSq = dx * dx + dy * dy + dz * dz;
+
+        if (distSq < threshSq) {
+          const alpha = 1 - Math.sqrt(distSq) / threshold;
+          const li = lineIdx * 6;
+          positions[li] = pArr[i * 3];
+          positions[li + 1] = pArr[i * 3 + 1];
+          positions[li + 2] = pArr[i * 3 + 2];
+          positions[li + 3] = pArr[j * 3];
+          positions[li + 4] = pArr[j * 3 + 1];
+          positions[li + 5] = pArr[j * 3 + 2];
+
+          const a = alpha * 0.3;
+          lineColors[li] = a;
+          lineColors[li + 1] = a;
+          lineColors[li + 2] = a * 1.5;
+          lineColors[li + 3] = a;
+          lineColors[li + 4] = a;
+          lineColors[li + 5] = a * 1.5;
+          lineIdx++;
+        }
+      }
     }
-    if (halo.current) {
-      const s = phase === "code" ? 2.5 : phase === "app" ? 0.8 : 1.6;
-      halo.current.scale.setScalar(s * (1 + Math.sin(t * 1.5) * 0.08));
-      const mat = halo.current.material as THREE.MeshBasicMaterial;
-      mat.color = phase === "code" ? COL_GREEN : COL_BLUE;
-      mat.opacity = phase === "app" ? 0.02 : 0.05;
+
+    // Zero out unused
+    for (let k = lineIdx * 6; k < MAX_LINES * 6; k++) {
+      positions[k] = 0;
+      lineColors[k] = 0;
     }
+
+    const geo = lineRef.current.geometry;
+    (geo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+    (geo.attributes.color as THREE.BufferAttribute).needsUpdate = true;
+    geo.setDrawRange(0, lineIdx * 2);
   });
 
   return (
-    <>
-      <mesh ref={inner}>
-        <sphereGeometry args={[0.3, 32, 32]} />
-        <meshStandardMaterial color="#fff" emissive="#3D4EF0" emissiveIntensity={3} toneMapped={false} />
-      </mesh>
-      <mesh ref={halo}>
-        <sphereGeometry args={[1.2, 32, 32]} />
-        <meshBasicMaterial color="#3D4EF0" transparent opacity={0.05} side={THREE.BackSide} depthWrite={false} />
-      </mesh>
-    </>
+    <lineSegments ref={lineRef}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-color" args={[lineColors, 3]} />
+      </bufferGeometry>
+      <lineBasicMaterial vertexColors transparent opacity={0.5} depthWrite={false} blending={THREE.AdditiveBlending} />
+    </lineSegments>
   );
 }
 
-// ── Floating dust for depth ──
-function Dust() {
+// ── Soft ambient haze ──
+function AmbientHaze() {
   const ref = useRef<THREE.Points>(null);
-  const count = 120;
+  const count = 150;
   const pos = useMemo(() => {
     const p = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      p[i * 3] = (Math.random() - 0.5) * 22;
-      p[i * 3 + 1] = (Math.random() - 0.5) * 16;
-      p[i * 3 + 2] = (Math.random() - 0.5) * 12 - 5;
+      p[i * 3] = (Math.random() - 0.5) * 20;
+      p[i * 3 + 1] = (Math.random() - 0.5) * 14;
+      p[i * 3 + 2] = (Math.random() - 0.5) * 12 - 4;
     }
     return p;
   }, []);
 
   useFrame(({ clock }) => {
-    if (ref.current) {
-      ref.current.rotation.y = clock.getElapsedTime() * 0.004;
-      ref.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.006) * 0.02;
-    }
+    if (!ref.current) return;
+    ref.current.rotation.y = clock.getElapsedTime() * 0.003;
   });
 
   return (
@@ -311,7 +311,15 @@ function Dust() {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[pos, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.04} color="#3D4EF0" transparent opacity={0.12} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} />
+      <pointsMaterial
+        size={0.05}
+        color="#3D4EF0"
+        transparent
+        opacity={0.15}
+        sizeAttenuation
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
     </points>
   );
 }
@@ -320,18 +328,18 @@ function Dust() {
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.4} />
-      <pointLight position={[5, 4, 5]} intensity={0.35} color="#3D4EF0" />
-      <pointLight position={[-4, -3, 4]} intensity={0.2} color="#8B5CF6" />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[4, 3, 5]} intensity={0.4} color="#3D4EF0" />
+      <pointLight position={[-3, -2, 3]} intensity={0.25} color="#8B5CF6" />
 
-      <MorphSystem />
-      <Nucleus />
-      <Dust />
+      <MorphParticles />
+      <ConnectionLines />
+      <AmbientHaze />
     </>
   );
 }
 
-// ── CSS overlay panels ──
+// ── CSS overlay ──
 const PROMPT_TEXT = "Build me a SaaS dashboard with real-time analytics...";
 
 const CODE_LINES = [
@@ -370,11 +378,11 @@ function PhaseOverlay() {
         {phase === "prompt" && (
           <motion.div
             key="prompt"
-            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.92, filter: "blur(10px)" }}
+            exit={{ opacity: 0, scale: 0.9, filter: "blur(12px)" }}
             transition={{ duration: 0.5 }}
-            className="bg-white/65 dark:bg-white/8 backdrop-blur-2xl border border-[#3D4EF0]/8 dark:border-[#3D4EF0]/15 rounded-2xl px-7 py-5 max-w-lg shadow-2xl shadow-[#3D4EF0]/10"
+            className="bg-white/70 dark:bg-white/8 backdrop-blur-2xl border border-[#3D4EF0]/8 dark:border-[#3D4EF0]/15 rounded-2xl px-7 py-5 max-w-lg shadow-2xl shadow-[#3D4EF0]/8"
           >
             <div className="flex items-center gap-1.5 mb-3">
               <div className="w-2.5 h-2.5 rounded-full bg-[#FF6059]" />
@@ -397,26 +405,26 @@ function PhaseOverlay() {
         {phase === "code" && (
           <motion.div
             key="code"
-            initial={{ opacity: 0, y: -16, scale: 0.97 }}
+            initial={{ opacity: 0, y: -16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.92, filter: "blur(10px)" }}
+            exit={{ opacity: 0, y: 16, scale: 0.9, filter: "blur(12px)" }}
             transition={{ duration: 0.45 }}
-            className="bg-white/65 dark:bg-white/8 backdrop-blur-2xl border border-[#10B981]/12 dark:border-[#10B981]/20 rounded-2xl px-6 py-4 max-w-md font-mono text-xs leading-[1.9] shadow-2xl shadow-[#10B981]/10"
+            className="bg-white/70 dark:bg-white/8 backdrop-blur-2xl border border-[#10B981]/12 dark:border-[#10B981]/20 rounded-2xl px-6 py-4 max-w-md font-mono text-xs leading-[1.9] shadow-2xl shadow-[#10B981]/8"
           >
             <div className="flex items-center gap-1.5 mb-3">
               <motion.div
                 className="w-2 h-2 rounded-full bg-[#10B981]"
-                animate={{ scale: [1, 1.4, 1] }}
-                transition={{ duration: 0.8, repeat: Infinity }}
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
               />
               <span className="text-[9px] text-[#10B981]/50 dark:text-[#10B981]/70 font-mono tracking-widest">generating</span>
             </div>
             {CODE_LINES.map((line, i) => (
               <motion.p
                 key={i}
-                initial={{ opacity: 0, x: -8 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.08, duration: 0.2 }}
+                transition={{ delay: i * 0.08, duration: 0.25 }}
                 className={line.cls}
               >
                 {line.text}
@@ -428,23 +436,21 @@ function PhaseOverlay() {
         {phase === "app" && (
           <motion.div
             key="app"
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: [0, 1, 1, 0], scale: [0.85, 1, 1, 0.96] }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: [0, 1, 1, 0], scale: [0.8, 1, 1, 0.95] }}
             transition={{ duration: 5.5, times: [0, 0.12, 0.78, 1] }}
             className="flex flex-col items-center gap-4"
           >
             <motion.div
-              className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#3D4EF0] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-[#3D4EF0]/25"
-              animate={{ rotate: [0, 4, -4, 0] }}
+              className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#3D4EF0] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-[#3D4EF0]/30"
+              animate={{ rotate: [0, 5, -5, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              <div className="w-6 h-5 rounded-md border-2 border-white/80 flex flex-col gap-0.5 p-0.5">
-                <div className="w-full h-[2px] bg-white/60 rounded-full" />
-                <div className="flex gap-0.5 flex-1">
-                  <div className="w-1/3 bg-white/40 rounded-sm" />
-                  <div className="flex-1 bg-white/25 rounded-sm" />
-                </div>
-              </div>
+              <motion.div
+                className="w-6 h-6 rounded-lg bg-white/90"
+                animate={{ scale: [0.85, 1, 0.85] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              />
             </motion.div>
             <p
               className="text-xl font-bold text-transparent bg-clip-text"
@@ -467,7 +473,7 @@ export default function CinematicHero() {
   return (
     <div className="absolute inset-0 z-0">
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 50 }}
+        camera={{ position: [0, 0, 7], fov: 55 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         dpr={[1, 1.5]}
         style={{ background: "transparent" }}
