@@ -97,25 +97,7 @@ export default function Index() {
             </span>
           </motion.div>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.35 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#0C0F18] dark:text-white leading-tight tracking-tight"
-          >
-            <span className="whitespace-nowrap">
-              Something{" "}
-              <span
-                className="bg-clip-text text-transparent"
-                style={{ backgroundImage: BRAND_GRADIENT }}
-              >
-                extraordinary
-              </span>
-            </span>
-            <br />
-            is on the way
-          </motion.h1>
+          {/* Headline – removed */}
 
           {/* Subtitle */}
           <motion.p
