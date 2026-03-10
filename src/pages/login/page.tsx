@@ -365,7 +365,6 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-screen bg-[#F5F8FF] text-foreground antialiased"
-      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
     >
       <Authenticated>
         <RedirectIfAuthenticated />
