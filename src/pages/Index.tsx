@@ -94,7 +94,7 @@ export default function Index() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mb-6"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-[#3D4EF0]/15 bg-[#3D4EF0]/5 text-[#3D4EF0]">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-emerald-600/20 bg-emerald-600/10 text-emerald-700 dark:text-emerald-400">
               <motion.span
                 className="w-1.5 h-1.5 rounded-full bg-[#23A0FF]"
                 animate={{ opacity: [1, 0.3, 1] }}
