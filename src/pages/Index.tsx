@@ -27,7 +27,7 @@ export default function Index() {
       setEmail("");
     } catch (error) {
       if (error instanceof ConvexError) {
-        const { message } = error.data as { code: string; message: string };
+        const { message } = error.data as {code: string;message: string;};
         toast.error(message);
       } else {
         toast.error("Something went wrong. Please try again.");
@@ -53,29 +53,29 @@ export default function Index() {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-            className="mb-4"
-          >
+            className="mb-4">
+            
             <div className="flex items-center gap-3">
               <motion.img
                 src={LOGO_URL}
                 alt="OneNexium"
-                className="h-16 w-auto"
+                className="h-16 w-auto bg-slate-50"
                 animate={{ rotateY: [0, 360] }}
                 transition={{
                   duration: 3,
                   delay: 1,
                   repeat: Infinity,
                   repeatDelay: 5,
-                  ease: "easeInOut",
-                }}
-              />
+                  ease: "easeInOut"
+                }} />
+              
               <motion.span
                 className="text-3xl font-bold text-[#0C0F18] dark:text-white tracking-tight"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                OneNexium
+                transition={{ duration: 0.5, delay: 0.4 }}>ONE Nexium
+
+
               </motion.span>
             </div>
           </motion.div>
@@ -84,14 +84,14 @@ export default function Index() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+            transition={{ duration: 0.5, delay: 0.2 }}>
+            
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
               <motion.span
                 className="w-1.5 h-1.5 rounded-full bg-emerald-500"
                 animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
+                transition={{ duration: 2, repeat: Infinity }} />
+              
               Coming Soon
             </span>
           </motion.div>
@@ -105,13 +105,13 @@ export default function Index() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.75 }}
-            className="w-full"
-          >
+            className="w-full">
+            
             <div className="relative group">
               <div
                 className="absolute -inset-[1px] rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-sm"
-                style={{ background: BRAND_GRADIENT }}
-              />
+                style={{ background: BRAND_GRADIENT }} />
+              
               <div className="relative flex items-center bg-white dark:bg-white/10 border border-[#0C0F18]/10 dark:border-white/10 rounded-xl shadow-sm overflow-hidden">
                 <input
                   type="email"
@@ -119,24 +119,24 @@ export default function Index() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
-                  className="flex-1 bg-transparent text-[#0C0F18] dark:text-white placeholder:text-[#0C0F18]/30 dark:placeholder:text-white/30 text-sm px-4 py-3.5 outline-none"
-                />
+                  className="flex-1 bg-transparent text-[#0C0F18] dark:text-white placeholder:text-[#0C0F18]/30 dark:placeholder:text-white/30 text-sm px-4 py-3.5 outline-none" />
+                
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="mr-1.5 px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#3D4EF0]/25 disabled:opacity-60 cursor-pointer shrink-0"
-                  style={{ background: BRAND_GRADIENT }}
-                >
-                  {isSubmitting ? (
-                    <motion.span
-                      animate={{ opacity: [1, 0.4, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                    >
+                  style={{ background: BRAND_GRADIENT }}>
+                  
+                  {isSubmitting ?
+                  <motion.span
+                    animate={{ opacity: [1, 0.4, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}>
+                    
                       Sending...
-                    </motion.span>
-                  ) : (
-                    "Notify Me"
-                  )}
+                    </motion.span> :
+
+                  "Notify Me"
+                  }
                 </button>
               </div>
             </div>
@@ -150,27 +150,27 @@ export default function Index() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="mt-6 flex items-center gap-8"
-          >
+            className="mt-6 flex items-center gap-8">
+            
             {[
-              { label: "Days", value: "14" },
-              { label: "Hours", value: "08" },
-              { label: "Minutes", value: "42" },
-            ].map((item, i) => (
-              <div key={item.label} className="flex flex-col items-center">
+            { label: "Days", value: "14" },
+            { label: "Hours", value: "08" },
+            { label: "Minutes", value: "42" }].
+            map((item, i) =>
+            <div key={item.label} className="flex flex-col items-center">
                 <motion.span
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1 + i * 0.1 }}
-                  className="text-2xl sm:text-3xl font-bold text-[#0C0F18]/80 dark:text-white/80 tabular-nums"
-                >
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1 + i * 0.1 }}
+                className="text-2xl sm:text-3xl font-bold text-[#0C0F18]/80 dark:text-white/80 tabular-nums">
+                
                   {item.value}
                 </motion.span>
                 <span className="text-[10px] uppercase tracking-widest text-[#0C0F18]/30 dark:text-white/30 mt-1">
                   {item.label}
                 </span>
               </div>
-            ))}
+            )}
           </motion.div>
         </div>
 
@@ -179,18 +179,18 @@ export default function Index() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
+          className="absolute bottom-8 left-1/2 -translate-x-1/2">
+          
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-5 h-8 rounded-full border-2 border-[#0C0F18]/15 dark:border-white/15 flex items-start justify-center p-1"
-          >
+            className="w-5 h-8 rounded-full border-2 border-[#0C0F18]/15 dark:border-white/15 flex items-start justify-center p-1">
+            
             <motion.div
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-2 rounded-full bg-[#3D4EF0]"
-            />
+              className="w-1 h-2 rounded-full bg-[#3D4EF0]" />
+            
           </motion.div>
         </motion.div>
       </div>
@@ -203,6 +203,6 @@ export default function Index() {
 
       {/* Footer */}
       <Footer />
-    </div>
-  );
+    </div>);
+
 }
