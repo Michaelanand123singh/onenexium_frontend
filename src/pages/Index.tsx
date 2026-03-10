@@ -59,7 +59,7 @@ export default function Index() {
               <motion.img
                 src={LOGO_URL}
                 alt="OneNexium"
-                className="h-16 w-auto bg-slate-50"
+                className="h-16 w-auto"
                 animate={{ rotateY: [0, 360] }}
                 transition={{
                   duration: 3,
