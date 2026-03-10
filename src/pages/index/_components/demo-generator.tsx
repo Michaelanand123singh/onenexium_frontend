@@ -5,8 +5,6 @@ import {
   Monitor,
   Smartphone,
   Bot,
-  Image,
-  Globe,
   Send,
   Check,
   Code,
@@ -14,32 +12,65 @@ import {
   Database,
   Layers,
   Rocket,
-  ShoppingBag,
   Coffee,
   Briefcase,
+  ShoppingBag,
   GraduationCap,
+  Globe,
+  FileText,
+  Settings,
+  Lock,
+  BarChart3,
+  Image,
+  Users,
+  CreditCard,
+  ChevronLeft,
+  ChevronRight,
+  RotateCcw,
+  PanelLeftClose,
+  Paintbrush,
+  HardDrive,
+  Mail,
+  Bell,
+  Eye,
 } from "lucide-react";
-import { BRAND_GRADIENT, BRAND_COLORS } from "@/lib/brand.ts";
+import { BRAND_GRADIENT, BRAND_COLORS, LOGO_URL } from "@/lib/brand.ts";
+
+// --- Sidebar icons (mimicking Hercules App Builder) ---
+const SIDEBAR_ICONS = [
+  { icon: Bot, label: "AI Editor", active: true },
+  { icon: Eye, label: "Visual Editor" },
+  { icon: Paintbrush, label: "Branding" },
+  { icon: FileText, label: "Files & Media" },
+  { icon: Users, label: "Users & Auth" },
+  { icon: CreditCard, label: "Commerce" },
+  { icon: Mail, label: "Email" },
+  { icon: Bell, label: "Push Notifications" },
+  { icon: Globe, label: "Domains" },
+  { icon: BarChart3, label: "Analytics" },
+  { icon: HardDrive, label: "Database" },
+  { icon: Lock, label: "Secrets" },
+  { icon: Settings, label: "Settings" },
+];
 
 // --- Demo scenarios ---
+type PreviewContent = {
+  navItems: string[];
+  heroTitle: string;
+  heroSubtitle: string;
+  heroEmoji: string;
+  cards: { title: string; desc: string; emoji: string }[];
+  ctaText: string;
+  accentColor: string;
+};
+
 type Scenario = {
   prompt: string;
   label: string;
   icon: typeof Coffee;
   url: string;
-  pages: string[];
   chatMessages: string[];
   preview: PreviewContent;
-};
-
-type PreviewContent = {
-  navItems: string[];
-  heroTitle: string;
-  heroSubtitle: string;
-  heroImage: string;
-  cards: { title: string; desc: string; emoji: string }[];
-  ctaText: string;
-  accentColor: string;
 };
 
 const SCENARIOS: Scenario[] = [
@@ -48,13 +79,12 @@ const SCENARIOS: Scenario[] = [
     label: "Coffee Shop",
     icon: Coffee,
     url: "brewhaus.onenexium.app",
-    pages: ["Home", "Menu", "Order", "About"],
     chatMessages: [
       "Setting up your coffee shop website...",
-      "Creating a warm, inviting hero section with your brand",
-      "Building the menu page with categories and pricing",
-      "Adding online ordering with cart functionality",
-      "Setting up the about page with your story",
+      "Creating a warm, inviting hero section",
+      "Building the menu page with categories",
+      "Adding online ordering with cart",
+      "Setting up the about page",
       "Optimizing for mobile and adding animations",
       "Your coffee shop website is ready!",
     ],
@@ -62,7 +92,7 @@ const SCENARIOS: Scenario[] = [
       navItems: ["Home", "Menu", "Order", "About"],
       heroTitle: "Crafted with Passion",
       heroSubtitle: "Artisan coffee, fresh pastries, and a cozy atmosphere",
-      heroImage: "☕",
+      heroEmoji: "☕",
       cards: [
         { title: "Espresso", desc: "Rich & bold", emoji: "☕" },
         { title: "Pastries", desc: "Freshly baked", emoji: "🥐" },
@@ -73,17 +103,16 @@ const SCENARIOS: Scenario[] = [
     },
   },
   {
-    prompt: "Create a SaaS dashboard for project management with analytics",
+    prompt: "Create a SaaS dashboard for project management",
     label: "SaaS App",
     icon: Briefcase,
     url: "taskflow.onenexium.app",
-    pages: ["Dashboard", "Projects", "Analytics", "Settings"],
     chatMessages: [
       "Initializing your SaaS project...",
       "Creating the dashboard with key metrics",
-      "Building the projects board with drag-and-drop",
-      "Adding analytics charts and data visualization",
-      "Setting up user authentication and roles",
+      "Building the projects board",
+      "Adding analytics and data visualization",
+      "Setting up user authentication",
       "Adding real-time notifications",
       "Your SaaS dashboard is ready!",
     ],
@@ -91,7 +120,7 @@ const SCENARIOS: Scenario[] = [
       navItems: ["Dashboard", "Projects", "Analytics", "Team"],
       heroTitle: "Ship Faster Together",
       heroSubtitle: "Project management that scales with your team",
-      heroImage: "📊",
+      heroEmoji: "📊",
       cards: [
         { title: "12 Projects", desc: "Active", emoji: "📁" },
         { title: "98%", desc: "On track", emoji: "✅" },
@@ -102,16 +131,15 @@ const SCENARIOS: Scenario[] = [
     },
   },
   {
-    prompt: "Make an online store for handmade jewelry with checkout",
+    prompt: "Make an online store for handmade jewelry",
     label: "E-Commerce",
     icon: ShoppingBag,
     url: "luxecraft.onenexium.app",
-    pages: ["Shop", "Collections", "Cart", "About"],
     chatMessages: [
       "Setting up your online store...",
       "Creating a stunning product gallery",
       "Building collection pages with filters",
-      "Adding shopping cart and checkout flow",
+      "Adding shopping cart and checkout",
       "Setting up payment processing",
       "Adding inventory management",
       "Your online store is ready!",
@@ -120,7 +148,7 @@ const SCENARIOS: Scenario[] = [
       navItems: ["Shop", "Collections", "New In", "About"],
       heroTitle: "Handcrafted Elegance",
       heroSubtitle: "Unique jewelry pieces, made with love",
-      heroImage: "💎",
+      heroEmoji: "💎",
       cards: [
         { title: "Rings", desc: "From $49", emoji: "💍" },
         { title: "Necklaces", desc: "From $79", emoji: "📿" },
@@ -131,16 +159,15 @@ const SCENARIOS: Scenario[] = [
     },
   },
   {
-    prompt: "Build an online learning platform with courses and progress tracking",
+    prompt: "Build an online learning platform with courses",
     label: "Education",
     icon: GraduationCap,
     url: "learnhub.onenexium.app",
-    pages: ["Courses", "My Learning", "Community", "Profile"],
     chatMessages: [
       "Creating your learning platform...",
-      "Building the course catalog with search and filters",
-      "Adding video player and lesson navigation",
-      "Setting up progress tracking and certificates",
+      "Building the course catalog",
+      "Adding video player and lessons",
+      "Setting up progress tracking",
       "Building the community forum",
       "Adding gamification and achievements",
       "Your learning platform is ready!",
@@ -149,7 +176,7 @@ const SCENARIOS: Scenario[] = [
       navItems: ["Courses", "My Learning", "Community", "Profile"],
       heroTitle: "Learn Without Limits",
       heroSubtitle: "Master new skills with expert-led courses",
-      heroImage: "🎓",
+      heroEmoji: "🎓",
       cards: [
         { title: "150+ Courses", desc: "All levels", emoji: "📚" },
         { title: "Expert-Led", desc: "Top instructors", emoji: "👨‍🏫" },
@@ -171,19 +198,14 @@ export default function DemoGenerator() {
   const [activeView, setActiveView] = useState<"desktop" | "mobile">("desktop");
   const [chatIndex, setChatIndex] = useState(0);
   const [activeScenario, setActiveScenario] = useState(0);
-  const [activePage, setActivePage] = useState(0);
   const chatRef = useRef<HTMLDivElement>(null);
 
   const scenario = SCENARIOS[activeScenario];
 
-  // Auto-start when in view
   useEffect(() => {
-    if (isInView && phase === "idle") {
-      setPhase("typing");
-    }
+    if (isInView && phase === "idle") setPhase("typing");
   }, [isInView, phase]);
 
-  // Typing animation
   useEffect(() => {
     if (phase !== "typing") return;
     if (typedText.length < scenario.prompt.length) {
@@ -196,20 +218,16 @@ export default function DemoGenerator() {
     return () => clearTimeout(timeout);
   }, [phase, typedText, scenario.prompt]);
 
-  // Chat messages during generation
   useEffect(() => {
     if (phase !== "generating") return;
     if (chatIndex < scenario.chatMessages.length - 1) {
-      const timeout = setTimeout(() => {
-        setChatIndex((i) => i + 1);
-      }, 900);
+      const timeout = setTimeout(() => setChatIndex((i) => i + 1), 900);
       return () => clearTimeout(timeout);
     }
     const timeout = setTimeout(() => setPhase("done"), 600);
     return () => clearTimeout(timeout);
   }, [phase, chatIndex, scenario.chatMessages.length]);
 
-  // Auto-scroll chat
   useEffect(() => {
     chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
   }, [chatIndex]);
@@ -219,7 +237,6 @@ export default function DemoGenerator() {
     setPhase("idle");
     setTypedText("");
     setChatIndex(0);
-    setActivePage(0);
     setTimeout(() => setPhase("typing"), 200);
   };
 
@@ -227,7 +244,6 @@ export default function DemoGenerator() {
     setPhase("idle");
     setTypedText("");
     setChatIndex(0);
-    setActivePage(0);
     setTimeout(() => setPhase("typing"), 200);
   };
 
@@ -235,9 +251,9 @@ export default function DemoGenerator() {
   const isDone = phase === "done";
   const progress = isBuilding
     ? Math.round(((chatIndex + 1) / scenario.chatMessages.length) * 100)
-    : isDone
-      ? 100
-      : 0;
+    : isDone ? 100 : 0;
+
+  const stepIcons = [Layers, Palette, Code, Database, Rocket, Sparkles, Check];
 
   return (
     <section ref={ref} className="relative py-24 md:py-32 px-6 overflow-hidden">
@@ -284,7 +300,7 @@ export default function DemoGenerator() {
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-all duration-200 border ${
                 i === activeScenario
                   ? "bg-[#3D4EF0]/10 text-[#3D4EF0] border-[#3D4EF0]/25"
-                  : "bg-foreground/3 text-foreground/50 border-foreground/8 hover:border-foreground/15 hover:text-foreground/70"
+                  : "bg-foreground/3 text-foreground/50 border-foreground/8 hover:border-foreground/15"
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -294,7 +310,7 @@ export default function DemoGenerator() {
         })}
       </motion.div>
 
-      {/* Main demo container */}
+      {/* ===== HERCULES-STYLE APP BUILDER MOCKUP ===== */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -302,121 +318,99 @@ export default function DemoGenerator() {
         transition={{ duration: 0.7, delay: 0.2 }}
         className="max-w-6xl mx-auto"
       >
-        <div className="rounded-2xl border border-foreground/10 overflow-hidden bg-background shadow-xl shadow-foreground/3">
-          {/* Prompt input bar */}
-          <div className="p-5 border-b border-foreground/8 bg-foreground/[0.02]">
+        <div className="rounded-2xl border border-foreground/10 overflow-hidden bg-background shadow-2xl shadow-foreground/5">
+          {/* ── Top bar (mimicking app header) ── */}
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-foreground/8 bg-foreground/[0.02]">
             <div className="flex items-center gap-3">
-              <div className="flex-1 relative">
-                <div className="bg-background border border-foreground/10 rounded-xl px-4 py-3.5 text-sm min-h-[48px] flex items-center gap-2">
-                  <Bot className="w-4 h-4 text-[#3D4EF0] shrink-0" />
-                  <span className="text-foreground">
-                    {typedText}
-                    {phase === "typing" && (
-                      <motion.span
-                        animate={{ opacity: [1, 0] }}
-                        transition={{ duration: 0.5, repeat: Infinity }}
-                        className="inline-block w-0.5 h-4 bg-[#3D4EF0] ml-0.5 align-middle"
-                      />
-                    )}
-                    {phase === "idle" && (
-                      <span className="text-foreground/25">Describe the website you want to build...</span>
-                    )}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button className="p-2.5 rounded-xl border border-foreground/8 text-foreground/30 hover:text-foreground/50 transition-colors cursor-pointer">
-                  <Image className="w-4 h-4" />
-                </button>
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={isDone ? handleReplay : undefined}
-                  className="px-5 py-2.5 rounded-xl text-white font-semibold text-sm cursor-pointer shrink-0 flex items-center gap-2"
-                  style={{ background: BRAND_GRADIENT }}
-                >
-                  {isDone ? (
-                    <>
-                      <Rocket className="w-3.5 h-3.5" /> Try Again
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-3.5 h-3.5" /> Generate
-                    </>
-                  )}
-                </motion.button>
-              </div>
+              <img src={LOGO_URL} alt="OneNexium" className="h-5 w-auto" />
+              <span className="text-xs font-semibold text-foreground/70 hidden sm:inline">
+                OneNexium
+              </span>
             </div>
-
-            {/* Progress bar */}
-            <AnimatePresence>
-              {(isBuilding || isDone) && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mt-3"
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-foreground/40">
-                      {isDone ? "Build complete" : "Building your website..."}
-                    </span>
-                    <span className="text-xs font-medium text-[#3D4EF0]">{progress}%</span>
-                  </div>
-                  <div className="h-1.5 bg-foreground/5 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full"
-                      style={{ background: BRAND_GRADIENT }}
-                      initial={{ width: "0%" }}
-                      animate={{ width: `${progress}%` }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <span className="text-[10px] text-foreground/30 font-medium">
+              {scenario.label} Website
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-foreground/30 bg-foreground/5 px-2 py-0.5 rounded">
+                v1
+              </span>
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                className="px-3 py-1 rounded-lg text-[10px] font-semibold text-white"
+                style={{ background: BRAND_GRADIENT }}
+              >
+                Publish
+              </motion.button>
+            </div>
           </div>
 
-          {/* Two-column: AI chat + Preview */}
-          <div className="flex flex-col lg:flex-row min-h-[480px]">
-            {/* AI Chat sidebar */}
-            <div className="lg:w-80 border-b lg:border-b-0 lg:border-r border-foreground/8 flex flex-col">
-              <div className="px-4 py-3 border-b border-foreground/8 flex items-center gap-2">
-                <div
-                  className="w-6 h-6 rounded-lg flex items-center justify-center"
-                  style={{ background: BRAND_GRADIENT }}
-                >
-                  <Bot className="w-3.5 h-3.5 text-white" />
-                </div>
-                <span className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">
-                  AI Assistant
-                </span>
-                {isBuilding && (
+          {/* ── Main 3-panel layout ── */}
+          <div className="flex min-h-[480px]">
+            {/* LEFT: Icon sidebar */}
+            <div className="hidden md:flex flex-col w-12 border-r border-foreground/8 bg-foreground/[0.01] py-2 items-center gap-1">
+              {SIDEBAR_ICONS.map((item, i) => {
+                const Icon = item.icon;
+                return (
                   <motion.div
-                    animate={{ opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="ml-auto w-2 h-2 rounded-full bg-[#3D4EF0]"
-                  />
-                )}
+                    key={item.label}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + i * 0.03 }}
+                    title={item.label}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${
+                      item.active
+                        ? "bg-[#3D4EF0]/10 text-[#3D4EF0]"
+                        : "text-foreground/25 hover:text-foreground/50 hover:bg-foreground/5"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* CENTER: Chat panel */}
+            <div className="w-full md:w-80 lg:w-[340px] border-b md:border-b-0 md:border-r border-foreground/8 flex flex-col">
+              {/* Chat header */}
+              <div className="px-4 py-2.5 border-b border-foreground/8 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <PanelLeftClose className="w-3.5 h-3.5 text-foreground/25" />
+                  <span className="text-xs font-semibold text-foreground/60">
+                    {scenario.label} Website
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {isBuilding && (
+                    <motion.div
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="w-2 h-2 rounded-full bg-[#3D4EF0]"
+                    />
+                  )}
+                </div>
               </div>
 
-              <div ref={chatRef} className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[380px]">
+              {/* Chat messages */}
+              <div ref={chatRef} className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[350px]">
                 {/* User message */}
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: phase !== "idle" ? 1 : 0 }}
-                  className="flex justify-end"
-                >
-                  <div className="bg-[#3D4EF0] text-white rounded-xl rounded-tr-sm px-3.5 py-2.5 text-xs max-w-[90%] leading-relaxed">
-                    {scenario.prompt}
-                  </div>
-                </motion.div>
+                <AnimatePresence>
+                  {phase !== "idle" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex justify-end"
+                    >
+                      <div className="bg-[#3D4EF0] text-white rounded-2xl rounded-tr-sm px-3.5 py-2.5 text-xs max-w-[85%] leading-relaxed">
+                        {scenario.prompt}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* AI responses */}
                 {(isBuilding || isDone) &&
                   scenario.chatMessages.slice(0, chatIndex + 1).map((msg, i) => {
                     const isLast = i === chatIndex && isBuilding;
-                    const stepIcons = [Layers, Palette, Code, Database, Rocket, Sparkles, Check];
                     const StepIcon = stepIcons[i % stepIcons.length];
                     return (
                       <motion.div
@@ -424,12 +418,12 @@ export default function DemoGenerator() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="flex gap-2"
+                        className="flex gap-2.5"
                       >
-                        <div className="w-5 h-5 rounded-md bg-foreground/5 flex items-center justify-center shrink-0 mt-0.5">
+                        <div className="w-6 h-6 rounded-lg bg-foreground/5 flex items-center justify-center shrink-0 mt-0.5">
                           <StepIcon className="w-3 h-3 text-[#3D4EF0]" />
                         </div>
-                        <div className="bg-foreground/[0.04] rounded-xl rounded-tl-sm px-3.5 py-2.5 text-xs text-foreground/70 leading-relaxed">
+                        <div className="bg-foreground/[0.03] rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-xs text-foreground/60 leading-relaxed">
                           {msg}
                           {isLast && (
                             <motion.span
@@ -445,18 +439,18 @@ export default function DemoGenerator() {
                     );
                   })}
 
-                {/* Success message */}
+                {/* Deploy success */}
                 <AnimatePresence>
                   {isDone && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="flex gap-2"
+                      className="flex gap-2.5"
                     >
-                      <div className="w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 text-emerald-500" />
                       </div>
-                      <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-xl rounded-tl-sm px-3.5 py-2.5 text-xs text-emerald-600 leading-relaxed">
+                      <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-xs text-emerald-600 leading-relaxed">
                         Website deployed to{" "}
                         <span className="font-semibold">{scenario.url}</span>
                       </div>
@@ -464,88 +458,136 @@ export default function DemoGenerator() {
                   )}
                 </AnimatePresence>
               </div>
+
+              {/* Chat input */}
+              <div className="p-3 border-t border-foreground/8">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 bg-foreground/[0.03] border border-foreground/8 rounded-xl px-3 py-2.5 flex items-center gap-2">
+                    <span className="text-xs text-foreground/70 flex-1 truncate">
+                      {typedText || (
+                        <span className="text-foreground/25">Type your message...</span>
+                      )}
+                      {phase === "typing" && (
+                        <motion.span
+                          animate={{ opacity: [1, 0] }}
+                          transition={{ duration: 0.5, repeat: Infinity }}
+                          className="inline-block w-0.5 h-3.5 bg-[#3D4EF0] ml-0.5 align-middle"
+                        />
+                      )}
+                    </span>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={isDone ? handleReplay : undefined}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 cursor-pointer"
+                    style={{ background: BRAND_GRADIENT }}
+                  >
+                    {isDone ? <RotateCcw className="w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />}
+                  </motion.button>
+                </div>
+                {/* Progress bar */}
+                <AnimatePresence>
+                  {(isBuilding || isDone) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-2"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] text-foreground/30">
+                          {isDone ? "Build complete" : "Building..."}
+                        </span>
+                        <span className="text-[10px] font-medium text-[#3D4EF0]">{progress}%</span>
+                      </div>
+                      <div className="h-1 bg-foreground/5 rounded-full overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full"
+                          style={{ background: BRAND_GRADIENT }}
+                          initial={{ width: "0%" }}
+                          animate={{ width: `${progress}%` }}
+                          transition={{ duration: 0.4 }}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
-            {/* Preview panel */}
-            <div className="flex-1 flex flex-col">
+            {/* RIGHT: Preview panel */}
+            <div className="flex-1 flex flex-col bg-foreground/[0.01]">
               {/* Preview toolbar */}
-              <div className="px-4 py-3 border-b border-foreground/8 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5 text-foreground/30" />
-                  <span className="text-xs text-foreground/40 font-medium">{scenario.url}</span>
+              <div className="px-3 py-2 border-b border-foreground/8 flex items-center gap-3">
+                <span className="text-[10px] font-semibold text-foreground/40">Preview</span>
+                {/* Browser navigation */}
+                <div className="flex items-center gap-1 text-foreground/20">
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <ChevronRight className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-3 h-3" />
                 </div>
-                {/* Pages tabs */}
-                <div className="hidden sm:flex items-center gap-1">
-                  {scenario.pages.map((page, i) => (
-                    <button
-                      key={page}
-                      onClick={() => setActivePage(i)}
-                      className={`px-2.5 py-1 rounded-md text-[10px] font-medium cursor-pointer transition-all ${
-                        i === activePage
-                          ? "bg-[#3D4EF0]/10 text-[#3D4EF0]"
-                          : "text-foreground/30 hover:text-foreground/50"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
+                {/* URL bar */}
+                <div className="flex-1 bg-foreground/[0.04] border border-foreground/6 rounded-lg px-2.5 py-1 flex items-center gap-1.5">
+                  <Globe className="w-3 h-3 text-foreground/20" />
+                  <span className="text-[10px] text-foreground/30 truncate">/{""}</span>
                 </div>
+                <span className="text-[9px] text-foreground/20 hidden lg:inline">Dev Machine</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 hidden lg:block" />
                 {/* View toggle */}
-                <div className="flex gap-1 bg-foreground/5 rounded-lg p-0.5">
+                <div className="flex gap-0.5 bg-foreground/5 rounded-md p-0.5">
                   <button
                     onClick={() => setActiveView("desktop")}
-                    className={`p-1.5 rounded-md cursor-pointer transition-colors ${
-                      activeView === "desktop" ? "bg-[#3D4EF0] text-white" : "text-foreground/30"
+                    className={`p-1 rounded cursor-pointer transition-colors ${
+                      activeView === "desktop" ? "bg-[#3D4EF0] text-white" : "text-foreground/25"
                     }`}
                   >
-                    <Monitor className="w-3.5 h-3.5" />
+                    <Monitor className="w-3 h-3" />
                   </button>
                   <button
                     onClick={() => setActiveView("mobile")}
-                    className={`p-1.5 rounded-md cursor-pointer transition-colors ${
-                      activeView === "mobile" ? "bg-[#3D4EF0] text-white" : "text-foreground/30"
+                    className={`p-1 rounded cursor-pointer transition-colors ${
+                      activeView === "mobile" ? "bg-[#3D4EF0] text-white" : "text-foreground/25"
                     }`}
                   >
-                    <Smartphone className="w-3.5 h-3.5" />
+                    <Smartphone className="w-3 h-3" />
                   </button>
                 </div>
               </div>
 
               {/* Website preview */}
-              <div className="flex-1 p-4 bg-foreground/[0.015] overflow-hidden">
+              <div className="flex-1 p-3 overflow-hidden">
                 <motion.div
-                  animate={{ opacity: isDone ? 1 : isBuilding ? 0.4 : 0.1 }}
+                  animate={{ opacity: isDone ? 1 : isBuilding ? 0.35 : 0.08 }}
                   transition={{ duration: 0.5 }}
-                  className={`h-full border border-foreground/8 rounded-xl overflow-hidden bg-background ${
-                    activeView === "mobile" ? "max-w-[300px] mx-auto" : "w-full"
+                  className={`h-full border border-foreground/6 rounded-xl overflow-hidden bg-background ${
+                    activeView === "mobile" ? "max-w-[280px] mx-auto" : "w-full"
                   }`}
                 >
                   {/* Browser chrome */}
-                  <div className="flex items-center gap-1.5 px-3 py-2 bg-foreground/[0.03] border-b border-foreground/8">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-foreground/[0.025] border-b border-foreground/6">
                     <div className="w-2 h-2 rounded-full bg-red-400/50" />
                     <div className="w-2 h-2 rounded-full bg-yellow-400/50" />
                     <div className="w-2 h-2 rounded-full bg-green-400/50" />
-                    <div className="ml-2 flex-1 bg-foreground/5 rounded-md px-2.5 py-0.5 text-[9px] text-foreground/25 flex items-center gap-1">
-                      <Globe className="w-2.5 h-2.5" />
+                    <div className="ml-2 flex-1 bg-foreground/5 rounded px-2 py-0.5 text-[8px] text-foreground/20 flex items-center gap-1">
+                      <Globe className="w-2 h-2" />
                       {scenario.url}
                     </div>
                   </div>
 
-                  {/* Realistic website content */}
+                  {/* Website content */}
                   <div className="overflow-y-auto max-h-[350px]">
                     {/* Nav */}
                     <motion.div
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: isDone ? 1 : 0.15, y: isDone ? 0 : -8 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: isDone ? 1 : 0.12 }}
                       transition={{ duration: 0.4, delay: 0.1 }}
-                      className="px-4 py-2.5 flex items-center justify-between border-b border-foreground/5"
+                      className="px-4 py-2 flex items-center justify-between border-b border-foreground/5"
                     >
                       <span className="text-[10px] font-bold text-foreground/70">{scenario.label}</span>
                       <div className="flex gap-3">
                         {scenario.preview.navItems.map((item) => (
-                          <span key={item} className="text-[9px] text-foreground/35 hover:text-foreground/60 cursor-pointer">
-                            {item}
-                          </span>
+                          <span key={item} className="text-[8px] text-foreground/30">{item}</span>
                         ))}
                       </div>
                     </motion.div>
@@ -553,9 +595,9 @@ export default function DemoGenerator() {
                     {/* Hero */}
                     <motion.div
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: isDone ? 1 : 0.1 }}
+                      animate={{ opacity: isDone ? 1 : 0.08 }}
                       transition={{ duration: 0.5, delay: 0.2 }}
-                      className="px-5 py-8 text-center"
+                      className="px-5 py-7 text-center"
                       style={{
                         background: isDone
                           ? `linear-gradient(135deg, ${scenario.preview.accentColor}08, ${BRAND_COLORS.primary}05)`
@@ -566,13 +608,13 @@ export default function DemoGenerator() {
                         initial={{ scale: 0 }}
                         animate={{ scale: isDone ? 1 : 0 }}
                         transition={{ duration: 0.5, delay: 0.3, type: "spring" }}
-                        className="text-3xl mb-3"
+                        className="text-3xl mb-2"
                       >
-                        {scenario.preview.heroImage}
+                        {scenario.preview.heroEmoji}
                       </motion.div>
                       <motion.h3
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: isDone ? 1 : 0, y: isDone ? 0 : 8 }}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: isDone ? 1 : 0, y: isDone ? 0 : 6 }}
                         transition={{ duration: 0.4, delay: 0.35 }}
                         className="text-sm font-bold text-foreground/80 mb-1"
                       >
@@ -582,7 +624,7 @@ export default function DemoGenerator() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: isDone ? 1 : 0 }}
                         transition={{ duration: 0.4, delay: 0.4 }}
-                        className="text-[10px] text-foreground/40 mb-3 max-w-[200px] mx-auto"
+                        className="text-[9px] text-foreground/40 mb-3 max-w-[180px] mx-auto"
                       >
                         {scenario.preview.heroSubtitle}
                       </motion.p>
@@ -590,30 +632,26 @@ export default function DemoGenerator() {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: isDone ? 1 : 0, scale: isDone ? 1 : 0.8 }}
                         transition={{ duration: 0.3, delay: 0.5 }}
-                        className="px-3 py-1 rounded-md text-[9px] font-semibold text-white"
+                        className="px-3 py-1 rounded text-[8px] font-semibold text-white"
                         style={{ background: scenario.preview.accentColor }}
                       >
                         {scenario.preview.ctaText}
                       </motion.button>
                     </motion.div>
 
-                    {/* Cards grid */}
+                    {/* Cards */}
                     <div className={`px-4 pb-4 grid gap-2 ${activeView === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
                       {scenario.preview.cards.map((card, i) => (
                         <motion.div
                           key={card.title}
-                          initial={{ opacity: 0, y: 16, scale: 0.9 }}
-                          animate={{
-                            opacity: isDone ? 1 : 0.08,
-                            y: isDone ? 0 : 16,
-                            scale: isDone ? 1 : 0.9,
-                          }}
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: isDone ? 1 : 0.06, y: isDone ? 0 : 12 }}
                           transition={{ duration: 0.4, delay: isDone ? 0.5 + i * 0.1 : 0 }}
-                          className="border border-foreground/8 rounded-lg p-3 text-center bg-foreground/[0.02] hover:bg-foreground/[0.04] transition-colors"
+                          className="border border-foreground/6 rounded-lg p-2.5 text-center"
                         >
-                          <span className="text-lg block mb-1">{card.emoji}</span>
-                          <p className="text-[10px] font-semibold text-foreground/70">{card.title}</p>
-                          <p className="text-[8px] text-foreground/35">{card.desc}</p>
+                          <span className="text-base block mb-1">{card.emoji}</span>
+                          <p className="text-[9px] font-semibold text-foreground/70">{card.title}</p>
+                          <p className="text-[7px] text-foreground/30">{card.desc}</p>
                         </motion.div>
                       ))}
                     </div>
@@ -621,37 +659,22 @@ export default function DemoGenerator() {
                     {/* Footer */}
                     <motion.div
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: isDone ? 1 : 0.05 }}
+                      animate={{ opacity: isDone ? 1 : 0.04 }}
                       transition={{ duration: 0.4, delay: 0.8 }}
-                      className="px-4 py-3 border-t border-foreground/5 text-center"
+                      className="px-4 py-2 border-t border-foreground/5 text-center"
                     >
-                      <p className="text-[8px] text-foreground/20">
+                      <p className="text-[7px] text-foreground/15">
                         Built with OneNexium &bull; {new Date().getFullYear()}
                       </p>
                     </motion.div>
                   </div>
                 </motion.div>
+              </div>
 
-                {/* Shimmer overlay during build */}
-                <AnimatePresence>
-                  {isBuilding && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="absolute inset-0 pointer-events-none"
-                    >
-                      <motion.div
-                        animate={{ x: ["-100%", "200%"] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-y-0 w-1/3"
-                        style={{
-                          background: `linear-gradient(90deg, transparent, ${BRAND_COLORS.primary}08, transparent)`,
-                        }}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+              {/* Console bar at bottom */}
+              <div className="px-3 py-1.5 border-t border-foreground/8 flex items-center gap-2">
+                <Image className="w-3 h-3 text-foreground/20" />
+                <span className="text-[9px] text-foreground/20">Console</span>
               </div>
             </div>
           </div>
