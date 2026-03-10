@@ -99,15 +99,7 @@ export default function Index() {
 
           {/* Headline – removed */}
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.55 }}
-            className="mt-5 text-base sm:text-lg text-[#0C0F18]/50 dark:text-white/50 max-w-md leading-relaxed"
-          >
-            {"We're crafting a new experience. Be the first to know when we launch."}
-          </motion.p>
+          {/* Subtitle – removed */}
 
           {/* Email form */}
           <motion.form
