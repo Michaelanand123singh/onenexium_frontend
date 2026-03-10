@@ -9,6 +9,9 @@ import AnimatedBackground from "@/components/animated-background.tsx";
 import DemoGenerator from "./index/_components/demo-generator.tsx";
 import HowItWorks from "./index/_components/how-it-works.tsx";
 import AIPromptExamples from "./index/_components/ai-prompt-examples.tsx";
+import TemplatesGallery from "./index/_components/templates-gallery.tsx";
+import PromptToProduct from "./index/_components/prompt-to-product.tsx";
+import MadeWithOneNexium from "./index/_components/made-with-onenexium.tsx";
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -223,6 +226,9 @@ export default function Index() {
       <DemoGenerator />
       <HowItWorks />
       <AIPromptExamples />
+      <TemplatesGallery />
+      <PromptToProduct />
+      <MadeWithOneNexium />
 
       {/* Footer */}
       <div className="relative py-12 text-center">
