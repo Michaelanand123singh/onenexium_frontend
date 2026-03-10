@@ -48,7 +48,7 @@ export default function Index() {
           style={{ backgroundImage: "url('https://cdn.hercules.app/file_0dHhULU3qDkP1J5IfcVqepVa')" }}
         />
         {/* Fade overlay to blend with background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/40 via-black/60 to-background pointer-events-none" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/40 via-background/60 to-background pointer-events-none" />
 
         {/* Shared animated background */}
         <AnimatedBackground />
