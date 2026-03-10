@@ -4,19 +4,13 @@ import { toast } from "sonner";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { ConvexError } from "convex/values";
-import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/use-auth.ts";
-import { Loader2 } from "lucide-react";
 import { BRAND_GRADIENT, LOGO_URL } from "@/lib/brand.ts";
 import AnimatedBackground from "@/components/animated-background.tsx";
-import AuthenticatedNav from "./index/_components/authenticated-nav.tsx";
 
 export default function Index() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const joinWaitlist = useMutation(api.waitlist.join);
-  const navigate = useNavigate();
 
   const handleNotify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,30 +34,6 @@ export default function Index() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-background">
-      {/* Top-right auth area */}
-      <div className="absolute top-6 right-6 z-20">
-        <Unauthenticated>
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <button
-              onClick={() => navigate("/login")}
-              className="px-4 py-2 rounded-lg text-sm font-semibold text-white cursor-pointer hover:shadow-lg hover:shadow-[#3D4EF0]/25 transition-all"
-              style={{ background: BRAND_GRADIENT }}
-            >
-              Sign In
-            </button>
-          </motion.div>
-        </Unauthenticated>
-        <AuthLoading>
-          <Loader2 className="w-5 h-5 animate-spin text-[#3D4EF0]" />
-        </AuthLoading>
-      </div>
-      <Authenticated>
-        <AuthenticatedNav />
-      </Authenticated>
-
       {/* Shared animated background */}
       <AnimatedBackground />
 
