@@ -98,15 +98,43 @@ export default function Index() {
           </motion.div>
         </div>
 
-        {/* Content – Bottom: Email form & Countdown */}
+        {/* Content – Bottom: Countdown & Email form */}
         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center px-6 w-full max-w-md text-center">
+          {/* Countdown */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1 }}
+            className="flex items-center gap-8">
+            
+            {[
+            { label: "Days", value: "14" },
+            { label: "Hours", value: "08" },
+            { label: "Minutes", value: "42" }].
+            map((item, i) =>
+            <div key={item.label} className="flex flex-col items-center">
+                <motion.span
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1 + i * 0.1 }}
+                className="text-2xl sm:text-3xl font-bold text-[#0C0F18]/80 dark:text-white/80 tabular-nums">
+                
+                  {item.value}
+                </motion.span>
+                <span className="text-[10px] uppercase tracking-widest text-[#0C0F18]/30 dark:text-white/30 mt-1">
+                  {item.label}
+                </span>
+              </div>
+            )}
+          </motion.div>
+
           {/* Email form */}
           <motion.form
             onSubmit={handleNotify}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.75 }}
-            className="w-full">
+            className="w-full mt-6">
             
             <div className="relative group">
               <div
@@ -145,34 +173,6 @@ export default function Index() {
               No spam, ever. We{"'"}ll only email you once when we go live.
             </p>
           </motion.form>
-
-          {/* Countdown */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="mt-6 flex items-center gap-8">
-            
-            {[
-            { label: "Days", value: "14" },
-            { label: "Hours", value: "08" },
-            { label: "Minutes", value: "42" }].
-            map((item, i) =>
-            <div key={item.label} className="flex flex-col items-center">
-                <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1 + i * 0.1 }}
-                className="text-2xl sm:text-3xl font-bold text-[#0C0F18]/80 dark:text-white/80 tabular-nums">
-                
-                  {item.value}
-                </motion.span>
-                <span className="text-[10px] uppercase tracking-widest text-[#0C0F18]/30 dark:text-white/30 mt-1">
-                  {item.label}
-                </span>
-              </div>
-            )}
-          </motion.div>
         </div>
 
         {/* Scroll indicator */}
