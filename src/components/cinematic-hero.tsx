@@ -135,7 +135,7 @@ function PhaseParticles({ count = 600 }: { count?: number }) {
         <bufferAttribute attach="attributes-position" args={[positions.slice(), 3]} />
         <bufferAttribute attach="attributes-color" args={[colors.slice(), 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.06} vertexColors transparent opacity={0.85} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} />
+      <pointsMaterial size={0.06} vertexColors transparent opacity={0.75} sizeAttenuation depthWrite={false} />
     </points>
   );
 }
@@ -270,10 +270,10 @@ function AppWireframe() {
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.3} />
-      <pointLight position={[0, 0, 5]} intensity={3} color="#3D4EF0" distance={25} />
-      <pointLight position={[-4, 3, 2]} intensity={1.5} color="#23A0FF" distance={20} />
-      <pointLight position={[4, -2, 3]} intensity={1} color="#6366f1" distance={18} />
+      <ambientLight intensity={0.6} />
+      <pointLight position={[0, 0, 5]} intensity={2} color="#3D4EF0" distance={25} />
+      <pointLight position={[-4, 3, 2]} intensity={1.2} color="#23A0FF" distance={20} />
+      <pointLight position={[4, -2, 3]} intensity={0.8} color="#6366f1" distance={18} />
       <PhaseParticles count={600} />
       <EnergyCore />
       <PulseRings />
@@ -289,9 +289,9 @@ const CODE_LINES = [
   { text: "export default function Dashboard() {", cls: "text-[#6366f1]" },
   { text: "  const data = useQuery(api.analytics);", cls: "text-[#23A0FF]" },
   { text: "  const charts = processMetrics(data);", cls: "text-[#10B981]" },
-  { text: "  return <DashboardLayout>", cls: "text-white/70" },
+  { text: "  return <DashboardLayout>", cls: "text-[#0C0F18]/70" },
   { text: "    <MetricCards data={charts} />", cls: "text-[#23A0FF]" },
-  { text: "  </DashboardLayout>;", cls: "text-white/70" },
+  { text: "  </DashboardLayout>;", cls: "text-[#0C0F18]/70" },
   { text: "}", cls: "text-[#6366f1]" },
 ];
 
@@ -317,15 +317,15 @@ function PhaseOverlay() {
       <AnimatePresence mode="wait">
         {phase === "prompt" && (
           <motion.div key="prompt" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.5 }}
-            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-8 py-5 max-w-lg">
+            className="bg-white/80 backdrop-blur-md border border-[#0C0F18]/10 rounded-2xl px-8 py-5 max-w-lg shadow-lg shadow-[#3D4EF0]/5">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-              <span className="ml-2 text-[10px] text-white/25 font-mono">prompt.ai</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+              <span className="ml-2 text-[10px] text-[#0C0F18]/30 font-mono">prompt.ai</span>
             </div>
-            <p className="text-white/80 font-mono text-sm leading-relaxed">
-              <span className="text-[#23A0FF]">{">"} </span>
+            <p className="text-[#0C0F18]/80 font-mono text-sm leading-relaxed">
+              <span className="text-[#3D4EF0]">{">"} </span>
               {typed}
               <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} className="inline-block w-1.5 h-4 bg-[#3D4EF0] ml-0.5 -mb-0.5 rounded-sm" />
             </p>
@@ -337,13 +337,13 @@ function PhaseOverlay() {
             className="flex flex-col items-center gap-4">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               className="w-10 h-10 border-2 border-[#3D4EF0] border-t-transparent rounded-full" />
-            <p className="text-white/50 text-sm font-mono tracking-wider uppercase">AI is thinking...</p>
+            <p className="text-[#0C0F18]/50 text-sm font-mono tracking-wider uppercase">AI is thinking...</p>
           </motion.div>
         )}
 
         {phase === "code" && (
           <motion.div key="code" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.4 }}
-            className="bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl px-6 py-4 max-w-md font-mono text-xs leading-relaxed">
+            className="bg-white/80 backdrop-blur-md border border-[#0C0F18]/10 rounded-2xl px-6 py-4 max-w-md font-mono text-xs leading-relaxed shadow-lg shadow-[#3D4EF0]/5">
             {CODE_LINES.map((line, i) => (
               <motion.p key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.12 }} className={line.cls}>
                 {line.text}
@@ -355,7 +355,7 @@ function PhaseOverlay() {
         {phase === "assemble" && (
           <motion.div key="assemble" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
             className="flex flex-col items-center gap-3">
-            <motion.p className="text-white/60 text-sm font-mono tracking-wider uppercase" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity }}>
+            <motion.p className="text-[#0C0F18]/50 text-sm font-mono tracking-wider uppercase" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }}>
               Assembling your app...
             </motion.p>
           </motion.div>

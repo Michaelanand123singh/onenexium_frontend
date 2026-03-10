@@ -40,7 +40,7 @@ export default function Index() {
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden bg-background">
       {/* ── HERO SECTION ── */}
-      <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#060818]">
+      <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#F5F8FF]">
         {/* Cinematic Prompt → Code → App animation */}
         <CinematicHero />
         {/* Fade overlay to blend with page below */}
@@ -70,7 +70,7 @@ export default function Index() {
                 }}
               />
               <motion.span
-                className="text-3xl font-bold text-white tracking-tight"
+                className="text-3xl font-bold text-[#0C0F18] tracking-tight"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
@@ -87,9 +87,9 @@ export default function Index() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mb-6"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-emerald-400/30 bg-emerald-400/10 text-emerald-400">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
               <motion.span
-                className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+                className="w-1.5 h-1.5 rounded-full bg-emerald-500"
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
@@ -102,7 +102,7 @@ export default function Index() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.35 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight tracking-tight"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#0C0F18] leading-tight tracking-tight"
           >
             <span className="whitespace-nowrap">
               Something{" "}
@@ -122,7 +122,7 @@ export default function Index() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.55 }}
-            className="mt-5 text-base sm:text-lg text-white/50 max-w-md leading-relaxed"
+            className="mt-5 text-base sm:text-lg text-[#0C0F18]/50 max-w-md leading-relaxed"
           >
             {"We're crafting a new experience. Be the first to know when we launch."}
           </motion.p>
@@ -140,14 +140,14 @@ export default function Index() {
                 className="absolute -inset-[1px] rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-sm"
                 style={{ background: BRAND_GRADIENT }}
               />
-              <div className="relative flex items-center bg-white/5 border border-white/10 rounded-xl shadow-sm overflow-hidden backdrop-blur-sm">
+              <div className="relative flex items-center bg-white border border-[#0C0F18]/10 rounded-xl shadow-sm overflow-hidden">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
-                  className="flex-1 bg-transparent text-white placeholder:text-white/30 text-sm px-4 py-3.5 outline-none"
+                  className="flex-1 bg-transparent text-[#0C0F18] placeholder:text-[#0C0F18]/30 text-sm px-4 py-3.5 outline-none"
                 />
                 <button
                   type="submit"
@@ -168,7 +168,7 @@ export default function Index() {
                 </button>
               </div>
             </div>
-            <p className="mt-3 text-xs text-white/30">
+            <p className="mt-3 text-xs text-[#0C0F18]/30">
               No spam, ever. We{"'"}ll only email you once when we go live.
             </p>
           </motion.form>
@@ -190,11 +190,11 @@ export default function Index() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.1 + i * 0.1 }}
-                  className="text-2xl sm:text-3xl font-bold text-white/80 tabular-nums"
+                  className="text-2xl sm:text-3xl font-bold text-[#0C0F18]/80 tabular-nums"
                 >
                   {item.value}
                 </motion.span>
-                <span className="text-[10px] uppercase tracking-widest text-white/30 mt-1">
+                <span className="text-[10px] uppercase tracking-widest text-[#0C0F18]/30 mt-1">
                   {item.label}
                 </span>
               </div>
@@ -212,7 +212,7 @@ export default function Index() {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-5 h-8 rounded-full border-2 border-white/20 flex items-start justify-center p-1"
+            className="w-5 h-8 rounded-full border-2 border-[#0C0F18]/15 flex items-start justify-center p-1"
           >
             <motion.div
               animate={{ opacity: [1, 0.3, 1] }}
