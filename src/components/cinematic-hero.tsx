@@ -360,12 +360,12 @@ const CODE_LINES = [
   { text: "export default function Dashboard() {", cls: "text-[#6366f1]" },
   { text: "  const data = useQuery(api.analytics);", cls: "text-[#3D4EF0]" },
   { text: "  const metrics = processData(data);", cls: "text-[#10B981]" },
-  { text: "  return (", cls: "text-[#0C0F18]/50" },
+  { text: "  return (", cls: "text-[#0C0F18]/50 dark:text-white/50" },
   { text: "    <Layout sidebar={<NavMenu />}>", cls: "text-[#3D4EF0]" },
   { text: "      <MetricCards data={metrics} />", cls: "text-[#14b8a6]" },
   { text: "      <RevenueChart data={metrics} />", cls: "text-[#10B981]" },
-  { text: "    </Layout>", cls: "text-[#0C0F18]/50" },
-  { text: "  );", cls: "text-[#0C0F18]/50" },
+  { text: "    </Layout>", cls: "text-[#0C0F18]/50 dark:text-white/50" },
+  { text: "  );", cls: "text-[#0C0F18]/50 dark:text-white/50" },
   { text: "}", cls: "text-[#6366f1]" },
 ];
 
@@ -396,15 +396,15 @@ function PhaseOverlay() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, filter: "blur(8px)" }}
             transition={{ duration: 0.6 }}
-            className="bg-white/75 backdrop-blur-xl border border-[#3D4EF0]/10 rounded-2xl px-8 py-5 max-w-lg shadow-xl shadow-[#3D4EF0]/6"
+            className="bg-white/75 dark:bg-white/10 backdrop-blur-xl border border-[#3D4EF0]/10 dark:border-[#3D4EF0]/20 rounded-2xl px-8 py-5 max-w-lg shadow-xl shadow-[#3D4EF0]/6"
           >
             <div className="flex items-center gap-1.5 mb-3">
               <div className="w-2.5 h-2.5 rounded-full bg-[#FF6059]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
-              <span className="ml-2 text-[10px] text-[#0C0F18]/20 font-mono tracking-wider">onenexium.ai</span>
+              <span className="ml-2 text-[10px] text-[#0C0F18]/20 dark:text-white/20 font-mono tracking-wider">onenexium.ai</span>
             </div>
-            <p className="text-[#0C0F18]/75 font-mono text-sm leading-relaxed">
+            <p className="text-[#0C0F18]/75 dark:text-white/75 font-mono text-sm leading-relaxed">
               <span className="text-[#3D4EF0] font-semibold">{">"} </span>
               {typed}
               <motion.span
@@ -423,11 +423,11 @@ function PhaseOverlay() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.92, filter: "blur(8px)" }}
             transition={{ duration: 0.5 }}
-            className="bg-white/75 backdrop-blur-xl border border-[#10B981]/15 rounded-2xl px-6 py-4 max-w-md font-mono text-xs leading-[1.8] shadow-xl shadow-[#10B981]/6"
+            className="bg-white/75 dark:bg-white/10 backdrop-blur-xl border border-[#10B981]/15 dark:border-[#10B981]/25 rounded-2xl px-6 py-4 max-w-md font-mono text-xs leading-[1.8] shadow-xl shadow-[#10B981]/6"
           >
             <div className="flex items-center gap-1.5 mb-3">
               <div className="w-2 h-2 rounded-full bg-[#10B981]" />
-              <span className="text-[10px] text-[#10B981]/60 font-mono tracking-wider">generating code...</span>
+              <span className="text-[10px] text-[#10B981]/60 dark:text-[#10B981]/80 font-mono tracking-wider">generating code...</span>
             </div>
             {CODE_LINES.map((line, i) => (
               <motion.p
@@ -468,7 +468,7 @@ function PhaseOverlay() {
             >
               Your app is ready
             </p>
-            <p className="text-[#0C0F18]/35 text-xs font-mono">Dashboard deployed successfully</p>
+            <p className="text-[#0C0F18]/35 dark:text-white/35 text-xs font-mono">Dashboard deployed successfully</p>
           </motion.div>
         )}
       </AnimatePresence>
