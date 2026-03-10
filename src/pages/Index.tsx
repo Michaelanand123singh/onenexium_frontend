@@ -45,7 +45,7 @@ export default function Index() {
         {/* AI background image — 60% opacity */}
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.8] pointer-events-none"
-          style={{ backgroundImage: "url('https://cdn.hercules.app/file_wxN3GnYIw1j0Q7p1K6KbBfks')" }}
+          style={{ backgroundImage: "url('https://cdn.hercules.app/file_5tDWueY3MM4AhrraL830CpZp')" }}
         />
         {/* Fade overlay to blend with background */}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/40 via-background/60 to-background pointer-events-none" />
