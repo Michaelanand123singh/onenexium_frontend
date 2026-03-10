@@ -44,7 +44,7 @@ export default function Index() {
       <div className="relative min-h-screen flex flex-col items-center justify-center">
         {/* AI background image — 60% opacity */}
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.6] pointer-events-none"
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.8] pointer-events-none"
           style={{ backgroundImage: "url('https://cdn.hercules.app/file_0dHhULU3qDkP1J5IfcVqepVa')" }}
         />
         {/* Fade overlay to blend with background */}
