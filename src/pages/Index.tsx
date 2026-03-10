@@ -43,6 +43,15 @@ export default function Index() {
       <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#F5F8FF] dark:bg-[#0A0D1A]">
         {/* Cinematic Prompt → Code → App animation */}
         <CinematicHero />
+        {/* Grid lines */}
+        <div
+          className="absolute inset-0 z-[1] pointer-events-none opacity-50"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(61,78,240,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(61,78,240,0.08) 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }}
+        />
         {/* Fade overlay to blend with page below */}
         <div className="absolute inset-0 z-[5] bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
 
