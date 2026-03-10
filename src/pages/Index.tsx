@@ -115,7 +115,7 @@ export default function Index() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.75 }}
-            className="mt-10 w-full max-w-md"
+            className="mt-16 w-full max-w-md"
           >
             <div className="relative group">
               <div
@@ -160,7 +160,7 @@ export default function Index() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="mt-14 flex items-center gap-8"
+            className="mt-20 flex items-center gap-8"
           >
             {[
               { label: "Days", value: "14" },
