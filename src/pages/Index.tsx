@@ -6,6 +6,7 @@ import { api } from "@/convex/_generated/api.js";
 import { ConvexError } from "convex/values";
 import { BRAND_GRADIENT, LOGO_URL } from "@/lib/brand.ts";
 import AnimatedBackground from "@/components/animated-background.tsx";
+import NeuralNetworkBg from "@/components/neural-network-bg.tsx";
 import DemoGenerator from "./index/_components/demo-generator.tsx";
 import HowItWorks from "./index/_components/how-it-works.tsx";
 import AIPromptExamples from "./index/_components/ai-prompt-examples.tsx";
@@ -41,13 +42,10 @@ export default function Index() {
     <div className="relative min-h-screen flex flex-col overflow-hidden bg-background">
       {/* ── HERO SECTION ── */}
       <div className="relative min-h-screen flex flex-col items-center justify-center">
-        {/* AI background image — 60% opacity */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.6] pointer-events-none"
-          style={{ backgroundImage: "url('https://cdn.hercules.app/file_1ilkYaYuOFiWAKinF6s9ufFd')" }}
-        />
+        {/* Animated neural network background */}
+        <NeuralNetworkBg />
         {/* Fade overlay to blend with background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/40 via-background/60 to-background pointer-events-none" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
 
         {/* Shared animated background */}
         <AnimatedBackground />
