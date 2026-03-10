@@ -5,8 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { ConvexError } from "convex/values";
 import { BRAND_GRADIENT, LOGO_URL } from "@/lib/brand.ts";
-import AnimatedBackground from "@/components/animated-background.tsx";
-import ThreeBg from "@/components/three-bg.tsx";
+import CinematicHero from "@/components/cinematic-hero.tsx";
 import DemoGenerator from "./index/_components/demo-generator.tsx";
 import HowItWorks from "./index/_components/how-it-works.tsx";
 import AIPromptExamples from "./index/_components/ai-prompt-examples.tsx";
@@ -42,13 +41,10 @@ export default function Index() {
     <div className="relative min-h-screen flex flex-col overflow-hidden bg-background">
       {/* ── HERO SECTION ── */}
       <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#060818]">
-        {/* 3D animated background */}
-        <ThreeBg />
+        {/* Cinematic Prompt → Code → App animation */}
+        <CinematicHero />
         {/* Fade overlay to blend with page below */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
-
-        {/* Shared animated background */}
-        <AnimatedBackground />
+        <div className="absolute inset-0 z-[5] bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center px-6 max-w-2xl text-center">
