@@ -46,14 +46,14 @@ export default function Index() {
         {/* Fade overlay to blend with page below */}
         <div className="absolute inset-0 z-[5] bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center px-6 max-w-2xl text-center">
+        {/* Content – Top: Logo & Badge */}
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center px-6 text-center">
           {/* Logo / Brand */}
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-            className="mb-8"
+            className="mb-4"
           >
             <div className="flex items-center gap-3">
               <motion.img
@@ -85,7 +85,6 @@ export default function Index() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-6"
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
               <motion.span
@@ -96,18 +95,17 @@ export default function Index() {
               Coming Soon
             </span>
           </motion.div>
+        </div>
 
-          {/* Headline – removed */}
-
-          {/* Subtitle – removed */}
-
+        {/* Content – Bottom: Email form & Countdown */}
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center px-6 w-full max-w-md text-center">
           {/* Email form */}
           <motion.form
             onSubmit={handleNotify}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.75 }}
-            className="mt-28 w-full max-w-md"
+            className="w-full"
           >
             <div className="relative group">
               <div
@@ -152,7 +150,7 @@ export default function Index() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="mt-28 flex items-center gap-8"
+            className="mt-6 flex items-center gap-8"
           >
             {[
               { label: "Days", value: "14" },
