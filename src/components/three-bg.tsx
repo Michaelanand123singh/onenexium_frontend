@@ -1,109 +1,200 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Stars } from "@react-three/drei";
 import * as THREE from "three";
 
-// ── Floating glowing sphere ──
-function GlowSphere({
-  position,
-  color,
-  size,
-  speed,
-}: {
-  position: [number, number, number];
-  color: string;
-  size: number;
-  speed: number;
-}) {
+// ── Central morphing wireframe sphere ──
+function MorphingSphere() {
   const meshRef = useRef<THREE.Mesh>(null);
-  const glowRef = useRef<THREE.Mesh>(null);
+  const wireRef = useRef<THREE.LineSegments>(null);
+  const geo = useMemo(() => new THREE.IcosahedronGeometry(2.2, 4), []);
 
   useFrame(({ clock }) => {
-    const t = clock.getElapsedTime() * speed;
-    if (meshRef.current) {
-      meshRef.current.position.y = position[1] + Math.sin(t) * 0.5;
-      meshRef.current.position.x = position[0] + Math.cos(t * 0.7) * 0.3;
+    const t = clock.getElapsedTime();
+    if (!meshRef.current) return;
+
+    // Slowly rotate
+    meshRef.current.rotation.y = t * 0.12;
+    meshRef.current.rotation.x = Math.sin(t * 0.08) * 0.3;
+
+    // Morph vertices
+    const posAttr = geo.attributes.position;
+    const original = geo.attributes.position.clone();
+    for (let i = 0; i < posAttr.count; i++) {
+      const ox = original.getX(i);
+      const oy = original.getY(i);
+      const oz = original.getZ(i);
+
+      const noise =
+        Math.sin(ox * 2 + t * 0.8) * 0.12 +
+        Math.cos(oy * 3 + t * 0.6) * 0.1 +
+        Math.sin(oz * 2.5 + t * 0.9) * 0.08;
+
+      const len = Math.sqrt(ox * ox + oy * oy + oz * oz);
+      const scale = 1 + noise / len;
+      posAttr.setXYZ(i, ox * scale, oy * scale, oz * scale);
     }
-    if (glowRef.current) {
-      glowRef.current.position.y = position[1] + Math.sin(t) * 0.5;
-      glowRef.current.position.x = position[0] + Math.cos(t * 0.7) * 0.3;
-      const pulse = 1 + Math.sin(t * 2) * 0.15;
-      glowRef.current.scale.setScalar(pulse);
+    posAttr.needsUpdate = true;
+
+    if (wireRef.current) {
+      wireRef.current.rotation.copy(meshRef.current.rotation);
     }
   });
 
+  const edgesGeo = useMemo(
+    () => new THREE.EdgesGeometry(geo, 15),
+    [geo],
+  );
+
   return (
-    <>
-      <mesh ref={meshRef} position={position}>
-        <sphereGeometry args={[size, 32, 32]} />
+    <group position={[0, 0, 0]}>
+      {/* Solid inner glow */}
+      <mesh ref={meshRef} geometry={geo}>
         <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={1.5}
-          roughness={0.1}
-          metalness={0.9}
+          color="#3D4EF0"
+          emissive="#3D4EF0"
+          emissiveIntensity={0.6}
+          transparent
+          opacity={0.15}
+          side={THREE.DoubleSide}
+          wireframe={false}
         />
       </mesh>
-      <mesh ref={glowRef} position={position}>
-        <sphereGeometry args={[size * 2.5, 32, 32]} />
-        <meshBasicMaterial color={color} transparent opacity={0.1} />
-      </mesh>
-    </>
+      {/* Wireframe edges */}
+      <lineSegments ref={wireRef} geometry={edgesGeo}>
+        <lineBasicMaterial
+          color="#3D4EF0"
+          transparent
+          opacity={0.55}
+          linewidth={1}
+        />
+      </lineSegments>
+    </group>
   );
 }
 
-// ── Particle field ──
-function ParticleField({ count }: { count: number }) {
-  const meshRef = useRef<THREE.Points>(null);
+// ── Flowing energy ribbons ──
+function EnergyRibbon({
+  radius,
+  speed,
+  color,
+  tiltX,
+  tiltZ,
+  thickness,
+}: {
+  radius: number;
+  speed: number;
+  color: string;
+  tiltX: number;
+  tiltZ: number;
+  thickness: number;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
 
-  const { positions, colors, sizes } = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const col = new Float32Array(count * 3);
-    const sz = new Float32Array(count);
-    const primaryColor = new THREE.Color("#3D4EF0");
-    const secondaryColor = new THREE.Color("#23A0FF");
-
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
-
-      const t = Math.random();
-      const mixed = primaryColor.clone().lerp(secondaryColor, t);
-      col[i * 3] = mixed.r;
-      col[i * 3 + 1] = mixed.g;
-      col[i * 3 + 2] = mixed.b;
-
-      sz[i] = Math.random() * 3 + 0.5;
-    }
-    return { positions: pos, colors: col, sizes: sz };
-  }, [count]);
+  const geometry = useMemo(() => {
+    const curve = new THREE.CatmullRomCurve3(
+      Array.from({ length: 80 }, (_, i) => {
+        const angle = (i / 80) * Math.PI * 2;
+        const wobble = Math.sin(angle * 3) * 0.3 + Math.cos(angle * 5) * 0.15;
+        return new THREE.Vector3(
+          Math.cos(angle) * (radius + wobble),
+          Math.sin(angle * 2) * 0.4,
+          Math.sin(angle) * (radius + wobble),
+        );
+      }),
+      true,
+    );
+    return new THREE.TubeGeometry(curve, 120, thickness, 6, true);
+  }, [radius, thickness]);
 
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
-    const t = clock.getElapsedTime() * 0.05;
-    meshRef.current.rotation.y = t;
-    meshRef.current.rotation.x = Math.sin(t * 0.5) * 0.1;
+    meshRef.current.rotation.y = clock.getElapsedTime() * speed;
+    const mat = meshRef.current.material as THREE.MeshBasicMaterial;
+    mat.opacity = 0.25 + Math.sin(clock.getElapsedTime() * 1.5) * 0.1;
   });
 
   return (
-    <points ref={meshRef}>
+    <mesh ref={meshRef} geometry={geometry} rotation={[tiltX, 0, tiltZ]}>
+      <meshBasicMaterial
+        color={color}
+        transparent
+        opacity={0.3}
+        side={THREE.DoubleSide}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}
+
+// ── Floating data particles with trails ──
+function DataParticles({ count }: { count: number }) {
+  const pointsRef = useRef<THREE.Points>(null);
+
+  const { positions, velocities, colors } = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const vel = new Float32Array(count * 3);
+    const col = new Float32Array(count * 3);
+    const c1 = new THREE.Color("#3D4EF0");
+    const c2 = new THREE.Color("#23A0FF");
+    const c3 = new THREE.Color("#6366f1");
+
+    for (let i = 0; i < count; i++) {
+      // Distribute in a sphere shell
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 3 + Math.random() * 5;
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi);
+
+      // Orbital velocities
+      vel[i * 3] = (Math.random() - 0.5) * 0.01;
+      vel[i * 3 + 1] = (Math.random() - 0.5) * 0.008;
+      vel[i * 3 + 2] = (Math.random() - 0.5) * 0.01;
+
+      const pick = Math.random();
+      const c = pick < 0.4 ? c1 : pick < 0.7 ? c2 : c3;
+      col[i * 3] = c.r;
+      col[i * 3 + 1] = c.g;
+      col[i * 3 + 2] = c.b;
+    }
+    return { positions: pos, velocities: vel, colors: col };
+  }, [count]);
+
+  useFrame(({ clock }) => {
+    if (!pointsRef.current) return;
+    const posAttr = pointsRef.current.geometry.attributes
+      .position as THREE.BufferAttribute;
+    const t = clock.getElapsedTime();
+
+    for (let i = 0; i < count; i++) {
+      const idx = i * 3;
+      // Orbit around center with drift
+      const x = posAttr.array[idx] as number;
+      const z = posAttr.array[idx + 2] as number;
+      const angle = 0.002 + velocities[idx] * 0.5;
+
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      (posAttr.array as Float32Array)[idx] = x * cos - z * sin;
+      (posAttr.array as Float32Array)[idx + 2] = x * sin + z * cos;
+      (posAttr.array as Float32Array)[idx + 1] +=
+        Math.sin(t * 0.3 + i * 0.1) * 0.002;
+    }
+    posAttr.needsUpdate = true;
+
+    // Slow overall rotation
+    pointsRef.current.rotation.y = t * 0.02;
+  });
+
+  return (
+    <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          args={[colors, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-size"
-          args={[sizes, 1]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.06}
+        size={0.07}
         vertexColors
         transparent
         opacity={0.9}
@@ -114,181 +205,144 @@ function ParticleField({ count }: { count: number }) {
   );
 }
 
-// ── Connection lines between spheres ──
-function ConnectionLines({
-  points,
-}: {
-  points: [number, number, number][];
-}) {
-  const lineRef = useRef<THREE.LineSegments>(null);
-
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry();
-    const verts: number[] = [];
-    const cols: number[] = [];
-    const primaryColor = new THREE.Color("#3D4EF0");
-    const secondaryColor = new THREE.Color("#23A0FF");
-
-    for (let i = 0; i < points.length; i++) {
-      for (let j = i + 1; j < points.length; j++) {
-        const dx = points[i][0] - points[j][0];
-        const dy = points[i][1] - points[j][1];
-        const dz = points[i][2] - points[j][2];
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist < 5) {
-          verts.push(...points[i], ...points[j]);
-          const t1 = i / points.length;
-          const t2 = j / points.length;
-          const c1 = primaryColor.clone().lerp(secondaryColor, t1);
-          const c2 = primaryColor.clone().lerp(secondaryColor, t2);
-          cols.push(c1.r, c1.g, c1.b, c2.r, c2.g, c2.b);
-        }
-      }
-    }
-    geo.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(verts, 3),
-    );
-    geo.setAttribute(
-      "color",
-      new THREE.Float32BufferAttribute(cols, 3),
-    );
-    return geo;
-  }, [points]);
+// ── Pulsing energy core ──
+function EnergyCore() {
+  const coreRef = useRef<THREE.Mesh>(null);
+  const haloRef = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
-    if (!lineRef.current) return;
-    const mat = lineRef.current.material as THREE.LineBasicMaterial;
-    mat.opacity = 0.12 + Math.sin(clock.getElapsedTime() * 0.5) * 0.06;
+    const t = clock.getElapsedTime();
+    if (coreRef.current) {
+      const pulse = 1 + Math.sin(t * 2) * 0.15;
+      coreRef.current.scale.setScalar(pulse);
+    }
+    if (haloRef.current) {
+      const haloPulse = 1 + Math.sin(t * 1.5 + 1) * 0.2;
+      haloRef.current.scale.setScalar(haloPulse);
+      const mat = haloRef.current.material as THREE.MeshBasicMaterial;
+      mat.opacity = 0.04 + Math.sin(t * 2) * 0.03;
+    }
   });
 
   return (
-    <lineSegments ref={lineRef} geometry={geometry}>
-      <lineBasicMaterial
-        vertexColors
-        transparent
-        opacity={0.25}
-        depthWrite={false}
-      />
-    </lineSegments>
+    <>
+      <mesh ref={coreRef}>
+        <sphereGeometry args={[0.3, 32, 32]} />
+        <meshStandardMaterial
+          color="#ffffff"
+          emissive="#3D4EF0"
+          emissiveIntensity={5}
+          toneMapped={false}
+        />
+      </mesh>
+      <mesh ref={haloRef}>
+        <sphereGeometry args={[1.2, 32, 32]} />
+        <meshBasicMaterial
+          color="#3D4EF0"
+          transparent
+          opacity={0.12}
+          side={THREE.BackSide}
+        />
+      </mesh>
+    </>
   );
 }
 
-// ── Orbiting ring ──
-function OrbitRing({
-  radius,
+// ── Floating geometric shards ──
+function FloatingShard({
+  position,
   speed,
-  tilt,
+  rotSpeed,
   color,
 }: {
-  radius: number;
+  position: [number, number, number];
   speed: number;
-  tilt: number;
+  rotSpeed: number;
   color: string;
 }) {
-  const ringRef = useRef<THREE.Mesh>(null);
+  const ref = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
-    if (!ringRef.current) return;
-    ringRef.current.rotation.z = clock.getElapsedTime() * speed;
+    if (!ref.current) return;
+    const t = clock.getElapsedTime() * speed;
+    ref.current.position.y = position[1] + Math.sin(t) * 0.8;
+    ref.current.position.x = position[0] + Math.cos(t * 0.6) * 0.3;
+    ref.current.rotation.x = t * rotSpeed;
+    ref.current.rotation.z = t * rotSpeed * 0.7;
   });
 
   return (
-    <mesh ref={ringRef} rotation={[tilt, 0, 0]}>
-      <torusGeometry args={[radius, 0.015, 16, 100]} />
-      <meshBasicMaterial
+    <mesh ref={ref} position={position}>
+      <octahedronGeometry args={[0.15, 0]} />
+      <meshStandardMaterial
         color={color}
+        emissive={color}
+        emissiveIntensity={2}
         transparent
-        opacity={0.25}
+        opacity={0.8}
+        metalness={0.9}
+        roughness={0.1}
       />
     </mesh>
   );
 }
 
-// ── Scene composition ──
-const SPHERE_POSITIONS: [number, number, number][] = [
-  [-3.5, 1.8, -2],
-  [3.8, -1.5, -1.5],
-  [-1.2, -2.5, -3],
-  [2.5, 2.8, -2.5],
-  [-4.5, -0.5, -1],
-  [0.8, 3.2, -4],
-  [4.2, 0.3, -3],
-  [-2, 0.5, -1.5],
-  [1.5, -3, -2],
-  [-3, 3, -3.5],
+// ── Scene ──
+const SHARD_DATA: {
+  position: [number, number, number];
+  speed: number;
+  rotSpeed: number;
+  color: string;
+}[] = [
+  { position: [-4, 2, -3], speed: 0.4, rotSpeed: 0.5, color: "#3D4EF0" },
+  { position: [4.5, -1.5, -2], speed: 0.35, rotSpeed: 0.7, color: "#23A0FF" },
+  { position: [-3, -2.5, -4], speed: 0.5, rotSpeed: 0.4, color: "#6366f1" },
+  { position: [3, 3, -3], speed: 0.45, rotSpeed: 0.6, color: "#23A0FF" },
+  { position: [-5, 0.5, -2], speed: 0.3, rotSpeed: 0.8, color: "#3D4EF0" },
+  { position: [5, 1, -4], speed: 0.55, rotSpeed: 0.35, color: "#6366f1" },
+  { position: [0, -3.5, -3], speed: 0.42, rotSpeed: 0.55, color: "#23A0FF" },
+  { position: [-2, 3.5, -5], speed: 0.38, rotSpeed: 0.65, color: "#3D4EF0" },
 ];
 
 function Scene() {
   return (
     <>
-      {/* Ambient light for base illumination */}
-      <ambientLight intensity={0.3} />
+      <ambientLight intensity={0.4} />
 
-      {/* Blue directional lights */}
-      <directionalLight
-        position={[5, 5, 5]}
-        intensity={0.8}
-        color="#3D4EF0"
-      />
-      <directionalLight
-        position={[-5, -3, 3]}
-        intensity={0.6}
-        color="#23A0FF"
-      />
+      <directionalLight position={[5, 5, 5]} intensity={1.2} color="#3D4EF0" />
+      <directionalLight position={[-5, -3, 3]} intensity={0.8} color="#23A0FF" />
 
-      {/* Point lights for glow effect */}
-      <pointLight position={[0, 0, 3]} intensity={1} color="#3D4EF0" distance={15} />
-      <pointLight position={[-3, 2, 1]} intensity={0.7} color="#23A0FF" distance={12} />
+      <pointLight position={[0, 0, 4]} intensity={3} color="#3D4EF0" distance={25} />
+      <pointLight position={[-4, 3, 2]} intensity={2} color="#23A0FF" distance={20} />
+      <pointLight position={[4, -2, 2]} intensity={1.5} color="#6366f1" distance={18} />
 
-      {/* Stars in the background */}
-      <Stars
-        radius={12}
-        depth={40}
-        count={2500}
-        factor={4}
-        saturation={0.8}
-        fade
-        speed={0.8}
-      />
+      {/* Central morphing wireframe sphere */}
+      <MorphingSphere />
 
-      {/* Floating glowing spheres */}
-      {SPHERE_POSITIONS.map((pos, i) => (
-        <Float
-          key={`float-${pos[0]}-${pos[1]}`}
-          speed={1 + i * 0.2}
-          rotationIntensity={0.2}
-          floatIntensity={0.4}
-        >
-          <GlowSphere
-            position={pos}
-            color={i % 2 === 0 ? "#3D4EF0" : "#23A0FF"}
-            size={0.12 + Math.random() * 0.15}
-            speed={0.3 + i * 0.05}
-          />
-        </Float>
+      {/* Pulsing energy core */}
+      <EnergyCore />
+
+      {/* Energy ribbons */}
+      <EnergyRibbon radius={3.5} speed={0.06} color="#3D4EF0" tiltX={0.4} tiltZ={0.2} thickness={0.015} />
+      <EnergyRibbon radius={4.2} speed={-0.04} color="#23A0FF" tiltX={-0.3} tiltZ={0.5} thickness={0.01} />
+      <EnergyRibbon radius={5} speed={0.03} color="#6366f1" tiltX={0.8} tiltZ={-0.3} thickness={0.008} />
+
+      {/* Data particles */}
+      <DataParticles count={800} />
+
+      {/* Floating geometric shards */}
+      {SHARD_DATA.map((shard, i) => (
+        <FloatingShard key={`shard-${i}`} {...shard} />
       ))}
-
-      {/* Particle field */}
-      <ParticleField count={600} />
-
-      {/* Connection lines between sphere positions */}
-      <ConnectionLines points={SPHERE_POSITIONS} />
-
-      {/* Orbiting rings */}
-      <OrbitRing radius={4} speed={0.08} tilt={0.5} color="#3D4EF0" />
-      <OrbitRing radius={5.5} speed={-0.05} tilt={-0.3} color="#23A0FF" />
-      <OrbitRing radius={3} speed={0.12} tilt={1.2} color="#6366f1" />
     </>
   );
 }
 
-// ── Main export ──
 export default function ThreeBg() {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none">
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 60 }}
+        camera={{ position: [0, 0, 8], fov: 55 }}
         gl={{
           antialias: true,
           alpha: true,
