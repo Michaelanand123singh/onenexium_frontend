@@ -6,7 +6,6 @@ import { ConvexError } from "convex/values";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import {
-  ArrowLeft,
   User,
   Shield,
   Trash2,
@@ -29,7 +28,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog.tsx";
 import { useAuth } from "@/hooks/use-auth.ts";
-import { LOGO_URL } from "@/lib/brand.ts";
 
 export default function SettingsContent() {
   const navigate = useNavigate();
@@ -45,12 +43,10 @@ export default function SettingsContent() {
 
   if (user === undefined) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-2xl mx-auto px-6 pt-24 space-y-6">
-          <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-64 w-full rounded-2xl" />
-          <Skeleton className="h-48 w-full rounded-2xl" />
-        </div>
+      <div className="p-6 lg:p-10 max-w-2xl space-y-6">
+        <Skeleton className="h-10 w-48" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
       </div>
     );
   }
@@ -102,44 +98,32 @@ export default function SettingsContent() {
   const hasChanges = name !== null && name !== (user?.name ?? "");
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="p-6 lg:p-10 max-w-2xl">
       {/* Header */}
-      <div className="border-b border-border bg-background/80 backdrop-blur-xl sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="p-2 rounded-xl hover:bg-accent transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <img
-              src={LOGO_URL}
-              alt="Logo"
-              className="h-7 w-7 rounded-lg object-cover"
-            />
-            <h1 className="text-lg font-semibold">Settings</h1>
-          </div>
-          {hasChanges && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <Button
-                size="sm"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                <Save className="w-3.5 h-3.5 mr-1.5" />
-                {saving ? "Saving..." : "Save changes"}
-              </Button>
-            </motion.div>
-          )}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Settings</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Manage your account and preferences</p>
         </div>
+        {hasChanges && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <Button
+              size="sm"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              <Save className="w-3.5 h-3.5 mr-1.5" />
+              {saving ? "Saving..." : "Save changes"}
+            </Button>
+          </motion.div>
+        )}
       </div>
 
       {/* Content */}
-      <div className="max-w-2xl mx-auto px-6 py-10 space-y-6">
+      <div className="space-y-6">
         {/* Profile Section */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}

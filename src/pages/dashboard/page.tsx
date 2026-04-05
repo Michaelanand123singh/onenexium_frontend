@@ -2,8 +2,8 @@ import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { SignInButton } from "@/components/ui/signin.tsx";
-import DashboardContent from "./_components/DashboardContent.tsx";
 import OnboardingGate from "./_components/OnboardingGate.tsx";
+import DashboardOverview from "./_components/DashboardOverview.tsx";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function DashboardPage() {
       </Unauthenticated>
       <Authenticated>
         <OnboardingGate>
-          <DashboardContent />
+          <DashboardOverview />
         </OnboardingGate>
       </Authenticated>
     </>
