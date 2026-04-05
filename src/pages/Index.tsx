@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { LOGO_URL } from "@/lib/brand.ts";
@@ -15,87 +15,40 @@ import {
   Zap,
 } from "lucide-react";
 
-// ── Animated Crosshair Grid ──
-const GRID_SPACING = 52;
-const CROSS_SIZE = 5; // half-length of each crosshair arm
-
+// ── Dot Grid Background (Google Stitch style) ──
 function DottedGrid() {
-  const gridW = 1440;
-  const gridH = 900;
-
-  const points = useMemo(() => {
-    const result: { x: number; y: number; delay: number }[] = [];
-    const centerX = gridW / 2;
-    const centerY = gridH / 2;
-
-    for (let y = 0; y <= gridH; y += GRID_SPACING) {
-      for (let x = 0; x <= gridW; x += GRID_SPACING) {
-        const dx = x - centerX;
-        const dy = y - centerY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        result.push({ x, y, delay: dist * 0.0015 });
-      }
-    }
-    return result;
-  }, []);
-
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      <svg
-        className="absolute inset-0 w-full h-full"
-        viewBox={`0 0 ${gridW} ${gridH}`}
-        preserveAspectRatio="xMidYMid slice"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {points.map((pt, i) => (
-          <motion.g
-            key={i}
-            animate={{ opacity: [0.25, 0.8, 0.25], scale: [0.8, 1.15, 0.8] }}
-            transition={{
-              duration: 3.5,
-              delay: pt.delay,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            style={{ transformOrigin: `${pt.x}px ${pt.y}px` }}
-          >
-            {/* Horizontal arm */}
-            <line
-              x1={pt.x - CROSS_SIZE}
-              y1={pt.y}
-              x2={pt.x + CROSS_SIZE}
-              y2={pt.y}
-              className="stroke-foreground/20 dark:stroke-foreground/25"
-              strokeWidth={0.8}
-              strokeLinecap="round"
-            />
-            {/* Vertical arm */}
-            <line
-              x1={pt.x}
-              y1={pt.y - CROSS_SIZE}
-              x2={pt.x}
-              y2={pt.y + CROSS_SIZE}
-              className="stroke-foreground/20 dark:stroke-foreground/25"
-              strokeWidth={0.8}
-              strokeLinecap="round"
-            />
-            {/* Center dot */}
-            <circle
-              cx={pt.x}
-              cy={pt.y}
-              r={0.8}
-              className="fill-foreground/30 dark:fill-foreground/35"
-            />
-          </motion.g>
-        ))}
-      </svg>
+      {/* Base dot grid via CSS radial-gradient pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.35] dark:opacity-[0.2]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, var(--foreground) 0.8px, transparent 0.8px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
 
-      {/* Radial vignette to fade edges */}
+      {/* Animated sweeping highlight that travels across the grid */}
+      <motion.div
+        className="absolute inset-0"
+        animate={{
+          background: [
+            "radial-gradient(ellipse 40% 50% at 20% 30%, rgba(var(--primary-rgb, 99 102 241) / 0.06) 0%, transparent 70%)",
+            "radial-gradient(ellipse 40% 50% at 80% 60%, rgba(var(--primary-rgb, 99 102 241) / 0.06) 0%, transparent 70%)",
+            "radial-gradient(ellipse 40% 50% at 50% 20%, rgba(var(--primary-rgb, 99 102 241) / 0.06) 0%, transparent 70%)",
+            "radial-gradient(ellipse 40% 50% at 20% 30%, rgba(var(--primary-rgb, 99 102 241) / 0.06) 0%, transparent 70%)",
+          ],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Radial vignette to fade edges cleanly */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 70% 60% at 50% 40%, transparent 30%, var(--background) 100%)",
+            "radial-gradient(ellipse 80% 70% at 50% 45%, transparent 35%, var(--background) 100%)",
         }}
       />
     </div>
