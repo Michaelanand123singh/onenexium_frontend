@@ -138,8 +138,8 @@ function DottedGrid() {
           const wave = (Math.sin(t * 0.6 + c * 0.12 + r * 0.12) + 1) * 0.5;
 
           // Opacity: always visible at low alpha, brighter near cursor
-          const baseAlpha = dark ? 0.18 + wave * 0.04 : 0.25 + wave * 0.05;
-          const alpha = Math.min(1, baseAlpha + proximity * 0.65);
+          const baseAlpha = dark ? 0.3 + wave * 0.05 : 0.4 + wave * 0.06;
+          const alpha = Math.min(1, baseAlpha + proximity * 0.55);
 
           // Dot radius: base + proximity growth, scaled by perspective
           const dotR = (BASE_RADIUS + proximity * 2.5) * Math.max(scale, 0.4);
