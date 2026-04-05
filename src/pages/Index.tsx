@@ -17,7 +17,7 @@ import {
 
 // ── Interactive 3D Dot Grid ──
 const GRID_GAP = 28;
-const BASE_RADIUS = 0.25;
+const BASE_RADIUS = 0.35;
 const GLOW_RADIUS = 200; // px radius around cursor that lights up dots
 
 function DottedGrid() {
@@ -137,9 +137,9 @@ function DottedGrid() {
           // Subtle wave animation
           const wave = (Math.sin(t * 0.6 + c * 0.12 + r * 0.12) + 1) * 0.5;
 
-          // Opacity: base + wave + proximity boost
-          const baseAlpha = dark ? 0.15 + wave * 0.05 : 0.22 + wave * 0.06;
-          const alpha = Math.min(1, baseAlpha + proximity * 0.75);
+          // Opacity: always visible at low alpha, brighter near cursor
+          const baseAlpha = dark ? 0.18 + wave * 0.04 : 0.25 + wave * 0.05;
+          const alpha = Math.min(1, baseAlpha + proximity * 0.65);
 
           // Dot radius: base + proximity growth, scaled by perspective
           const dotR = (BASE_RADIUS + proximity * 2.5) * Math.max(scale, 0.4);
