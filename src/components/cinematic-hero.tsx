@@ -1,7 +1,6 @@
-import { useRef, useMemo, useState, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import { useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useState } from "react";
 
 // ── Phase system ──
 const CYCLE = 18;
@@ -15,343 +14,208 @@ function getPhase(t: number): PhaseInfo {
   return { phase: "app", progress: (raw - 12) / 6 };
 }
 
-function smooth(x: number): number {
-  return x * x * (3 - 2 * x);
+// ── Aurora Canvas ──
+type AuroraBlob = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  color: string;
+  phase: number;
+  speed: number;
+};
+
+type Star = {
+  x: number;
+  y: number;
+  size: number;
+  twinkleSpeed: number;
+  twinklePhase: number;
+  brightness: number;
+};
+
+function createBlobs(w: number, h: number): AuroraBlob[] {
+  const colors = [
+    "rgba(61, 78, 240, 0.35)",
+    "rgba(35, 160, 255, 0.30)",
+    "rgba(139, 92, 246, 0.28)",
+    "rgba(99, 102, 241, 0.32)",
+    "rgba(14, 165, 233, 0.25)",
+    "rgba(61, 78, 240, 0.20)",
+    "rgba(139, 92, 246, 0.22)",
+  ];
+
+  return colors.map((color, i) => ({
+    x: w * (0.15 + Math.random() * 0.7),
+    y: h * (0.2 + Math.random() * 0.6),
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.3,
+    radius: Math.min(w, h) * (0.25 + Math.random() * 0.3),
+    color,
+    phase: i * 0.9,
+    speed: 0.3 + Math.random() * 0.5,
+  }));
 }
 
-// ── Colors ──
-const BLUE = new THREE.Color("#3D4EF0");
-const CYAN = new THREE.Color("#23A0FF");
-const VIOLET = new THREE.Color("#8B5CF6");
-const GREEN = new THREE.Color("#10B981");
-const AMBER = new THREE.Color("#F59E0B");
-
-// ── Particle count ──
-const N = 600;
-
-// ── Generate shape targets ──
-function generateShapes() {
-  const wave = new Float32Array(N * 3);
-  const helix = new Float32Array(N * 3);
-  const grid = new Float32Array(N * 3);
-  const stagger = new Float32Array(N);
-
-  for (let i = 0; i < N; i++) {
-    // WAVE: flowing ocean-like surface
-    const row = Math.floor(i / 30);
-    const col = i % 30;
-    const wx = (col - 14.5) * 0.42;
-    const wy = (row - 10) * 0.42;
-    wave[i * 3] = wx;
-    wave[i * 3 + 1] = wy;
-    wave[i * 3 + 2] = 0;
-
-    // HELIX: double helix DNA strand
-    const strand = i % 2;
-    const idx = Math.floor(i / 2);
-    const theta = (idx / (N / 2)) * Math.PI * 6;
-    const hY = (idx / (N / 2)) * 10 - 5;
-    const hR = 1.8;
-    const offset = strand * Math.PI;
-    helix[i * 3] = Math.cos(theta + offset) * hR;
-    helix[i * 3 + 1] = hY;
-    helix[i * 3 + 2] = Math.sin(theta + offset) * hR - 1;
-
-    // GRID: 3D cube lattice
-    const side = Math.ceil(Math.cbrt(N));
-    const gi = i % side;
-    const gj = Math.floor(i / side) % side;
-    const gk = Math.floor(i / (side * side));
-    const spacing = 0.55;
-    grid[i * 3] = (gi - side / 2) * spacing;
-    grid[i * 3 + 1] = (gj - side / 2) * spacing;
-    grid[i * 3 + 2] = (gk - side / 2) * spacing - 1;
-
-    // Stagger delay based on distance from center
-    stagger[i] = Math.sqrt(wave[i * 3] ** 2 + wave[i * 3 + 1] ** 2) * 0.04;
-  }
-
-  return { wave, helix, grid, stagger };
+function createStars(w: number, h: number): Star[] {
+  return Array.from({ length: 120 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    size: Math.random() * 1.8 + 0.3,
+    twinkleSpeed: 0.5 + Math.random() * 2,
+    twinklePhase: Math.random() * Math.PI * 2,
+    brightness: 0.3 + Math.random() * 0.7,
+  }));
 }
 
-// ── Main particle system ──
-function MorphParticles() {
-  const ref = useRef<THREE.Points>(null);
-  const { wave, helix, grid, stagger } = useMemo(generateShapes, []);
+function AuroraCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const blobsRef = useRef<AuroraBlob[]>([]);
+  const starsRef = useRef<Star[]>([]);
+  const rafRef = useRef<number>(0);
 
-  const positions = useMemo(() => wave.slice(), [wave]);
-  const colors = useMemo(() => {
-    const c = new Float32Array(N * 3);
-    for (let i = 0; i < N; i++) {
-      c[i * 3] = BLUE.r;
-      c[i * 3 + 1] = BLUE.g;
-      c[i * 3 + 2] = BLUE.b;
-    }
-    return c;
+  const resize = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const dpr = Math.min(window.devicePixelRatio, 2);
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext("2d");
+    if (ctx) ctx.scale(dpr, dpr);
+    blobsRef.current = createBlobs(rect.width, rect.height);
+    starsRef.current = createStars(rect.width, rect.height);
   }, []);
 
-  useFrame(({ clock }) => {
-    if (!ref.current) return;
-    const t = clock.getElapsedTime();
-    const { phase, progress } = getPhase(t);
-    const pa = ref.current.geometry.attributes.position as THREE.BufferAttribute;
-    const ca = ref.current.geometry.attributes.color as THREE.BufferAttribute;
-    const p = pa.array as Float32Array;
-    const c = ca.array as Float32Array;
+  useEffect(() => {
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, [resize]);
 
-    for (let i = 0; i < N; i++) {
-      const ix = i * 3;
-      const d = stagger[i];
-      let tx: number, ty: number, tz: number;
-      let col: THREE.Color;
-      let speed = 0.04;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-      if (phase === "prompt") {
-        // Animated ocean wave
-        const wx = wave[ix];
-        const wy = wave[ix + 1];
-        tx = wx;
-        ty = wy;
-        tz = Math.sin(wx * 1.2 + t * 0.8) * 0.4
-           + Math.cos(wy * 0.9 + t * 0.6) * 0.3
-           + Math.sin((wx + wy) * 0.7 + t * 1.1) * 0.2;
+    const animate = (time: number) => {
+      const t = time * 0.001;
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
 
-        const blend3 = (Math.sin(t * 0.3 + i * 0.01) + 1) * 0.5;
-        col = new THREE.Color().lerpColors(BLUE, VIOLET, blend3);
+      // Clear with a very dark background
+      ctx.clearRect(0, 0, w, h);
 
-        // Transition to helix in last 18%
-        if (progress > 0.82) {
-          const b = Math.max(0, smooth((progress - 0.82) / 0.18) - d * 1.2);
-          const ht = t * 0.3;
-          tx = THREE.MathUtils.lerp(tx, helix[ix] * Math.cos(ht) - helix[ix + 2] * Math.sin(ht), b);
-          ty = THREE.MathUtils.lerp(ty, helix[ix + 1], b);
-          tz = THREE.MathUtils.lerp(tz, helix[ix] * Math.sin(ht) + helix[ix + 2] * Math.cos(ht), b);
-          speed = 0.06;
-        }
-      } else if (phase === "code") {
-        // Spinning double helix
-        const spin = t * 0.5;
-        const rawX = helix[ix];
-        const rawZ = helix[ix + 2];
-        tx = rawX * Math.cos(spin) - rawZ * Math.sin(spin);
-        ty = helix[ix + 1] + Math.sin(t * 2 + i * 0.02) * 0.08;
-        tz = rawX * Math.sin(spin) + rawZ * Math.cos(spin);
-
-        const strand = i % 2;
-        col = strand === 0 ? GREEN : CYAN;
-        speed = 0.05;
-
-        // Transition to grid in last 18%
-        if (progress > 0.82) {
-          const b = Math.max(0, smooth((progress - 0.82) / 0.18) - d * 1.2);
-          tx = THREE.MathUtils.lerp(tx, grid[ix], b);
-          ty = THREE.MathUtils.lerp(ty, grid[ix + 1], b);
-          tz = THREE.MathUtils.lerp(tz, grid[ix + 2], b);
-        }
-      } else {
-        // Breathing cube lattice
-        const breathe = 1 + Math.sin(t * 0.6) * 0.06;
-        const rot = t * 0.15;
-        const gx = grid[ix] * breathe;
-        const gy = grid[ix + 1] * breathe;
-        const gz = grid[ix + 2] * breathe;
-        // Rotate around Y axis
-        tx = gx * Math.cos(rot) - gz * Math.sin(rot);
-        ty = gy;
-        tz = gx * Math.sin(rot) + gz * Math.cos(rot);
-
-        const dist = Math.sqrt(gx ** 2 + gy ** 2 + gz ** 2);
-        col = new THREE.Color().lerpColors(BLUE, AMBER, Math.min(dist / 3, 1));
-        speed = 0.04;
-
-        // Dissolve back to wave in last 22%
-        if (progress > 0.78) {
-          const b = Math.max(0, smooth((progress - 0.78) / 0.22) - d * 1.0);
-          const wx = wave[ix];
-          const wy = wave[ix + 1];
-          const wz = Math.sin(wx * 1.2 + t * 0.8) * 0.4 + Math.cos(wy * 0.9 + t * 0.6) * 0.3;
-          tx = THREE.MathUtils.lerp(tx, wx, b);
-          ty = THREE.MathUtils.lerp(ty, wy, b);
-          tz = THREE.MathUtils.lerp(tz, wz, b);
-        }
+      // Draw stars
+      for (const star of starsRef.current) {
+        const twinkle =
+          (Math.sin(t * star.twinkleSpeed + star.twinklePhase) + 1) * 0.5;
+        const alpha = star.brightness * (0.3 + twinkle * 0.7);
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.6})`;
+        ctx.fill();
       }
 
-      p[ix] = THREE.MathUtils.lerp(p[ix], tx, speed);
-      p[ix + 1] = THREE.MathUtils.lerp(p[ix + 1], ty, speed);
-      p[ix + 2] = THREE.MathUtils.lerp(p[ix + 2], tz, speed);
+      // Update and draw aurora blobs
+      for (const blob of blobsRef.current) {
+        // Organic motion
+        blob.x += blob.vx + Math.sin(t * blob.speed + blob.phase) * 0.6;
+        blob.y += blob.vy + Math.cos(t * blob.speed * 0.7 + blob.phase) * 0.4;
 
-      c[ix] = THREE.MathUtils.lerp(c[ix], col.r, 0.025);
-      c[ix + 1] = THREE.MathUtils.lerp(c[ix + 1], col.g, 0.025);
-      c[ix + 2] = THREE.MathUtils.lerp(c[ix + 2], col.b, 0.025);
-    }
+        // Wrap around edges with padding
+        const pad = blob.radius;
+        if (blob.x < -pad) blob.x = w + pad;
+        if (blob.x > w + pad) blob.x = -pad;
+        if (blob.y < -pad) blob.y = h + pad;
+        if (blob.y > h + pad) blob.y = -pad;
 
-    pa.needsUpdate = true;
-    ca.needsUpdate = true;
-  });
+        // Pulsing radius
+        const pulse =
+          blob.radius * (1 + Math.sin(t * 0.5 + blob.phase) * 0.15);
 
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.07}
-        vertexColors
-        transparent
-        opacity={0.85}
-        sizeAttenuation
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-      />
-    </points>
-  );
-}
+        // Draw soft radial gradient blob
+        const gradient = ctx.createRadialGradient(
+          blob.x,
+          blob.y,
+          0,
+          blob.x,
+          blob.y,
+          pulse
+        );
+        gradient.addColorStop(0, blob.color);
+        gradient.addColorStop(0.5, blob.color.replace(/[\d.]+\)$/, "0.12)"));
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
-// ── Connection lines between nearby particles ──
-function ConnectionLines() {
-  const lineRef = useRef<THREE.LineSegments>(null);
-  const MAX_LINES = 1200;
-  const positions = useMemo(() => new Float32Array(MAX_LINES * 6), []);
-  const lineColors = useMemo(() => new Float32Array(MAX_LINES * 6), []);
-
-  useFrame(() => {
-    if (!lineRef.current) return;
-    const parent = lineRef.current.parent;
-    if (!parent) return;
-
-    // Find the points object to read positions
-    let pointsObj: THREE.Points | null = null;
-    parent.traverse((child) => {
-      if (child instanceof THREE.Points) pointsObj = child;
-    });
-    if (!pointsObj) return;
-
-    const pts = (pointsObj as THREE.Points).geometry.attributes.position as THREE.BufferAttribute;
-    const pArr = pts.array as Float32Array;
-    const threshold = 1.1;
-    const threshSq = threshold * threshold;
-
-    let lineIdx = 0;
-    // Sample subset for performance
-    const step = 4;
-    for (let i = 0; i < N && lineIdx < MAX_LINES; i += step) {
-      for (let j = i + step; j < N && lineIdx < MAX_LINES; j += step) {
-        const dx = pArr[i * 3] - pArr[j * 3];
-        const dy = pArr[i * 3 + 1] - pArr[j * 3 + 1];
-        const dz = pArr[i * 3 + 2] - pArr[j * 3 + 2];
-        const distSq = dx * dx + dy * dy + dz * dz;
-
-        if (distSq < threshSq) {
-          const alpha = 1 - Math.sqrt(distSq) / threshold;
-          const li = lineIdx * 6;
-          positions[li] = pArr[i * 3];
-          positions[li + 1] = pArr[i * 3 + 1];
-          positions[li + 2] = pArr[i * 3 + 2];
-          positions[li + 3] = pArr[j * 3];
-          positions[li + 4] = pArr[j * 3 + 1];
-          positions[li + 5] = pArr[j * 3 + 2];
-
-          const a = alpha * 0.3;
-          lineColors[li] = a;
-          lineColors[li + 1] = a;
-          lineColors[li + 2] = a * 1.5;
-          lineColors[li + 3] = a;
-          lineColors[li + 4] = a;
-          lineColors[li + 5] = a * 1.5;
-          lineIdx++;
-        }
+        ctx.beginPath();
+        ctx.arc(blob.x, blob.y, pulse, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
       }
-    }
 
-    // Zero out unused
-    for (let k = lineIdx * 6; k < MAX_LINES * 6; k++) {
-      positions[k] = 0;
-      lineColors[k] = 0;
-    }
+      // Layered aurora streaks
+      const streakCount = 5;
+      for (let s = 0; s < streakCount; s++) {
+        ctx.beginPath();
+        const baseY = h * (0.3 + s * 0.12);
+        const amplitude = 40 + s * 15;
+        const freq = 0.003 + s * 0.001;
+        const timeOffset = t * (0.3 + s * 0.08);
 
-    const geo = lineRef.current.geometry;
-    (geo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
-    (geo.attributes.color as THREE.BufferAttribute).needsUpdate = true;
-    geo.setDrawRange(0, lineIdx * 2);
-  });
+        ctx.moveTo(0, baseY);
+        for (let x = 0; x <= w; x += 4) {
+          const y =
+            baseY +
+            Math.sin(x * freq + timeOffset) * amplitude +
+            Math.cos(x * freq * 1.5 + timeOffset * 0.7) * (amplitude * 0.4);
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(w, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
 
-  return (
-    <lineSegments ref={lineRef}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-color" args={[lineColors, 3]} />
-      </bufferGeometry>
-      <lineBasicMaterial vertexColors transparent opacity={0.5} depthWrite={false} blending={THREE.AdditiveBlending} />
-    </lineSegments>
-  );
-}
+        const streakGradient = ctx.createLinearGradient(0, baseY - amplitude, 0, baseY + amplitude * 2);
+        const hue = [240, 220, 260, 200, 250][s] ?? 240;
+        streakGradient.addColorStop(0, `hsla(${hue}, 80%, 60%, 0)`);
+        streakGradient.addColorStop(0.3, `hsla(${hue}, 80%, 55%, 0.06)`);
+        streakGradient.addColorStop(0.6, `hsla(${hue}, 75%, 50%, 0.03)`);
+        streakGradient.addColorStop(1, `hsla(${hue}, 80%, 60%, 0)`);
+        ctx.fillStyle = streakGradient;
+        ctx.fill();
+      }
 
-// ── Soft ambient haze ──
-function AmbientHaze() {
-  const ref = useRef<THREE.Points>(null);
-  const count = 150;
-  const pos = useMemo(() => {
-    const p = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      p[i * 3] = (Math.random() - 0.5) * 20;
-      p[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      p[i * 3 + 2] = (Math.random() - 0.5) * 12 - 4;
-    }
-    return p;
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
-  useFrame(({ clock }) => {
-    if (!ref.current) return;
-    ref.current.rotation.y = clock.getElapsedTime() * 0.003;
-  });
-
   return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[pos, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.05}
-        color="#3D4EF0"
-        transparent
-        opacity={0.15}
-        sizeAttenuation
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-      />
-    </points>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full"
+      style={{ background: "transparent" }}
+    />
   );
 }
 
-// ── Scene ──
-function Scene() {
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[4, 3, 5]} intensity={0.4} color="#3D4EF0" />
-      <pointLight position={[-3, -2, 3]} intensity={0.25} color="#8B5CF6" />
-
-      <MorphParticles />
-      <ConnectionLines />
-      <AmbientHaze />
-    </>
-  );
-}
-
-// ── CSS overlay ──
+// ── Phase Overlay ──
 const PROMPT_TEXT = "Build me a SaaS dashboard with real-time analytics...";
 
 const CODE_LINES = [
   { text: "export default function Dashboard() {", cls: "text-[#8B5CF6]" },
   { text: "  const data = useQuery(api.analytics);", cls: "text-[#3D4EF0]" },
   { text: "  const metrics = processData(data);", cls: "text-[#10B981]" },
-  { text: "  return (", cls: "text-[#0C0F18]/40 dark:text-white/40" },
+  { text: "  return (", cls: "text-foreground/40" },
   { text: "    <Layout sidebar={<NavMenu />}>", cls: "text-[#23A0FF]" },
   { text: "      <MetricCards data={metrics} />", cls: "text-[#14b8a6]" },
   { text: "      <RevenueChart data={metrics} />", cls: "text-[#10B981]" },
-  { text: "    </Layout>", cls: "text-[#0C0F18]/40 dark:text-white/40" },
-  { text: "  );", cls: "text-[#0C0F18]/40 dark:text-white/40" },
+  { text: "    </Layout>", cls: "text-foreground/40" },
+  { text: "  );", cls: "text-foreground/40" },
   { text: "}", cls: "text-[#8B5CF6]" },
 ];
 
@@ -366,7 +230,9 @@ function PhaseOverlay() {
       const info = getPhase(elapsed);
       setPhase(info.phase);
       if (info.phase === "prompt") {
-        setTyped(PROMPT_TEXT.slice(0, Math.floor(info.progress * PROMPT_TEXT.length)));
+        setTyped(
+          PROMPT_TEXT.slice(0, Math.floor(info.progress * PROMPT_TEXT.length))
+        );
       }
     }, 50);
     return () => clearInterval(id);
@@ -388,9 +254,11 @@ function PhaseOverlay() {
               <div className="w-2.5 h-2.5 rounded-full bg-[#FF6059]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
-              <span className="ml-auto text-[9px] text-[#0C0F18]/15 dark:text-white/15 font-mono tracking-widest">prompt</span>
+              <span className="ml-auto text-[9px] text-foreground/15 font-mono tracking-widest">
+                prompt
+              </span>
             </div>
-            <p className="text-[#0C0F18]/70 dark:text-white/70 font-mono text-sm leading-relaxed">
+            <p className="text-foreground/70 font-mono text-sm leading-relaxed">
               <span className="text-[#3D4EF0] font-semibold">{">"} </span>
               {typed}
               <motion.span
@@ -417,7 +285,9 @@ function PhaseOverlay() {
                 animate={{ scale: [1, 1.3, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
               />
-              <span className="text-[9px] text-[#10B981]/50 dark:text-[#10B981]/70 font-mono tracking-widest">generating</span>
+              <span className="text-[9px] text-[#10B981]/50 dark:text-[#10B981]/70 font-mono tracking-widest">
+                generating
+              </span>
             </div>
             {CODE_LINES.map((line, i) => (
               <motion.p
@@ -454,11 +324,14 @@ function PhaseOverlay() {
             </motion.div>
             <p
               className="text-xl font-bold text-transparent bg-clip-text"
-              style={{ backgroundImage: "linear-gradient(135deg, #3D4EF0, #8B5CF6)" }}
+              style={{
+                backgroundImage:
+                  "linear-gradient(135deg, #3D4EF0, #8B5CF6)",
+              }}
             >
               Your app is ready
             </p>
-            <p className="text-[#0C0F18]/30 dark:text-white/30 text-xs font-mono tracking-wide">
+            <p className="text-foreground/30 text-xs font-mono tracking-wide">
               deployed successfully
             </p>
           </motion.div>
@@ -472,14 +345,7 @@ function PhaseOverlay() {
 export default function CinematicHero() {
   return (
     <div className="absolute inset-0 z-0">
-      <Canvas
-        camera={{ position: [0, 0, 7], fov: 55 }}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        dpr={[1, 1.5]}
-        style={{ background: "transparent" }}
-      >
-        <Scene />
-      </Canvas>
+      <AuroraCanvas />
       <PhaseOverlay />
     </div>
   );
