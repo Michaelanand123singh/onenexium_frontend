@@ -17,7 +17,7 @@ import {
 
 // ── Animated Dotted Grid ──
 const GRID_SPACING = 32;
-const DOT_RADIUS = 1.2;
+const DOT_RADIUS = 0.7;
 
 function DottedGrid() {
   const cols = Math.ceil(1440 / GRID_SPACING) + 1;
@@ -54,10 +54,10 @@ function DottedGrid() {
             cx={dot.cx}
             cy={dot.cy}
             r={DOT_RADIUS}
-            className="fill-foreground/[0.08] dark:fill-foreground/[0.1]"
+            className="fill-foreground/[0.18] dark:fill-foreground/[0.22]"
             animate={{
               r: [DOT_RADIUS, DOT_RADIUS * 2.5, DOT_RADIUS],
-              opacity: [0.3, 1, 0.3],
+              opacity: [0.5, 1, 0.5],
             }}
             transition={{
               duration: 3,
