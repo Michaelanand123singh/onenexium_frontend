@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
+import { LOGO_URL } from "@/lib/brand.ts";
 import {
   BarChart3,
   Store,
@@ -64,9 +65,7 @@ export default function Index() {
         <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-foreground to-foreground/80 flex items-center justify-center text-background font-bold text-xl shadow-lg">
-              N
-            </div>
+            <img src={LOGO_URL} alt="One Nexium" className="h-8 w-8 rounded-lg object-cover shadow-lg" />
             <span className="font-semibold text-lg tracking-tight">
               One Nexium
             </span>
@@ -256,9 +255,7 @@ export default function Index() {
       <footer className="w-full border-t border-border bg-background/50 backdrop-blur-sm mt-auto relative z-10">
         <div className="max-w-[1440px] mx-auto px-6 py-12 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="w-6 h-6 rounded bg-foreground flex items-center justify-center text-background font-bold text-xs">
-              N
-            </div>
+            <img src={LOGO_URL} alt="One Nexium" className="h-6 w-6 rounded object-cover" />
             <span className="font-medium text-sm">One Nexium</span>
             <span className="text-sm text-muted-foreground ml-4">
               {"©"} {new Date().getFullYear()} All rights reserved.

@@ -13,5 +13,5 @@ export const BRAND_COLORS = {
   surfaceBg: "#F9FAFB",
 } as const;
 
-export const LOGO_URL = "https://cdn.hercules.app/file_2gLC3v8HzIV1C8GXJqD2e7JH";
+export const LOGO_URL = "https://hercules-cdn.com/file_OozkkE04E2bCbm9mfUvCKNdw";
 export const APP_NAME = "OneNexium";
