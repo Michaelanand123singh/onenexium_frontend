@@ -1,209 +1,282 @@
-import { motion } from "motion/react";
 import { useState } from "react";
+import { motion } from "motion/react";
 import { toast } from "sonner";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api.js";
-import { ConvexError } from "convex/values";
-import { BRAND_GRADIENT, LOGO_URL } from "@/lib/brand.ts";
-import CinematicHero from "@/components/cinematic-hero.tsx";
-import DemoGenerator from "./index/_components/demo-generator.tsx";
-import HowItWorks from "./index/_components/how-it-works.tsx";
-import AIPromptExamples from "./index/_components/ai-prompt-examples.tsx";
-import TemplatesGallery from "./index/_components/templates-gallery.tsx";
-import Footer from "./index/_components/footer.tsx";
+import {
+  BarChart3,
+  Store,
+  Contact,
+  Plus,
+  ChevronDown,
+  ArrowRight,
+  ShieldCheck,
+  Layers,
+  Code,
+  Zap,
+} from "lucide-react";
+
+const SUGGESTION_PILLS = [
+  { icon: BarChart3, text: "Create an AI SaaS dashboard" },
+  { icon: Store, text: "Build an e-commerce platform" },
+  { icon: Contact, text: "Design a portfolio site", hideOnMobile: true },
+];
+
+const FEATURES = [
+  {
+    icon: Layers,
+    title: "Component Library",
+    description:
+      "Access hundreds of pre-built, accessible UI components customized to your brand instantly.",
+    iconBg: "bg-primary/10",
+    iconColor: "text-primary",
+    iconBorder: "border-primary/20",
+  },
+  {
+    icon: Code,
+    title: "Clean Code Export",
+    description:
+      "Export production-ready React, Vue, or plain HTML/CSS code with zero dependencies.",
+    iconBg: "bg-blue-50 dark:bg-blue-500/10",
+    iconColor: "text-blue-600 dark:text-blue-400",
+    iconBorder: "border-blue-100 dark:border-blue-500/20",
+  },
+  {
+    icon: Zap,
+    title: "Instant Deploy",
+    description:
+      "Push your generated applications directly to Vercel, Netlify, or your custom infrastructure.",
+    iconBg: "bg-emerald-50 dark:bg-emerald-500/10",
+    iconColor: "text-emerald-600 dark:text-emerald-400",
+    iconBorder: "border-emerald-100 dark:border-emerald-500/20",
+  },
+];
+
+const NAV_LINKS = ["Products", "Solutions", "Resources", "Pricing"];
+const FOOTER_LINKS = ["Privacy", "Terms", "Twitter", "GitHub"];
 
 export default function Index() {
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const joinWaitlist = useMutation(api.waitlist.join);
-
-  const handleNotify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setIsSubmitting(true);
-    try {
-      await joinWaitlist({ email: email.trim() });
-      toast.success("You're on the list! We'll notify you when we launch.");
-      setEmail("");
-    } catch (error) {
-      if (error instanceof ConvexError) {
-        const { message } = error.data as {code: string;message: string;};
-        toast.error(message);
-      } else {
-        toast.error("Something went wrong. Please try again.");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const [prompt, setPrompt] = useState("");
+  const [activeTab, setActiveTab] = useState<"web" | "app">("web");
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden bg-background">
-      {/* ── HERO SECTION ── */}
-      <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#F5F8FF] dark:bg-[#0A0D1A]">
-        {/* Cinematic Prompt → Code → App animation */}
-        <CinematicHero />
-        {/* Fade overlay to blend with page below */}
-        <div className="absolute inset-0 z-[5] bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
-
-        {/* Content – Top: Logo & Badge */}
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center px-6 text-center">
-          {/* Logo / Brand */}
-          <motion.div
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-            className="mb-4">
-            
-            <div className="flex items-center gap-3">
-              <motion.img
-                src={LOGO_URL}
-                alt="OneNexium"
-                className="h-16 w-auto"
-                animate={{ rotateY: [0, 360] }}
-                transition={{
-                  duration: 3,
-                  delay: 1,
-                  repeat: Infinity,
-                  repeatDelay: 5,
-                  ease: "easeInOut"
-                }} />
-              
-              <motion.span
-                className="text-3xl font-bold text-[#0C0F18] dark:text-white tracking-tight"
-                style={{ fontFamily: "'Outfit', sans-serif" }}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}>One Nexium
-
-
-              </motion.span>
+    <div className="min-h-screen flex flex-col relative overflow-x-hidden bg-background antialiased">
+      {/* ── Header ── */}
+      <header className="fixed top-0 w-full z-50 bg-background/70 backdrop-blur-xl border-b border-border/50">
+        <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-foreground to-foreground/80 flex items-center justify-center text-background font-bold text-xl shadow-lg">
+              N
             </div>
+            <span className="font-semibold text-lg tracking-tight">
+              One Nexium
+            </span>
+          </div>
+
+          {/* Nav links */}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link}
+                href="#"
+                className="hover:text-foreground transition-colors"
+              >
+                {link}
+              </a>
+            ))}
+          </nav>
+
+          {/* Actions */}
+          <div className="flex items-center gap-4">
+            <a
+              href="#"
+              className="hidden sm:block text-sm font-medium hover:text-foreground transition-colors"
+            >
+              Sign in
+            </a>
+            <a
+              href="#"
+              className="px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium shadow-md hover:opacity-90 transition-all"
+            >
+              Get Started
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* ── Main ── */}
+      <main className="flex-1 flex flex-col items-center justify-center pt-32 pb-24 px-4 w-full max-w-[1440px] mx-auto relative z-10">
+        {/* Hero */}
+        <section className="w-full max-w-3xl mx-auto flex flex-col items-center text-center mb-16">
+          {/* Suggestion pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="flex flex-wrap justify-center gap-3 mb-8"
+          >
+            {SUGGESTION_PILLS.map((pill) => (
+              <button
+                key={pill.text}
+                onClick={() =>
+                  setPrompt(pill.text.toLowerCase() + "...")
+                }
+                className={`px-4 py-1.5 rounded-full border border-border shadow-sm text-sm font-medium items-center gap-2 hover:bg-accent transition-all cursor-pointer ${
+                  pill.hideOnMobile ? "hidden sm:flex" : "flex"
+                }`}
+              >
+                <pill.icon className="w-4 h-4 text-primary" />
+                {pill.text}
+              </button>
+            ))}
           </motion.div>
 
-          {/* Badge */}
+          {/* Heading */}
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-medium leading-[1.05] tracking-tight mb-12 text-balance"
+          >
+            What will you
+            <br />
+            build today?
+          </motion.h1>
+
+          {/* Prompt input box */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}>
-            
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
-              <motion.span
-                className="w-1.5 h-1.5 rounded-full bg-emerald-500"
-                animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity }} />
-              
-              Coming Soon
-            </span>
-          </motion.div>
-        </div>
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="w-full max-w-3xl relative"
+          >
+            <div className="rounded-3xl p-2 border border-border shadow-md hover:shadow-xl transition-shadow duration-300 bg-card">
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Describe the app you want to build in detail..."
+                className="w-full bg-transparent border-none outline-none resize-none px-6 pt-6 pb-20 text-lg min-h-[160px] placeholder:text-muted-foreground/50"
+              />
 
-        {/* Content – Bottom: Email form & Countdown */}
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center px-6 w-full max-w-md text-center">
-          {/* Email form */}
-          <motion.form
-            onSubmit={handleNotify}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.75 }}
-            className="w-full">
-            
-            <div className="relative group">
-              <div
-                className="absolute -inset-[1px] rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-sm"
-                style={{ background: BRAND_GRADIENT }} />
-              
-              <div className="relative flex items-center bg-white dark:bg-white/10 border border-[#0C0F18]/10 dark:border-white/10 rounded-xl shadow-sm overflow-hidden">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className="flex-1 bg-transparent text-[#0C0F18] dark:text-white placeholder:text-[#0C0F18]/30 dark:placeholder:text-white/30 text-sm px-4 py-3.5 outline-none" />
-                
+              {/* Bottom toolbar */}
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-background/50 backdrop-blur-xl rounded-2xl p-2 border border-border">
+                <div className="flex items-center gap-2">
+                  {/* Attach */}
+                  <button className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-accent hover:shadow-sm transition-all border border-transparent hover:border-border cursor-pointer">
+                    <Plus className="w-[18px] h-[18px]" />
+                  </button>
+
+                  {/* Web / App toggle */}
+                  <div className="flex items-center rounded-xl p-1 border border-border h-10">
+                    <button
+                      onClick={() => setActiveTab("web")}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                        activeTab === "web"
+                          ? "bg-background shadow-sm"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      Web
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("app")}
+                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                        activeTab === "app"
+                          ? "bg-background shadow-sm"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      App
+                    </button>
+                  </div>
+
+                  {/* AI model selector */}
+                  <button className="hidden sm:flex items-center gap-2 px-3 h-10 rounded-xl border border-border hover:bg-accent hover:shadow-sm transition-all text-xs font-medium cursor-pointer">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                    Nexium AI v4
+                    <ChevronDown className="w-[10px] h-[10px] ml-1 text-muted-foreground" />
+                  </button>
+                </div>
+
+                {/* Generate */}
                 <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="mr-1.5 px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#3D4EF0]/25 disabled:opacity-60 cursor-pointer shrink-0"
-                  style={{ background: BRAND_GRADIENT }}>
-                  
-                  {isSubmitting ?
-                  <motion.span
-                    animate={{ opacity: [1, 0.4, 1] }}
-                    transition={{ duration: 1, repeat: Infinity }}>
-                    
-                      Sending...
-                    </motion.span> :
-
-                  "Notify Me"
+                  onClick={() =>
+                    toast.info("Coming soon! Sign up for early access.")
                   }
+                  className="h-10 px-6 rounded-xl bg-foreground text-background text-sm font-semibold shadow-md hover:opacity-90 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  Generate
+                  <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
             </div>
-            <p className="mt-3 text-xs text-[#0C0F18]/30 dark:text-white/30">
-              No spam, ever. We{"'"}ll only email you once when we go live.
-            </p>
-          </motion.form>
 
-          {/* Countdown */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="mt-6 flex items-center gap-8">
-            
-            {[
-            { label: "Days", value: "14" },
-            { label: "Hours", value: "08" },
-            { label: "Minutes", value: "42" }].
-            map((item, i) =>
-            <div key={item.label} className="flex flex-col items-center">
-                <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1 + i * 0.1 }}
-                className="text-2xl sm:text-3xl font-bold text-[#0C0F18]/80 dark:text-white/80 tabular-nums">
-                
-                  {item.value}
-                </motion.span>
-                <span className="text-[10px] uppercase tracking-widest text-[#0C0F18]/30 dark:text-white/30 mt-1">
-                  {item.label}
-                </span>
+            {/* Privacy note */}
+            <div className="mt-4 flex justify-center items-center gap-2 text-xs text-muted-foreground">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Your prompts are private and secure</span>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* ── Features ── */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="w-full max-w-5xl mx-auto mt-24"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Everything you need to ship faster
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {FEATURES.map((feature) => (
+              <div
+                key={feature.title}
+                className="bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div
+                  className={`w-12 h-12 rounded-2xl ${feature.iconBg} ${feature.iconColor} border ${feature.iconBorder} flex items-center justify-center mb-6`}
+                >
+                  <feature.icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
-            )}
-          </motion.div>
+            ))}
+          </div>
+        </motion.section>
+      </main>
+
+      {/* ── Footer ── */}
+      <footer className="w-full border-t border-border bg-background/50 backdrop-blur-sm mt-auto relative z-10">
+        <div className="max-w-[1440px] mx-auto px-6 py-12 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="w-6 h-6 rounded bg-foreground flex items-center justify-center text-background font-bold text-xs">
+              N
+            </div>
+            <span className="font-medium text-sm">One Nexium</span>
+            <span className="text-sm text-muted-foreground ml-4">
+              {"©"} {new Date().getFullYear()} All rights reserved.
+            </span>
+          </div>
+          <div className="flex gap-6 text-sm text-muted-foreground">
+            {FOOTER_LINKS.map((link) => (
+              <a
+                key={link}
+                href="#"
+                className="hover:text-foreground transition-colors"
+              >
+                {link}
+              </a>
+            ))}
+          </div>
         </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2">
-          
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-5 h-8 rounded-full border-2 border-[#0C0F18]/15 dark:border-white/15 flex items-start justify-center p-1">
-            
-            <motion.div
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-2 rounded-full bg-[#3D4EF0]" />
-            
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* ── BELOW-THE-FOLD SECTIONS ── */}
-      <DemoGenerator />
-      <HowItWorks />
-      <AIPromptExamples />
-      <TemplatesGallery />
-
-      {/* Footer */}
-      <Footer />
-    </div>);
-
+      </footer>
+    </div>
+  );
 }
