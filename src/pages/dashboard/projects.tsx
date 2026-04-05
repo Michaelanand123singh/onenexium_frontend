@@ -26,21 +26,8 @@ import {
   EmptyDescription,
   EmptyContent,
 } from "@/components/ui/empty.tsx";
-import { BRAND_GRADIENT } from "@/lib/brand.ts";
 
 type Project = Doc<"projects">;
-
-function getProjectGradient(index: number): string {
-  const gradients = [
-    "linear-gradient(135deg, #3D4EF0 0%, #23A0FF 100%)",
-    "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
-    "linear-gradient(135deg, #3D4EF0 0%, #06B6D4 100%)",
-    "linear-gradient(135deg, #2563EB 0%, #7C3AED 100%)",
-    "linear-gradient(135deg, #0EA5E9 0%, #3D4EF0 100%)",
-    "linear-gradient(135deg, #4F46E5 0%, #23A0FF 100%)",
-  ];
-  return gradients[index % gradients.length];
-}
 
 function ProjectCard({
   project,
@@ -78,37 +65,34 @@ function ProjectCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04 }}
-      className="group relative bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg hover:shadow-primary/5 hover:border-primary/15 transition-all cursor-pointer"
+      transition={{ delay: index * 0.04, duration: 0.4 }}
+      className="group relative bg-card rounded-3xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
       onClick={handleOpen}
     >
       {/* Project preview area */}
-      <div
-        className="h-32 relative flex items-center justify-center"
-        style={{ background: getProjectGradient(index) }}
-      >
-        <div className="absolute inset-4 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20">
-          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/10">
-            <div className="w-2 h-2 rounded-full bg-white/30" />
-            <div className="w-2 h-2 rounded-full bg-white/30" />
-            <div className="w-2 h-2 rounded-full bg-white/30" />
-            <div className="w-16 h-2 ml-2 rounded-full bg-white/15" />
+      <div className="h-36 relative bg-foreground/[0.03] flex items-center justify-center">
+        <div className="absolute inset-5 rounded-2xl border border-border bg-background/60 backdrop-blur-sm">
+          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border">
+            <div className="w-2 h-2 rounded-full bg-foreground/10" />
+            <div className="w-2 h-2 rounded-full bg-foreground/10" />
+            <div className="w-2 h-2 rounded-full bg-foreground/10" />
+            <div className="w-16 h-1.5 ml-2 rounded-full bg-foreground/[0.06]" />
           </div>
           <div className="p-3 space-y-2">
-            <div className="w-3/4 h-2 rounded-full bg-white/15" />
-            <div className="w-1/2 h-2 rounded-full bg-white/10" />
-            <div className="flex gap-2 mt-2">
-              <div className="w-8 h-4 rounded bg-white/15" />
-              <div className="w-8 h-4 rounded bg-white/10" />
+            <div className="w-3/4 h-1.5 rounded-full bg-foreground/[0.06]" />
+            <div className="w-1/2 h-1.5 rounded-full bg-foreground/[0.04]" />
+            <div className="flex gap-2 mt-3">
+              <div className="w-10 h-4 rounded-lg bg-foreground/[0.06]" />
+              <div className="w-10 h-4 rounded-lg bg-foreground/[0.04]" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Card body */}
-      <div className="p-4">
+      <div className="p-5">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <h3 className="text-sm font-semibold text-foreground truncate">
@@ -126,7 +110,7 @@ function ProjectCard({
                 e.stopPropagation();
                 setMenuOpen(!menuOpen);
               }}
-              className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
             >
               <MoreHorizontal className="w-4 h-4" />
             </button>
@@ -140,7 +124,7 @@ function ProjectCard({
                     setMenuOpen(false);
                   }}
                 />
-                <div className="absolute right-0 top-8 z-50 w-40 bg-popover rounded-lg border border-border shadow-lg py-1">
+                <div className="absolute right-0 top-8 z-50 w-40 bg-popover rounded-xl border border-border shadow-lg py-1">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -169,8 +153,8 @@ function ProjectCard({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
+        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border">
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium border border-border rounded-full px-2 py-0.5">
             {project.visibility === "public" ? (
               <Globe className="w-3 h-3" />
             ) : (
@@ -179,12 +163,12 @@ function ProjectCard({
             {project.visibility === "public" ? "Public" : "Private"}
           </div>
           <span
-            className={`ml-auto px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${
+            className={`ml-auto px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide border ${
               project.status === "active"
-                ? "bg-emerald-500/10 text-emerald-600"
+                ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20"
                 : project.status === "generating"
-                  ? "bg-amber-500/10 text-amber-600"
-                  : "bg-muted text-muted-foreground"
+                  ? "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-500/20"
+                  : "bg-muted text-muted-foreground border-border"
             }`}
           >
             {project.status}
@@ -205,9 +189,9 @@ export default function ProjectsPage() {
     return (
       <div className="p-6 lg:p-10 max-w-5xl space-y-6">
         <Skeleton className="h-9 w-48" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-56 rounded-2xl" />
+            <Skeleton key={i} className="h-64 rounded-3xl" />
           ))}
         </div>
       </div>
@@ -215,11 +199,8 @@ export default function ProjectsPage() {
   }
 
   const filtered = projects.filter((p) => {
-    const matchesSearch = p.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesFilter =
-      filter === "all" || p.status === filter;
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+    const matchesFilter = filter === "all" || p.status === filter;
     return matchesSearch && matchesFilter;
   });
 
@@ -229,20 +210,17 @@ export default function ProjectsPage() {
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between gap-4 mb-6 flex-wrap"
+        className="flex items-center justify-between gap-4 mb-8 flex-wrap"
       >
         <div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            Projects
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <h1 className="text-3xl font-medium tracking-tight">Projects</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             {projects.length} project{projects.length !== 1 ? "s" : ""} total
           </p>
         </div>
         <button
-          onClick={() => navigate("/dashboard")}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white cursor-pointer hover:shadow-lg hover:shadow-[#3D4EF0]/20 transition-all shrink-0"
-          style={{ background: BRAND_GRADIENT }}
+          onClick={() => navigate("/dashboard/create")}
+          className="h-10 px-5 rounded-xl bg-foreground text-background text-sm font-semibold shadow-md hover:opacity-90 transition-all inline-flex items-center gap-2 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
           New Project
@@ -255,30 +233,28 @@ export default function ProjectsPage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex items-center gap-3 mb-6 flex-wrap"
+          className="flex items-center gap-3 mb-8 flex-wrap"
         >
-          {/* Search */}
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search projects..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/20 transition-colors shadow-sm"
             />
           </div>
 
-          {/* Filter pills */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center rounded-xl p-1 border border-border h-10 shadow-sm">
             {(["all", "active", "archived"] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3.5 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer capitalize ${
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer capitalize ${
                   filter === f
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground"
                 }`}
               >
                 {f}
@@ -314,9 +290,8 @@ export default function ProjectsPage() {
           </EmptyHeader>
           <EmptyContent>
             <button
-              onClick={() => navigate("/dashboard")}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white cursor-pointer"
-              style={{ background: BRAND_GRADIENT }}
+              onClick={() => navigate("/dashboard/create")}
+              className="h-10 px-5 rounded-xl bg-foreground text-background text-sm font-semibold shadow-md hover:opacity-90 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Create Project
@@ -324,7 +299,7 @@ export default function ProjectsPage() {
           </EmptyContent>
         </Empty>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((project, i) => (
             <ProjectCard key={project._id} project={project} index={i} />
           ))}

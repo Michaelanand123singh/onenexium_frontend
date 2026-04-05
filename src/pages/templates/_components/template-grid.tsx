@@ -12,7 +12,6 @@ import {
   Smartphone,
   LayoutGrid,
 } from "lucide-react";
-import { BRAND_GRADIENT } from "@/lib/brand.ts";
 import type { LucideIcon } from "lucide-react";
 
 type Category = {
@@ -149,27 +148,27 @@ export default function TemplateGrid({ onUseTemplate }: TemplateGridProps) {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.15 }}
         className="mb-8"
       >
-        <div className="relative max-w-md mx-auto">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+        <div className="relative max-w-md">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-foreground/[0.03] border border-foreground/10 rounded-xl pl-10 pr-4 py-3 text-sm text-foreground placeholder:text-foreground/30 outline-none focus:border-[#3D4EF0]/30 transition-colors"
+            className="w-full border border-border rounded-xl bg-card pl-11 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/20 transition-colors shadow-sm"
           />
         </div>
       </motion.div>
 
-      {/* Category filter */}
+      {/* Category filter - matching landing page toggle style */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="flex flex-wrap justify-center gap-2 mb-10"
+        transition={{ delay: 0.2 }}
+        className="flex flex-wrap gap-2 mb-8"
       >
         {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
@@ -177,12 +176,11 @@ export default function TemplateGrid({ onUseTemplate }: TemplateGridProps) {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-all duration-300 ${
+              className={`px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 cursor-pointer transition-all border ${
                 activeCategory === cat.id
-                  ? "text-white shadow-lg shadow-[#3D4EF0]/20"
-                  : "text-foreground/50 border border-foreground/10 hover:border-foreground/20 bg-foreground/[0.02]"
+                  ? "bg-foreground text-background border-foreground shadow-md"
+                  : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"
               }`}
-              style={activeCategory === cat.id ? { background: BRAND_GRADIENT } : undefined}
             >
               <Icon className="w-3.5 h-3.5" />
               {cat.label}
@@ -198,24 +196,21 @@ export default function TemplateGrid({ onUseTemplate }: TemplateGridProps) {
           animate={{ opacity: 1 }}
           className="text-center py-20"
         >
-          <p className="text-foreground/40 text-lg">No templates found</p>
-          <p className="text-foreground/25 text-sm mt-1">Try a different search or category</p>
+          <p className="text-muted-foreground text-lg font-medium">No templates found</p>
+          <p className="text-muted-foreground/60 text-sm mt-1">Try a different search or category</p>
         </motion.div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((template, i) => (
             <motion.div
               key={template.id}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 + i * 0.06 }}
+              transition={{ duration: 0.4, delay: 0.08 + i * 0.05 }}
               layout
               className="group"
             >
-              <div
-                className="rounded-2xl border border-foreground/10 overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-[#3D4EF0]/30 hover:shadow-xl hover:shadow-[#3D4EF0]/5"
-                style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(12px)" }}
-              >
+              <div className="bg-card rounded-3xl border border-border overflow-hidden h-full flex flex-col shadow-sm hover:shadow-md transition-shadow">
                 {/* Preview */}
                 <div className="relative overflow-hidden aspect-video">
                   <img
@@ -228,15 +223,14 @@ export default function TemplateGrid({ onUseTemplate }: TemplateGridProps) {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold text-sm cursor-pointer"
-                      style={{ background: BRAND_GRADIENT }}
+                      className="h-9 px-4 rounded-xl bg-foreground text-background font-semibold text-sm flex items-center gap-2 cursor-pointer shadow-md"
                       onClick={() => onUseTemplate(template.prompt)}
                     >
-                      <Shuffle className="w-4 h-4" />
+                      <Shuffle className="w-3.5 h-3.5" />
                       Use Template
                     </motion.button>
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold text-sm cursor-pointer bg-white/10 hover:bg-white/20 transition-colors">
-                      <Eye className="w-4 h-4" />
+                    <button className="h-9 px-4 rounded-xl text-white font-semibold text-sm flex items-center gap-2 cursor-pointer bg-white/10 hover:bg-white/20 transition-colors border border-white/20">
+                      <Eye className="w-3.5 h-3.5" />
                       Preview
                     </button>
                   </div>
@@ -244,15 +238,17 @@ export default function TemplateGrid({ onUseTemplate }: TemplateGridProps) {
 
                 {/* Info */}
                 <div className="p-5 flex-1 flex flex-col">
-                  <h3 className="font-bold text-foreground mb-1">{template.title}</h3>
-                  <p className="text-sm text-foreground/40 mb-3 flex-1">{template.description}</p>
+                  <h3 className="font-semibold text-foreground mb-1">{template.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-3 flex-1 leading-relaxed">
+                    {template.description}
+                  </p>
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     {template.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider bg-foreground/5 text-foreground/40"
+                        className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider border border-border text-muted-foreground"
                       >
                         {tag}
                       </span>
@@ -260,11 +256,11 @@ export default function TemplateGrid({ onUseTemplate }: TemplateGridProps) {
                   </div>
 
                   {/* Prompt */}
-                  <div className="bg-background/50 border border-foreground/8 rounded-lg px-3 py-2">
-                    <p className="text-[10px] text-foreground/30 uppercase tracking-widest mb-0.5">
+                  <div className="bg-foreground/[0.03] border border-border rounded-xl px-3 py-2">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-0.5 font-medium">
                       Prompt
                     </p>
-                    <p className="text-xs text-foreground/60 font-mono truncate">
+                    <p className="text-xs text-muted-foreground font-mono truncate">
                       {`"${template.prompt}"`}
                     </p>
                   </div>
