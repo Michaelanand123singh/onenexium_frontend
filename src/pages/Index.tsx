@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
-import { LOGO_URL } from "@/lib/brand.ts";
 import {
   BarChart3,
   Store,
@@ -14,6 +13,8 @@ import {
   Code,
   Zap,
 } from "lucide-react";
+import SiteHeader from "@/components/site-header.tsx";
+import SiteFooter from "@/components/site-footer.tsx";
 
 // ── Interactive 3D Dot Grid ──
 const GRID_GAP = 28;
@@ -239,8 +240,7 @@ const FEATURES = [
   },
 ];
 
-const NAV_LINKS = ["Products", "Solutions", "Resources", "Pricing"];
-const FOOTER_LINKS = ["Privacy", "Terms", "Twitter", "GitHub"];
+
 
 export default function Index() {
   const [prompt, setPrompt] = useState("");
@@ -252,71 +252,7 @@ export default function Index() {
       <DottedGrid />
 
       {/* ── Header ── */}
-      <header className="fixed top-0 w-full z-50 bg-background/70 backdrop-blur-xl border-b border-border/50">
-        <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <motion.img
-              src={LOGO_URL}
-              alt="One Nexium"
-              className="h-8 w-8 rounded-lg object-cover shadow-lg"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                filter: [
-                  "drop-shadow(0 0 0px rgba(99,102,241,0))",
-                  "drop-shadow(0 0 8px rgba(99,102,241,0.5))",
-                  "drop-shadow(0 0 0px rgba(99,102,241,0))",
-                ],
-              }}
-              transition={{
-                opacity: { duration: 0.5 },
-                scale: { duration: 0.5 },
-                filter: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
-              }}
-              whileHover={{ scale: 1.15 }}
-            />
-            <motion.span
-              className="font-semibold text-lg tracking-tight"
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.4 }}
-            >
-              One Nexium
-            </motion.span>
-          </div>
-
-          {/* Nav links */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="hover:text-foreground transition-colors"
-              >
-                {link}
-              </a>
-            ))}
-          </nav>
-
-          {/* Actions */}
-          <div className="flex items-center gap-4">
-            <a
-              href="#"
-              className="hidden sm:block text-sm font-medium hover:text-foreground transition-colors"
-            >
-              Sign in
-            </a>
-            <a
-              href="#"
-              className="px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium shadow-md hover:opacity-90 transition-all"
-            >
-              Get Started
-            </a>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* ── Main ── */}
       <main className="flex-1 flex flex-col items-center justify-center pt-32 pb-24 px-4 w-full max-w-[1440px] mx-auto relative z-10">
@@ -485,28 +421,7 @@ export default function Index() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="w-full border-t border-border bg-background/50 backdrop-blur-sm mt-auto relative z-10">
-        <div className="max-w-[1440px] mx-auto px-6 py-12 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
-          <div className="flex items-center gap-2 flex-wrap">
-            <img src={LOGO_URL} alt="One Nexium" className="h-6 w-6 rounded object-cover" />
-            <span className="font-medium text-sm">One Nexium</span>
-            <span className="text-sm text-muted-foreground ml-4">
-              {"©"} {new Date().getFullYear()} All rights reserved.
-            </span>
-          </div>
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            {FOOTER_LINKS.map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="hover:text-foreground transition-colors"
-              >
-                {link}
-              </a>
-            ))}
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
