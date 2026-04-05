@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import type { Doc } from "@/convex/_generated/dataModel.d.ts";
 import { BRAND_GRADIENT } from "@/lib/brand.ts";
+import { AnimatePresence } from "motion/react";
+import TeamDialog from "@/components/team-dialog.tsx";
 
 export default function EditorNavbar({
   project,
@@ -26,6 +28,7 @@ export default function EditorNavbar({
   const renameProject = useMutation(api.projects.rename);
   const [isRenaming, setIsRenaming] = useState(false);
   const [nameInput, setNameInput] = useState(project.name);
+  const [showTeamDialog, setShowTeamDialog] = useState(false);
 
   const handleRename = async () => {
     if (!nameInput.trim()) {
@@ -58,6 +61,7 @@ export default function EditorNavbar({
   };
 
   return (
+    <>
     <header className="h-12 shrink-0 border-b border-[#0C0F18]/5 bg-white/80 backdrop-blur-xl flex items-center px-3 gap-2">
       {/* Left section */}
       <div className="flex items-center gap-2">
@@ -131,7 +135,7 @@ export default function EditorNavbar({
       {/* Right section */}
       <div className="flex items-center gap-2">
         <button
-          onClick={() => toast.info("Coming soon in a future milestone!")}
+          onClick={() => setShowTeamDialog(true)}
           className="h-7 px-3 rounded-lg flex items-center gap-1.5 text-xs font-medium text-[#0C0F18]/40 hover:text-[#0C0F18]/70 hover:bg-[#0C0F18]/[0.03] transition-colors cursor-pointer"
         >
           <Share2 className="w-3.5 h-3.5" />
@@ -147,5 +151,16 @@ export default function EditorNavbar({
         </button>
       </div>
     </header>
+
+      <AnimatePresence>
+        {showTeamDialog && (
+          <TeamDialog
+            projectId={project._id}
+            projectName={project.name}
+            onClose={() => setShowTeamDialog(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }

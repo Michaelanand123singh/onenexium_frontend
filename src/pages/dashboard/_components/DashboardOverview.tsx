@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { formatDistanceToNow } from "date-fns";
 import type { Doc } from "@/convex/_generated/dataModel.d.ts";
 import { useRef, useEffect, useCallback } from "react";
+import InviteNotifications from "./InviteNotifications.tsx";
 
 type Project = Doc<"projects">;
 
@@ -329,6 +330,9 @@ export default function DashboardOverview() {
             </motion.button>
           </div>
         </motion.div>
+
+        {/* Invite notifications */}
+        <InviteNotifications />
 
         {/* Stats row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
