@@ -6,6 +6,7 @@ import LoginPage from "./pages/login/page.tsx";
 import DashboardPage from "./pages/dashboard/page.tsx";
 import TemplatesPage from "./pages/templates/page.tsx";
 import ProjectEditorPage from "./pages/project/page.tsx";
+import SettingsPage from "./pages/settings/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/templates" element={<TemplatesPage />} />
           <Route path="/project/:projectId" element={<ProjectEditorPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
