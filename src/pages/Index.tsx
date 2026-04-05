@@ -141,23 +141,36 @@ function DottedGrid() {
           const baseAlpha = dark ? 0.3 + wave * 0.05 : 0.4 + wave * 0.06;
           const alpha = Math.min(1, baseAlpha + proximity * 0.55);
 
-          // Dot radius: base size, smaller growth near cursor
-          const dotR = (BASE_RADIUS + proximity * 0.6) * Math.max(scale, 0.4);
+          // Dot radius: base size, subtle 3D lift near cursor
+          const lift = proximity * proximity; // eased proximity for natural feel
+          const dotR = (BASE_RADIUS + lift * 1.2) * Math.max(scale, 0.4);
+
+          // Draw shadow beneath dot for 3D depth (only near cursor)
+          if (proximity > 0.08) {
+            const shadowOffset = lift * 3;
+            const shadowAlpha = lift * 0.15;
+            ctx.beginPath();
+            ctx.arc(sx + shadowOffset * 0.5, sy + shadowOffset, dotR * 0.9, 0, Math.PI * 2);
+            ctx.fillStyle = dark
+              ? `rgba(0, 0, 0, ${shadowAlpha})`
+              : `rgba(0, 0, 0, ${shadowAlpha * 0.7})`;
+            ctx.fill();
+          }
 
           // Draw glow halo near cursor
           if (proximity > 0.05) {
-            const glowR = dotR + 2 * proximity * proximity;
+            const glowR = dotR + 2 * lift;
             ctx.beginPath();
-            ctx.arc(sx, sy, glowR, 0, Math.PI * 2);
+            ctx.arc(sx, sy - lift * 2, glowR, 0, Math.PI * 2);
             ctx.fillStyle = dark
               ? `rgba(160, 140, 255, ${proximity * 0.3})`
               : `rgba(99, 102, 241, ${proximity * 0.25})`;
             ctx.fill();
           }
 
-          // Draw dot
+          // Draw dot (shifts up slightly near cursor for lift effect)
           ctx.beginPath();
-          ctx.arc(sx, sy, dotR, 0, Math.PI * 2);
+          ctx.arc(sx, sy - lift * 2, dotR, 0, Math.PI * 2);
           ctx.fillStyle = dark
             ? `rgba(255, 255, 255, ${alpha})`
             : `rgba(0, 0, 0, ${alpha})`;
