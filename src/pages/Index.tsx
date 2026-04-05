@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { LOGO_URL } from "@/lib/brand.ts";
@@ -14,6 +14,72 @@ import {
   Code,
   Zap,
 } from "lucide-react";
+
+// ── Animated Dotted Grid ──
+const GRID_SPACING = 32;
+const DOT_RADIUS = 1.2;
+
+function DottedGrid() {
+  const cols = Math.ceil(1440 / GRID_SPACING) + 1;
+  const rows = Math.ceil(900 / GRID_SPACING) + 1;
+
+  const dots = useMemo(() => {
+    const result: { cx: number; cy: number; delay: number }[] = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const cx = c * GRID_SPACING;
+        const cy = r * GRID_SPACING;
+        // Radial distance from center for wave delay
+        const dx = cx - (cols * GRID_SPACING) / 2;
+        const dy = cy - (rows * GRID_SPACING) / 2;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const delay = dist * 0.002;
+        result.push({ cx, cy, delay });
+      }
+    }
+    return result;
+  }, [cols, rows]);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <svg
+        className="absolute inset-0 w-full h-full"
+        viewBox={`0 0 ${cols * GRID_SPACING} ${rows * GRID_SPACING}`}
+        preserveAspectRatio="xMidYMid slice"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {dots.map((dot, i) => (
+          <motion.circle
+            key={i}
+            cx={dot.cx}
+            cy={dot.cy}
+            r={DOT_RADIUS}
+            className="fill-foreground/[0.08] dark:fill-foreground/[0.1]"
+            animate={{
+              r: [DOT_RADIUS, DOT_RADIUS * 2.5, DOT_RADIUS],
+              opacity: [0.3, 1, 0.3],
+            }}
+            transition={{
+              duration: 3,
+              delay: dot.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </svg>
+
+      {/* Radial vignette to fade edges */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 40%, transparent 30%, var(--background) 100%)",
+        }}
+      />
+    </div>
+  );
+}
 
 const SUGGESTION_PILLS = [
   { icon: BarChart3, text: "Create an AI SaaS dashboard" },
@@ -60,6 +126,9 @@ export default function Index() {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden bg-background antialiased">
+      {/* ── Dotted Grid Background ── */}
+      <DottedGrid />
+
       {/* ── Header ── */}
       <header className="fixed top-0 w-full z-50 bg-background/70 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
