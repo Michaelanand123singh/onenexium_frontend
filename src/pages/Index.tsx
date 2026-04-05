@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { LOGO_URL } from "@/lib/brand.ts";
@@ -15,37 +15,181 @@ import {
   Zap,
 } from "lucide-react";
 
-// ── Dot Grid Background (Google Stitch style) ──
+// ── Interactive 3D Dot Grid ──
+const GRID_GAP = 28;
+const BASE_RADIUS = 1;
+const GLOW_RADIUS = 180; // px radius around cursor that lights up dots
+
 function DottedGrid() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: -9999, y: -9999 });
+  const scrollRef = useRef(0);
+  const rafRef = useRef(0);
+
+  const resize = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const dpr = Math.min(window.devicePixelRatio, 2);
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext("2d");
+    if (ctx) ctx.scale(dpr, dpr);
+  }, []);
+
+  useEffect(() => {
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, [resize]);
+
+  // Track mouse position relative to canvas
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    };
+    const handleLeave = () => {
+      mouseRef.current = { x: -9999, y: -9999 };
+    };
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseleave", handleLeave);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseleave", handleLeave);
+    };
+  }, []);
+
+  // Track scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      scrollRef.current = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Animation loop
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Detect dark mode
+    const isDark = () => document.documentElement.classList.contains("dark");
+
+    const animate = (time: number) => {
+      const t = time * 0.001;
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
+      const scroll = scrollRef.current;
+      const dark = isDark();
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 3D perspective tilt based on scroll
+      const maxTilt = 12; // degrees
+      const scrollNorm = Math.min(scroll / 600, 1); // normalize 0-1
+      const tiltX = scrollNorm * maxTilt;
+
+      // Apply 3D perspective via canvas transforms
+      const cx = w / 2;
+      const cy = h / 2;
+      const perspective = 1200;
+      const radX = (tiltX * Math.PI) / 180;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      // Draw dots in grid with 3D projection
+      const cols = Math.ceil(w / GRID_GAP) + 2;
+      const rows = Math.ceil(h / GRID_GAP) + 2;
+      const startX = -((cols * GRID_GAP) / 2);
+      const startY = -((rows * GRID_GAP) / 2);
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const lx = startX + c * GRID_GAP;
+          const ly = startY + r * GRID_GAP;
+
+          // 3D rotation around X axis
+          const cosX = Math.cos(radX);
+          const sinX = Math.sin(radX);
+          const y3d = ly * cosX;
+          const z3d = ly * sinX;
+
+          // Perspective projection
+          const scale = perspective / (perspective + z3d);
+          const px = lx * scale;
+          const py = y3d * scale;
+
+          // Screen position
+          const screenX = cx + px;
+          const screenY = cy + py;
+
+          // Distance from mouse
+          const dmx = screenX - mx;
+          const dmy = screenY - my;
+          const dist = Math.sqrt(dmx * dmx + dmy * dmy);
+
+          // Proximity factor: 1 at cursor, 0 at GLOW_RADIUS+
+          const proximity = Math.max(0, 1 - dist / GLOW_RADIUS);
+
+          // Base opacity with subtle wave
+          const wave = (Math.sin(t * 0.8 + c * 0.15 + r * 0.15) + 1) * 0.5;
+          const baseAlpha = dark ? 0.12 + wave * 0.06 : 0.2 + wave * 0.08;
+
+          // Boosted opacity near cursor
+          const alpha = baseAlpha + proximity * (dark ? 0.7 : 0.6);
+
+          // Dot size grows near cursor
+          const dotR = (BASE_RADIUS + proximity * 2.2) * scale;
+
+          // Color: base dots are foreground, highlighted dots get a slight primary tint
+          if (proximity > 0.05) {
+            // Glowing dot near cursor
+            const glowAlpha = proximity * 0.35;
+            ctx.beginPath();
+            ctx.arc(cx + px, cy + py, dotR + 3 * proximity, 0, Math.PI * 2);
+            ctx.fillStyle = dark
+              ? `rgba(180, 160, 255, ${glowAlpha})`
+              : `rgba(99, 102, 241, ${glowAlpha})`;
+            ctx.fill();
+          }
+
+          ctx.beginPath();
+          ctx.arc(cx + px, cy + py, dotR, 0, Math.PI * 2);
+          ctx.fillStyle = dark
+            ? `rgba(255, 255, 255, ${alpha})`
+            : `rgba(0, 0, 0, ${alpha})`;
+          ctx.fill();
+        }
+      }
+
+      ctx.restore();
+
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {/* Base dot grid via CSS radial-gradient pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.35] dark:opacity-[0.2]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, var(--foreground) 0.8px, transparent 0.8px)",
-          backgroundSize: "28px 28px",
-        }}
+    <div className="absolute inset-0 overflow-hidden z-0" style={{ perspective: "1200px" }}>
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
       />
-
-      {/* Animated sweeping highlight that travels across the grid */}
-      <motion.div
-        className="absolute inset-0"
-        animate={{
-          background: [
-            "radial-gradient(ellipse 40% 50% at 20% 30%, rgba(var(--primary-rgb, 99 102 241) / 0.06) 0%, transparent 70%)",
-            "radial-gradient(ellipse 40% 50% at 80% 60%, rgba(var(--primary-rgb, 99 102 241) / 0.06) 0%, transparent 70%)",
-            "radial-gradient(ellipse 40% 50% at 50% 20%, rgba(var(--primary-rgb, 99 102 241) / 0.06) 0%, transparent 70%)",
-            "radial-gradient(ellipse 40% 50% at 20% 30%, rgba(var(--primary-rgb, 99 102 241) / 0.06) 0%, transparent 70%)",
-          ],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
-
       {/* Radial vignette to fade edges cleanly */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background:
             "radial-gradient(ellipse 80% 70% at 50% 45%, transparent 35%, var(--background) 100%)",
