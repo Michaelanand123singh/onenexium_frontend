@@ -7,11 +7,11 @@
 
 @theme inline {
   --font-sans:
-    "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif,
+    "Outfit", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
   --font-heading:
-    "Outfit", ui-sans-serif, system-ui, sans-serif;
+    "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --font-mono:
     "DM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
