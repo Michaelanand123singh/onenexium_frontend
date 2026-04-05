@@ -141,12 +141,12 @@ function DottedGrid() {
           const baseAlpha = dark ? 0.3 + wave * 0.05 : 0.4 + wave * 0.06;
           const alpha = Math.min(1, baseAlpha + proximity * 0.55);
 
-          // Dot radius: base + proximity growth, scaled by perspective
-          const dotR = (BASE_RADIUS + proximity * 2.5) * Math.max(scale, 0.4);
+          // Dot radius: base size, smaller growth near cursor
+          const dotR = (BASE_RADIUS + proximity * 0.6) * Math.max(scale, 0.4);
 
           // Draw glow halo near cursor
           if (proximity > 0.05) {
-            const glowR = dotR + 4 * proximity * proximity;
+            const glowR = dotR + 2 * proximity * proximity;
             ctx.beginPath();
             ctx.arc(sx, sy, glowR, 0, Math.PI * 2);
             ctx.fillStyle = dark
