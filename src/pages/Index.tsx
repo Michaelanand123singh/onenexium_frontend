@@ -248,9 +248,13 @@ export default function Index() {
               alt="One Nexium"
               className="h-8 w-8 rounded-lg object-cover shadow-lg"
               initial={{ opacity: 0, scale: 0, rotate: -180 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              whileHover={{ scale: 1.15, rotate: 8 }}
+              animate={{ opacity: 1, scale: [1, 1.08, 1], rotate: [0, 5, -5, 0] }}
+              transition={{
+                opacity: { duration: 0.6 },
+                scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+              }}
+              whileHover={{ scale: 1.2, rotate: 12 }}
             />
             <motion.span
               className="font-semibold text-lg tracking-tight"
