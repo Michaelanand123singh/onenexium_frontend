@@ -1,6 +1,5 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
 
 // ── Phase system ──
 const CYCLE = 18;
@@ -14,65 +13,113 @@ function getPhase(t: number): PhaseInfo {
   return { phase: "app", progress: (raw - 12) / 6 };
 }
 
-// ── Aurora Canvas ──
-type AuroraBlob = {
+// ── Wave layer definition ──
+type WaveLayer = {
+  amplitude: number;
+  frequency: number;
+  speed: number;
+  yOffset: number;
+  color: string;
+  opacity: number;
+  secondary: {
+    amplitude: number;
+    frequency: number;
+    speed: number;
+  };
+};
+
+const WAVE_LAYERS: WaveLayer[] = [
+  {
+    amplitude: 55,
+    frequency: 0.0025,
+    speed: 0.4,
+    yOffset: 0.38,
+    color: "99, 102, 241",   // indigo
+    opacity: 0.08,
+    secondary: { amplitude: 20, frequency: 0.005, speed: 0.6 },
+  },
+  {
+    amplitude: 45,
+    frequency: 0.003,
+    speed: -0.3,
+    yOffset: 0.45,
+    color: "61, 78, 240",    // brand primary
+    opacity: 0.1,
+    secondary: { amplitude: 18, frequency: 0.006, speed: -0.5 },
+  },
+  {
+    amplitude: 60,
+    frequency: 0.002,
+    speed: 0.25,
+    yOffset: 0.52,
+    color: "139, 92, 246",   // violet
+    opacity: 0.07,
+    secondary: { amplitude: 25, frequency: 0.004, speed: 0.45 },
+  },
+  {
+    amplitude: 40,
+    frequency: 0.0035,
+    speed: -0.35,
+    yOffset: 0.58,
+    color: "35, 160, 255",   // brand secondary
+    opacity: 0.09,
+    secondary: { amplitude: 15, frequency: 0.007, speed: -0.55 },
+  },
+  {
+    amplitude: 50,
+    frequency: 0.0028,
+    speed: 0.2,
+    yOffset: 0.65,
+    color: "14, 165, 233",   // sky
+    opacity: 0.06,
+    secondary: { amplitude: 22, frequency: 0.0045, speed: 0.35 },
+  },
+  {
+    amplitude: 35,
+    frequency: 0.004,
+    speed: -0.22,
+    yOffset: 0.72,
+    color: "61, 78, 240",
+    opacity: 0.05,
+    secondary: { amplitude: 12, frequency: 0.008, speed: -0.4 },
+  },
+];
+
+// ── Floating orb for depth ──
+type Orb = {
   x: number;
   y: number;
+  radius: number;
   vx: number;
   vy: number;
-  radius: number;
   color: string;
   phase: number;
-  speed: number;
+  pulseSpeed: number;
 };
 
-type Star = {
-  x: number;
-  y: number;
-  size: number;
-  twinkleSpeed: number;
-  twinklePhase: number;
-  brightness: number;
-};
-
-function createBlobs(w: number, h: number): AuroraBlob[] {
-  const colors = [
-    "rgba(61, 78, 240, 0.35)",
-    "rgba(35, 160, 255, 0.30)",
-    "rgba(139, 92, 246, 0.28)",
-    "rgba(99, 102, 241, 0.32)",
-    "rgba(14, 165, 233, 0.25)",
-    "rgba(61, 78, 240, 0.20)",
-    "rgba(139, 92, 246, 0.22)",
+function createOrbs(w: number, h: number): Orb[] {
+  const configs = [
+    { color: "61, 78, 240", size: 0.3 },
+    { color: "139, 92, 246", size: 0.22 },
+    { color: "35, 160, 255", size: 0.26 },
+    { color: "99, 102, 241", size: 0.18 },
   ];
-
-  return colors.map((color, i) => ({
-    x: w * (0.15 + Math.random() * 0.7),
+  return configs.map((c, i) => ({
+    x: w * (0.2 + Math.random() * 0.6),
     y: h * (0.2 + Math.random() * 0.6),
-    vx: (Math.random() - 0.5) * 0.4,
-    vy: (Math.random() - 0.5) * 0.3,
-    radius: Math.min(w, h) * (0.25 + Math.random() * 0.3),
-    color,
-    phase: i * 0.9,
-    speed: 0.3 + Math.random() * 0.5,
+    radius: Math.min(w, h) * c.size,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: (Math.random() - 0.5) * 0.2,
+    color: c.color,
+    phase: i * 1.5,
+    pulseSpeed: 0.3 + Math.random() * 0.3,
   }));
 }
 
-function createStars(w: number, h: number): Star[] {
-  return Array.from({ length: 120 }, () => ({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    size: Math.random() * 1.8 + 0.3,
-    twinkleSpeed: 0.5 + Math.random() * 2,
-    twinklePhase: Math.random() * Math.PI * 2,
-    brightness: 0.3 + Math.random() * 0.7,
-  }));
-}
-
-function AuroraCanvas() {
+// ── Canvas animation ──
+function WaveCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const blobsRef = useRef<AuroraBlob[]>([]);
-  const starsRef = useRef<Star[]>([]);
+  const orbsRef = useRef<Orb[]>([]);
   const rafRef = useRef<number>(0);
 
   const resize = useCallback(() => {
@@ -84,8 +131,7 @@ function AuroraCanvas() {
     canvas.height = rect.height * dpr;
     const ctx = canvas.getContext("2d");
     if (ctx) ctx.scale(dpr, dpr);
-    blobsRef.current = createBlobs(rect.width, rect.height);
-    starsRef.current = createStars(rect.width, rect.height);
+    orbsRef.current = createOrbs(rect.width, rect.height);
   }, []);
 
   useEffect(() => {
@@ -106,85 +152,101 @@ function AuroraCanvas() {
       const w = rect.width;
       const h = rect.height;
 
-      // Clear with a very dark background
       ctx.clearRect(0, 0, w, h);
 
-      // Draw stars
-      for (const star of starsRef.current) {
-        const twinkle =
-          (Math.sin(t * star.twinkleSpeed + star.twinklePhase) + 1) * 0.5;
-        const alpha = star.brightness * (0.3 + twinkle * 0.7);
+      // Draw soft background orbs for ambient glow
+      for (const orb of orbsRef.current) {
+        orb.x += orb.vx + Math.sin(t * orb.pulseSpeed + orb.phase) * 0.3;
+        orb.y += orb.vy + Math.cos(t * orb.pulseSpeed * 0.8 + orb.phase) * 0.2;
+
+        // Wrap
+        const pad = orb.radius * 1.5;
+        if (orb.x < -pad) orb.x = w + pad;
+        if (orb.x > w + pad) orb.x = -pad;
+        if (orb.y < -pad) orb.y = h + pad;
+        if (orb.y > h + pad) orb.y = -pad;
+
+        const pulse = orb.radius * (1 + Math.sin(t * 0.4 + orb.phase) * 0.12);
+        const grad = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, pulse);
+        grad.addColorStop(0, `rgba(${orb.color}, 0.15)`);
+        grad.addColorStop(0.5, `rgba(${orb.color}, 0.05)`);
+        grad.addColorStop(1, `rgba(${orb.color}, 0)`);
+
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.6})`;
+        ctx.arc(orb.x, orb.y, pulse, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
         ctx.fill();
       }
 
-      // Update and draw aurora blobs
-      for (const blob of blobsRef.current) {
-        // Organic motion
-        blob.x += blob.vx + Math.sin(t * blob.speed + blob.phase) * 0.6;
-        blob.y += blob.vy + Math.cos(t * blob.speed * 0.7 + blob.phase) * 0.4;
-
-        // Wrap around edges with padding
-        const pad = blob.radius;
-        if (blob.x < -pad) blob.x = w + pad;
-        if (blob.x > w + pad) blob.x = -pad;
-        if (blob.y < -pad) blob.y = h + pad;
-        if (blob.y > h + pad) blob.y = -pad;
-
-        // Pulsing radius
-        const pulse =
-          blob.radius * (1 + Math.sin(t * 0.5 + blob.phase) * 0.15);
-
-        // Draw soft radial gradient blob
-        const gradient = ctx.createRadialGradient(
-          blob.x,
-          blob.y,
-          0,
-          blob.x,
-          blob.y,
-          pulse
-        );
-        gradient.addColorStop(0, blob.color);
-        gradient.addColorStop(0.5, blob.color.replace(/[\d.]+\)$/, "0.12)"));
-        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+      // Draw wave layers from back to front
+      for (const layer of WAVE_LAYERS) {
+        const baseY = h * layer.yOffset;
+        const step = 3;
 
         ctx.beginPath();
-        ctx.arc(blob.x, blob.y, pulse, 0, Math.PI * 2);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-      }
+        ctx.moveTo(0, h);
 
-      // Layered aurora streaks
-      const streakCount = 5;
-      for (let s = 0; s < streakCount; s++) {
-        ctx.beginPath();
-        const baseY = h * (0.3 + s * 0.12);
-        const amplitude = 40 + s * 15;
-        const freq = 0.003 + s * 0.001;
-        const timeOffset = t * (0.3 + s * 0.08);
+        for (let x = 0; x <= w; x += step) {
+          const primary =
+            Math.sin(x * layer.frequency + t * layer.speed) * layer.amplitude;
+          const secondary =
+            Math.sin(x * layer.secondary.frequency + t * layer.secondary.speed) *
+            layer.secondary.amplitude;
+          const tertiary =
+            Math.cos(x * 0.001 + t * 0.15) * 15;
 
-        ctx.moveTo(0, baseY);
-        for (let x = 0; x <= w; x += 4) {
-          const y =
-            baseY +
-            Math.sin(x * freq + timeOffset) * amplitude +
-            Math.cos(x * freq * 1.5 + timeOffset * 0.7) * (amplitude * 0.4);
+          const y = baseY + primary + secondary + tertiary;
           ctx.lineTo(x, y);
         }
+
         ctx.lineTo(w, h);
-        ctx.lineTo(0, h);
         ctx.closePath();
 
-        const streakGradient = ctx.createLinearGradient(0, baseY - amplitude, 0, baseY + amplitude * 2);
-        const hue = [240, 220, 260, 200, 250][s] ?? 240;
-        streakGradient.addColorStop(0, `hsla(${hue}, 80%, 60%, 0)`);
-        streakGradient.addColorStop(0.3, `hsla(${hue}, 80%, 55%, 0.06)`);
-        streakGradient.addColorStop(0.6, `hsla(${hue}, 75%, 50%, 0.03)`);
-        streakGradient.addColorStop(1, `hsla(${hue}, 80%, 60%, 0)`);
-        ctx.fillStyle = streakGradient;
+        // Gradient fill from wave crest downward
+        const fillGrad = ctx.createLinearGradient(0, baseY - layer.amplitude, 0, h);
+        fillGrad.addColorStop(0, `rgba(${layer.color}, ${layer.opacity})`);
+        fillGrad.addColorStop(0.4, `rgba(${layer.color}, ${layer.opacity * 0.5})`);
+        fillGrad.addColorStop(1, `rgba(${layer.color}, 0)`);
+        ctx.fillStyle = fillGrad;
         ctx.fill();
+
+        // Thin glowing line at the wave crest
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += step) {
+          const primary =
+            Math.sin(x * layer.frequency + t * layer.speed) * layer.amplitude;
+          const secondary =
+            Math.sin(x * layer.secondary.frequency + t * layer.secondary.speed) *
+            layer.secondary.amplitude;
+          const tertiary =
+            Math.cos(x * 0.001 + t * 0.15) * 15;
+          const y = baseY + primary + secondary + tertiary;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = `rgba(${layer.color}, ${layer.opacity * 2.5})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      // Subtle shimmer dots along the top wave
+      const topLayer = WAVE_LAYERS[0];
+      if (topLayer) {
+        const baseY = h * topLayer.yOffset;
+        for (let x = 0; x < w; x += 60) {
+          const primary =
+            Math.sin(x * topLayer.frequency + t * topLayer.speed) * topLayer.amplitude;
+          const secondary =
+            Math.sin(x * topLayer.secondary.frequency + t * topLayer.secondary.speed) *
+            topLayer.secondary.amplitude;
+          const y = baseY + primary + secondary;
+          const shimmer = (Math.sin(t * 2 + x * 0.05) + 1) * 0.5;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 2 + shimmer * 2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.15 + shimmer * 0.2})`;
+          ctx.fill();
+        }
       }
 
       rafRef.current = requestAnimationFrame(animate);
@@ -230,9 +292,7 @@ function PhaseOverlay() {
       const info = getPhase(elapsed);
       setPhase(info.phase);
       if (info.phase === "prompt") {
-        setTyped(
-          PROMPT_TEXT.slice(0, Math.floor(info.progress * PROMPT_TEXT.length))
-        );
+        setTyped(PROMPT_TEXT.slice(0, Math.floor(info.progress * PROMPT_TEXT.length)));
       }
     }, 50);
     return () => clearInterval(id);
@@ -325,8 +385,7 @@ function PhaseOverlay() {
             <p
               className="text-xl font-bold text-transparent bg-clip-text"
               style={{
-                backgroundImage:
-                  "linear-gradient(135deg, #3D4EF0, #8B5CF6)",
+                backgroundImage: "linear-gradient(135deg, #3D4EF0, #8B5CF6)",
               }}
             >
               Your app is ready
@@ -345,7 +404,7 @@ function PhaseOverlay() {
 export default function CinematicHero() {
   return (
     <div className="absolute inset-0 z-0">
-      <AuroraCanvas />
+      <WaveCanvas />
       <PhaseOverlay />
     </div>
   );
