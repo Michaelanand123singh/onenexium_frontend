@@ -15,42 +15,27 @@ import {
   Zap,
 } from "lucide-react";
 
-// ── Animated Dotted Grid ──
-const GRID_SPACING = 48;
-const DOT_RADIUS = 0.8;
-const DOT_GAP = 6; // distance between dots along each grid line
+// ── Animated Crosshair Grid ──
+const GRID_SPACING = 52;
+const CROSS_SIZE = 5; // half-length of each crosshair arm
 
 function DottedGrid() {
   const gridW = 1440;
   const gridH = 900;
 
-  const dots = useMemo(() => {
-    const result: { cx: number; cy: number; delay: number }[] = [];
+  const points = useMemo(() => {
+    const result: { x: number; y: number; delay: number }[] = [];
     const centerX = gridW / 2;
     const centerY = gridH / 2;
 
-    // Horizontal lines
     for (let y = 0; y <= gridH; y += GRID_SPACING) {
-      for (let x = 0; x <= gridW; x += DOT_GAP) {
+      for (let x = 0; x <= gridW; x += GRID_SPACING) {
         const dx = x - centerX;
         const dy = y - centerY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        result.push({ cx: x, cy: y, delay: dist * 0.0018 });
+        result.push({ x, y, delay: dist * 0.0015 });
       }
     }
-
-    // Vertical lines (skip intersections already placed)
-    for (let x = 0; x <= gridW; x += GRID_SPACING) {
-      for (let y = 0; y <= gridH; y += DOT_GAP) {
-        // Skip dots that sit on a horizontal line (already added above)
-        if (y % GRID_SPACING === 0) continue;
-        const dx = x - centerX;
-        const dy = y - centerY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        result.push({ cx: x, cy: y, delay: dist * 0.0018 });
-      }
-    }
-
     return result;
   }, []);
 
@@ -62,24 +47,46 @@ function DottedGrid() {
         preserveAspectRatio="xMidYMid slice"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {dots.map((dot, i) => (
-          <motion.circle
+        {points.map((pt, i) => (
+          <motion.g
             key={i}
-            cx={dot.cx}
-            cy={dot.cy}
-            r={DOT_RADIUS}
-            className="fill-foreground/[0.15] dark:fill-foreground/[0.2]"
-            animate={{
-              r: [DOT_RADIUS, DOT_RADIUS * 2, DOT_RADIUS],
-              opacity: [0.4, 1, 0.4],
-            }}
+            animate={{ opacity: [0.25, 0.8, 0.25], scale: [0.8, 1.15, 0.8] }}
             transition={{
-              duration: 3,
-              delay: dot.delay,
+              duration: 3.5,
+              delay: pt.delay,
               repeat: Infinity,
               ease: "easeInOut",
             }}
-          />
+            style={{ transformOrigin: `${pt.x}px ${pt.y}px` }}
+          >
+            {/* Horizontal arm */}
+            <line
+              x1={pt.x - CROSS_SIZE}
+              y1={pt.y}
+              x2={pt.x + CROSS_SIZE}
+              y2={pt.y}
+              className="stroke-foreground/20 dark:stroke-foreground/25"
+              strokeWidth={0.8}
+              strokeLinecap="round"
+            />
+            {/* Vertical arm */}
+            <line
+              x1={pt.x}
+              y1={pt.y - CROSS_SIZE}
+              x2={pt.x}
+              y2={pt.y + CROSS_SIZE}
+              className="stroke-foreground/20 dark:stroke-foreground/25"
+              strokeWidth={0.8}
+              strokeLinecap="round"
+            />
+            {/* Center dot */}
+            <circle
+              cx={pt.x}
+              cy={pt.y}
+              r={0.8}
+              className="fill-foreground/30 dark:fill-foreground/35"
+            />
+          </motion.g>
         ))}
       </svg>
 
