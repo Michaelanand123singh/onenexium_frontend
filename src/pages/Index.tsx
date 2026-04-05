@@ -18,7 +18,7 @@ import {
 // ── Interactive 3D Dot Grid ──
 const GRID_GAP = 28;
 const BASE_RADIUS = 1;
-const GLOW_RADIUS = 180; // px radius around cursor that lights up dots
+const GLOW_RADIUS = 200; // px radius around cursor that lights up dots
 
 function DottedGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,32 +43,31 @@ function DottedGrid() {
     return () => window.removeEventListener("resize", resize);
   }, [resize]);
 
-  // Track mouse position relative to canvas
+  // Track mouse relative to the page
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      mouseRef.current = { x: e.clientX, y: e.clientY };
     };
     const handleLeave = () => {
       mouseRef.current = { x: -9999, y: -9999 };
     };
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseleave", handleLeave);
+    document.addEventListener("mousemove", handleMove);
+    document.addEventListener("mouseleave", handleLeave);
     return () => {
-      window.removeEventListener("mousemove", handleMove);
-      window.removeEventListener("mouseleave", handleLeave);
+      document.removeEventListener("mousemove", handleMove);
+      document.removeEventListener("mouseleave", handleLeave);
     };
   }, []);
 
   // Track scroll
   useEffect(() => {
+    const el = document.querySelector(".landing-scroll") ?? window;
     const handleScroll = () => {
-      scrollRef.current = window.scrollY;
+      scrollRef.current =
+        el instanceof Window ? el.scrollY : (el as HTMLElement).scrollTop;
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Animation loop
@@ -78,7 +77,6 @@ function DottedGrid() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Detect dark mode
     const isDark = () => document.documentElement.classList.contains("dark");
 
     const animate = (time: number) => {
@@ -86,93 +84,86 @@ function DottedGrid() {
       const rect = canvas.getBoundingClientRect();
       const w = rect.width;
       const h = rect.height;
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-      const scroll = scrollRef.current;
       const dark = isDark();
+
+      // Mouse relative to canvas
+      const mx = mouseRef.current.x - rect.left;
+      const my = mouseRef.current.y - rect.top;
+      const scroll = scrollRef.current;
 
       ctx.clearRect(0, 0, w, h);
 
-      // 3D perspective tilt based on scroll
-      const maxTilt = 12; // degrees
-      const scrollNorm = Math.min(scroll / 600, 1); // normalize 0-1
+      // 3D tilt based on scroll
+      const maxTilt = 18;
+      const scrollNorm = Math.min(scroll / 500, 1);
       const tiltX = scrollNorm * maxTilt;
-
-      // Apply 3D perspective via canvas transforms
-      const cx = w / 2;
-      const cy = h / 2;
-      const perspective = 1200;
       const radX = (tiltX * Math.PI) / 180;
+      const cosX = Math.cos(radX);
+      const sinX = Math.sin(radX);
+      const perspective = 1000;
+      const centerX = w / 2;
+      const centerY = h / 2;
 
-      ctx.save();
-      ctx.translate(cx, cy);
-
-      // Draw dots in grid with 3D projection
-      const cols = Math.ceil(w / GRID_GAP) + 2;
-      const rows = Math.ceil(h / GRID_GAP) + 2;
-      const startX = -((cols * GRID_GAP) / 2);
-      const startY = -((rows * GRID_GAP) / 2);
+      // Grid dots
+      const cols = Math.ceil(w / GRID_GAP) + 4;
+      const rows = Math.ceil(h / GRID_GAP) + 4;
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          const lx = startX + c * GRID_GAP;
-          const ly = startY + r * GRID_GAP;
+          // Local position centered on canvas
+          const lx = (c - cols / 2) * GRID_GAP;
+          const ly = (r - rows / 2) * GRID_GAP;
 
-          // 3D rotation around X axis
-          const cosX = Math.cos(radX);
-          const sinX = Math.sin(radX);
+          // Rotate around X axis for 3D tilt
           const y3d = ly * cosX;
           const z3d = ly * sinX;
 
-          // Perspective projection
-          const scale = perspective / (perspective + z3d);
-          const px = lx * scale;
-          const py = y3d * scale;
+          // Perspective divide
+          const d = perspective + z3d;
+          if (d < 50) continue; // behind camera
+          const scale = perspective / d;
+          const sx = centerX + lx * scale;
+          const sy = centerY + y3d * scale;
 
-          // Screen position
-          const screenX = cx + px;
-          const screenY = cy + py;
+          // Skip if off-screen
+          if (sx < -20 || sx > w + 20 || sy < -20 || sy > h + 20) continue;
 
           // Distance from mouse
-          const dmx = screenX - mx;
-          const dmy = screenY - my;
-          const dist = Math.sqrt(dmx * dmx + dmy * dmy);
-
-          // Proximity factor: 1 at cursor, 0 at GLOW_RADIUS+
+          const dx = sx - mx;
+          const dy = sy - my;
+          const dist = Math.sqrt(dx * dx + dy * dy);
           const proximity = Math.max(0, 1 - dist / GLOW_RADIUS);
 
-          // Base opacity with subtle wave
-          const wave = (Math.sin(t * 0.8 + c * 0.15 + r * 0.15) + 1) * 0.5;
-          const baseAlpha = dark ? 0.12 + wave * 0.06 : 0.2 + wave * 0.08;
+          // Subtle wave animation
+          const wave = (Math.sin(t * 0.6 + c * 0.12 + r * 0.12) + 1) * 0.5;
 
-          // Boosted opacity near cursor
-          const alpha = baseAlpha + proximity * (dark ? 0.7 : 0.6);
+          // Opacity: base + wave + proximity boost
+          const baseAlpha = dark ? 0.15 + wave * 0.05 : 0.22 + wave * 0.06;
+          const alpha = Math.min(1, baseAlpha + proximity * 0.75);
 
-          // Dot size grows near cursor
-          const dotR = (BASE_RADIUS + proximity * 2.2) * scale;
+          // Dot radius: base + proximity growth, scaled by perspective
+          const dotR = (BASE_RADIUS + proximity * 2.5) * Math.max(scale, 0.4);
 
-          // Color: base dots are foreground, highlighted dots get a slight primary tint
+          // Draw glow halo near cursor
           if (proximity > 0.05) {
-            // Glowing dot near cursor
-            const glowAlpha = proximity * 0.35;
+            const glowR = dotR + 4 * proximity * proximity;
             ctx.beginPath();
-            ctx.arc(cx + px, cy + py, dotR + 3 * proximity, 0, Math.PI * 2);
+            ctx.arc(sx, sy, glowR, 0, Math.PI * 2);
             ctx.fillStyle = dark
-              ? `rgba(180, 160, 255, ${glowAlpha})`
-              : `rgba(99, 102, 241, ${glowAlpha})`;
+              ? `rgba(160, 140, 255, ${proximity * 0.3})`
+              : `rgba(99, 102, 241, ${proximity * 0.25})`;
             ctx.fill();
           }
 
+          // Draw dot
           ctx.beginPath();
-          ctx.arc(cx + px, cy + py, dotR, 0, Math.PI * 2);
+          ctx.arc(sx, sy, dotR, 0, Math.PI * 2);
           ctx.fillStyle = dark
             ? `rgba(255, 255, 255, ${alpha})`
             : `rgba(0, 0, 0, ${alpha})`;
           ctx.fill();
         }
       }
-
-      ctx.restore();
 
       rafRef.current = requestAnimationFrame(animate);
     };
@@ -182,17 +173,17 @@ function DottedGrid() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden z-0" style={{ perspective: "1200px" }}>
+    <div className="absolute inset-0 overflow-hidden z-0">
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="absolute inset-0 w-full h-full"
       />
-      {/* Radial vignette to fade edges cleanly */}
+      {/* Soft edge fade */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 80% 70% at 50% 45%, transparent 35%, var(--background) 100%)",
+            "radial-gradient(ellipse 90% 80% at 50% 45%, transparent 50%, var(--background) 100%)",
         }}
       />
     </div>
