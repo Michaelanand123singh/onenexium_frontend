@@ -16,35 +16,49 @@ import {
 } from "lucide-react";
 
 // ── Animated Dotted Grid ──
-const GRID_SPACING = 32;
-const DOT_RADIUS = 0.7;
+const GRID_SPACING = 48;
+const DOT_RADIUS = 0.8;
+const DOT_GAP = 6; // distance between dots along each grid line
 
 function DottedGrid() {
-  const cols = Math.ceil(1440 / GRID_SPACING) + 1;
-  const rows = Math.ceil(900 / GRID_SPACING) + 1;
+  const gridW = 1440;
+  const gridH = 900;
 
   const dots = useMemo(() => {
     const result: { cx: number; cy: number; delay: number }[] = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const cx = c * GRID_SPACING;
-        const cy = r * GRID_SPACING;
-        // Radial distance from center for wave delay
-        const dx = cx - (cols * GRID_SPACING) / 2;
-        const dy = cy - (rows * GRID_SPACING) / 2;
+    const centerX = gridW / 2;
+    const centerY = gridH / 2;
+
+    // Horizontal lines
+    for (let y = 0; y <= gridH; y += GRID_SPACING) {
+      for (let x = 0; x <= gridW; x += DOT_GAP) {
+        const dx = x - centerX;
+        const dy = y - centerY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const delay = dist * 0.002;
-        result.push({ cx, cy, delay });
+        result.push({ cx: x, cy: y, delay: dist * 0.0018 });
       }
     }
+
+    // Vertical lines (skip intersections already placed)
+    for (let x = 0; x <= gridW; x += GRID_SPACING) {
+      for (let y = 0; y <= gridH; y += DOT_GAP) {
+        // Skip dots that sit on a horizontal line (already added above)
+        if (y % GRID_SPACING === 0) continue;
+        const dx = x - centerX;
+        const dy = y - centerY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        result.push({ cx: x, cy: y, delay: dist * 0.0018 });
+      }
+    }
+
     return result;
-  }, [cols, rows]);
+  }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       <svg
         className="absolute inset-0 w-full h-full"
-        viewBox={`0 0 ${cols * GRID_SPACING} ${rows * GRID_SPACING}`}
+        viewBox={`0 0 ${gridW} ${gridH}`}
         preserveAspectRatio="xMidYMid slice"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -54,10 +68,10 @@ function DottedGrid() {
             cx={dot.cx}
             cy={dot.cy}
             r={DOT_RADIUS}
-            className="fill-foreground/[0.18] dark:fill-foreground/[0.22]"
+            className="fill-foreground/[0.15] dark:fill-foreground/[0.2]"
             animate={{
-              r: [DOT_RADIUS, DOT_RADIUS * 2.5, DOT_RADIUS],
-              opacity: [0.5, 1, 0.5],
+              r: [DOT_RADIUS, DOT_RADIUS * 2, DOT_RADIUS],
+              opacity: [0.4, 1, 0.4],
             }}
             transition={{
               duration: 3,
