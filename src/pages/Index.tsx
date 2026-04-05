@@ -243,10 +243,23 @@ export default function Index() {
         <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <img src={LOGO_URL} alt="One Nexium" className="h-8 w-8 rounded-lg object-cover shadow-lg" />
-            <span className="font-semibold text-lg tracking-tight">
+            <motion.img
+              src={LOGO_URL}
+              alt="One Nexium"
+              className="h-8 w-8 rounded-lg object-cover shadow-lg"
+              initial={{ opacity: 0, scale: 0, rotate: -180 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              whileHover={{ scale: 1.15, rotate: 8 }}
+            />
+            <motion.span
+              className="font-semibold text-lg tracking-tight"
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+            >
               One Nexium
-            </span>
+            </motion.span>
           </div>
 
           {/* Nav links */}
