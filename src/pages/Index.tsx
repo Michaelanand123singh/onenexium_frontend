@@ -17,7 +17,7 @@ import {
 
 // ── Interactive 3D Dot Grid ──
 const GRID_GAP = 28;
-const BASE_RADIUS = 0.4;
+const BASE_RADIUS = 0.25;
 const GLOW_RADIUS = 200; // px radius around cursor that lights up dots
 
 function DottedGrid() {
