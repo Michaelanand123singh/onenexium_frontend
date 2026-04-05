@@ -3,6 +3,7 @@ import { DefaultProviders } from "./components/providers/default.tsx";
 import AuthCallback from "./pages/auth/Callback.tsx";
 import Index from "./pages/Index.tsx";
 import LoginPage from "./pages/login/page.tsx";
+import SignupPage from "./pages/signup/page.tsx";
 import DashboardPage from "./pages/dashboard/page.tsx";
 import ProjectsPage from "./pages/dashboard/projects.tsx";
 import CreateProjectPage from "./pages/dashboard/create.tsx";
@@ -53,6 +54,7 @@ export default function App() {
           <Route path="/" element={<Index />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
 
           {/* Dashboard layout routes (sidebar) */}
           <Route

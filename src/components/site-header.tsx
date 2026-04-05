@@ -1,6 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
+import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { LayoutDashboard } from "lucide-react";
 import { LOGO_URL, APP_NAME } from "@/lib/brand.ts";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 const NAV_LINKS = [
   { label: "Products", href: "/products" },
@@ -11,6 +14,7 @@ const NAV_LINKS = [
 
 export default function SiteHeader() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <header className="fixed top-0 w-full z-50 bg-background/70 backdrop-blur-xl border-b border-border/50">
@@ -63,20 +67,36 @@ export default function SiteHeader() {
           ))}
         </nav>
 
-        {/* Actions */}
+        {/* Actions — auth-aware */}
         <div className="flex items-center gap-4">
-          <Link
-            to="/login"
-            className="hidden sm:block text-sm font-medium hover:text-foreground transition-colors"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/login"
-            className="px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium shadow-md hover:opacity-90 transition-all"
-          >
-            Get Started
-          </Link>
+          <AuthLoading>
+            <Skeleton className="h-9 w-24 rounded-full" />
+          </AuthLoading>
+
+          <Unauthenticated>
+            <Link
+              to="/login"
+              className="hidden sm:block text-sm font-medium hover:text-foreground transition-colors"
+            >
+              Sign in
+            </Link>
+            <Link
+              to="/signup"
+              className="px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium shadow-md hover:opacity-90 transition-all"
+            >
+              Get Started
+            </Link>
+          </Unauthenticated>
+
+          <Authenticated>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium shadow-md hover:opacity-90 transition-all cursor-pointer"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Dashboard
+            </button>
+          </Authenticated>
         </div>
       </div>
     </header>
