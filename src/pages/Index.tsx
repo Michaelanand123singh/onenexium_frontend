@@ -247,14 +247,22 @@ export default function Index() {
               src={LOGO_URL}
               alt="One Nexium"
               className="h-8 w-8 rounded-lg object-cover shadow-lg"
-              initial={{ opacity: 0, scale: 0, rotate: -180 }}
-              animate={{ opacity: 1, scale: [1, 1.08, 1], rotate: [0, 5, -5, 0] }}
-              transition={{
-                opacity: { duration: 0.6 },
-                scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                filter: [
+                  "drop-shadow(0 0 0px rgba(99,102,241,0))",
+                  "drop-shadow(0 0 8px rgba(99,102,241,0.5))",
+                  "drop-shadow(0 0 0px rgba(99,102,241,0))",
+                ],
               }}
-              whileHover={{ scale: 1.2, rotate: 12 }}
+              transition={{
+                opacity: { duration: 0.5 },
+                scale: { duration: 0.5 },
+                filter: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+              }}
+              whileHover={{ scale: 1.15 }}
             />
             <motion.span
               className="font-semibold text-lg tracking-tight"
