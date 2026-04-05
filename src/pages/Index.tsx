@@ -308,16 +308,33 @@ export default function Index() {
           </motion.div>
 
           {/* Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-medium leading-[1.05] tracking-tight mb-12 text-balance"
-          >
-            What will you
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-medium leading-[1.05] tracking-tight mb-12 text-balance">
+            {"What will you".split("").map((char, i) => (
+              <motion.span
+                key={`l1-${i}`}
+                initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ delay: 0.15 + i * 0.03, duration: 0.4, ease: "easeOut" }}
+                className="inline-block"
+                style={{ whiteSpace: char === " " ? "pre" : undefined }}
+              >
+                {char === " " ? "\u00A0" : char}
+              </motion.span>
+            ))}
             <br />
-            build today?
-          </motion.h1>
+            {"build today?".split("").map((char, i) => (
+              <motion.span
+                key={`l2-${i}`}
+                initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ delay: 0.55 + i * 0.03, duration: 0.4, ease: "easeOut" }}
+                className="inline-block"
+                style={{ whiteSpace: char === " " ? "pre" : undefined }}
+              >
+                {char === " " ? "\u00A0" : char}
+              </motion.span>
+            ))}
+          </h1>
 
           {/* Prompt input box */}
           <motion.div
