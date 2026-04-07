@@ -298,7 +298,7 @@ export default function CreateProjectPage() {
               exit={{ opacity: 0 }}
               className="mt-6 text-center"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-foreground/10 bg-foreground/5 text-foreground text-sm font-medium">
                 <Check className="w-4 h-4" />
                 Project created successfully!
               </div>

@@ -201,9 +201,9 @@ function ProjectCard({
           <span
             className={`ml-auto px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide border ${
               project.status === "active"
-                ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20"
+                ? "bg-foreground/5 text-foreground/80 border-foreground/10"
                 : project.status === "generating"
-                  ? "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-500/20"
+                  ? "bg-foreground/[0.03] text-foreground/60 border-foreground/8"
                   : "bg-muted text-muted-foreground border-border"
             }`}
           >

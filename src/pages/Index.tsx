@@ -163,8 +163,8 @@ function DottedGrid() {
             ctx.beginPath();
             ctx.arc(sx, sy - lift * 2, glowR, 0, Math.PI * 2);
             ctx.fillStyle = dark
-              ? `rgba(160, 140, 255, ${proximity * 0.3})`
-              : `rgba(99, 102, 241, ${proximity * 0.25})`;
+              ? `rgba(255, 255, 255, ${proximity * 0.3})`
+              : `rgba(0, 0, 0, ${proximity * 0.25})`;
             ctx.fill();
           }
 

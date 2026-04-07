@@ -58,7 +58,7 @@ function StepIndicator({ currentStep }: { currentStep: OnboardingStep }) {
               style={{
                 background:
                   i < currentIndex
-                    ? "linear-gradient(90deg, #3D4EF0, #23A0FF)"
+                    ? "linear-gradient(90deg, #0a0a0a, #333333)"
                     : "var(--border)",
               }}
             />
@@ -122,14 +122,14 @@ export default function OnboardingFlow({
         className="absolute inset-0 opacity-[0.03]"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 50% 40%, #3D4EF0, transparent)",
+            "radial-gradient(ellipse 80% 60% at 50% 40%, #0a0a0a, transparent)",
         }}
       />
       <div
         className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            "linear-gradient(#3D4EF0 1px, transparent 1px), linear-gradient(90deg, #3D4EF0 1px, transparent 1px)",
+            "linear-gradient(#0a0a0a 1px, transparent 1px), linear-gradient(90deg, #0a0a0a 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
@@ -161,7 +161,7 @@ export default function OnboardingFlow({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", bounce: 0.5, delay: 0.1 }}
-                className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-white shadow-lg shadow-[#3D4EF0]/20"
+                className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-white shadow-lg shadow-[#0a0a0a]/20"
                 style={{ background: BRAND_GRADIENT }}
               >
                 <Sparkles className="w-10 h-10" />
@@ -175,7 +175,7 @@ export default function OnboardingFlow({
               </p>
               <button
                 onClick={goNext}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#3D4EF0]/25 cursor-pointer"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#0a0a0a]/25 cursor-pointer"
                 style={{ background: BRAND_GRADIENT }}
               >
                 Get Started
@@ -211,7 +211,7 @@ export default function OnboardingFlow({
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Your name"
-                className="w-full max-w-xs mx-auto block bg-background border border-foreground/10 rounded-xl px-4 py-3 text-foreground text-center text-lg font-medium placeholder:text-foreground/25 outline-none focus:border-[#3D4EF0]/40 focus:shadow-sm focus:shadow-[#3D4EF0]/10 transition-all"
+                className="w-full max-w-xs mx-auto block bg-background border border-foreground/10 rounded-xl px-4 py-3 text-foreground text-center text-lg font-medium placeholder:text-foreground/25 outline-none focus:border-[#0a0a0a]/40 focus:shadow-sm focus:shadow-[#0a0a0a]/10 transition-all"
                 autoFocus
               />
               <div className="flex items-center justify-center gap-3 mt-10">
@@ -225,7 +225,7 @@ export default function OnboardingFlow({
                 <button
                   onClick={goNext}
                   disabled={!displayName.trim()}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#3D4EF0]/25 disabled:opacity-40 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#0a0a0a]/25 disabled:opacity-40 cursor-pointer"
                   style={{ background: BRAND_GRADIENT }}
                 >
                   Continue
@@ -264,8 +264,8 @@ export default function OnboardingFlow({
                     onClick={() => setSelectedRole(role.id)}
                     className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all cursor-pointer ${
                       selectedRole === role.id
-                        ? "border-[#3D4EF0]/40 bg-[#3D4EF0]/5 text-[#3D4EF0] shadow-sm shadow-[#3D4EF0]/10"
-                        : "border-[#0C0F18]/8 text-foreground/70 hover:border-[#0C0F18]/15 hover:bg-[#0C0F18]/[0.02]"
+                        ? "border-[#0a0a0a]/40 bg-[#0a0a0a]/5 text-[#0a0a0a] shadow-sm shadow-[#0a0a0a]/10"
+                        : "border-[#0a0a0a]/8 text-foreground/70 hover:border-[#0a0a0a]/15 hover:bg-[#0a0a0a]/[0.02]"
                     }`}
                   >
                     <span className="text-lg">{role.icon}</span>
@@ -284,7 +284,7 @@ export default function OnboardingFlow({
                 <button
                   onClick={goNext}
                   disabled={!selectedRole}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#3D4EF0]/25 disabled:opacity-40 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#0a0a0a]/25 disabled:opacity-40 cursor-pointer"
                   style={{ background: BRAND_GRADIENT }}
                 >
                   Continue
@@ -323,8 +323,8 @@ export default function OnboardingFlow({
                     onClick={() => setSelectedGoal(goal.id)}
                     className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all cursor-pointer ${
                       selectedGoal === goal.id
-                        ? "border-[#3D4EF0]/40 bg-[#3D4EF0]/5 text-[#3D4EF0] shadow-sm shadow-[#3D4EF0]/10"
-                        : "border-[#0C0F18]/8 text-foreground/70 hover:border-[#0C0F18]/15 hover:bg-[#0C0F18]/[0.02]"
+                        ? "border-[#0a0a0a]/40 bg-[#0a0a0a]/5 text-[#0a0a0a] shadow-sm shadow-[#0a0a0a]/10"
+                        : "border-[#0a0a0a]/8 text-foreground/70 hover:border-[#0a0a0a]/15 hover:bg-[#0a0a0a]/[0.02]"
                     }`}
                   >
                     <span className="text-lg">{goal.icon}</span>
@@ -343,7 +343,7 @@ export default function OnboardingFlow({
                 <button
                   onClick={handleFinish}
                   disabled={!selectedGoal || isSubmitting}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#3D4EF0]/25 disabled:opacity-40 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#0a0a0a]/25 disabled:opacity-40 cursor-pointer"
                   style={{ background: BRAND_GRADIENT }}
                 >
                   {isSubmitting ? "Setting up..." : "Finish Setup"}
@@ -366,7 +366,7 @@ export default function OnboardingFlow({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", bounce: 0.5, delay: 0.15 }}
-                className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center text-white shadow-lg shadow-[#3D4EF0]/20"
+                className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center text-white shadow-lg shadow-[#0a0a0a]/20"
                 style={{ background: BRAND_GRADIENT }}
               >
                 <Check className="w-10 h-10" />
@@ -380,7 +380,7 @@ export default function OnboardingFlow({
               </p>
               <button
                 onClick={onComplete}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#3D4EF0]/25 cursor-pointer"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#0a0a0a]/25 cursor-pointer"
                 style={{ background: BRAND_GRADIENT }}
               >
                 Go to Dashboard

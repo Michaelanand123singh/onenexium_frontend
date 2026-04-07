@@ -28,12 +28,11 @@ export default function DashboardPage() {
           <p className="text-foreground/60 text-lg">Please sign in to access the dashboard</p>
           <SignInButton
             signInText="Sign In"
-            className="text-white"
-            style={{ background: "linear-gradient(135deg, #3D4EF0, #23A0FF)" }}
+            className="bg-foreground text-background hover:opacity-90"
           />
           <button
             onClick={() => navigate("/")}
-            className="text-sm text-[#3D4EF0] hover:underline cursor-pointer"
+            className="text-sm text-foreground hover:underline cursor-pointer"
           >
             Back to home
           </button>

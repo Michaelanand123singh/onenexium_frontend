@@ -26,8 +26,8 @@ const SOLUTIONS = [
       "Scale as you grow",
       "Built-in analytics",
     ],
-    gradient: "from-orange-500/10 to-amber-500/10",
-    iconColor: "text-orange-600 dark:text-orange-400",
+    gradient: "from-foreground/[0.03] to-foreground/[0.01]",
+    iconColor: "text-foreground",
   },
   {
     icon: Building2,
@@ -41,8 +41,8 @@ const SOLUTIONS = [
       "White-label ready",
       "Template marketplace",
     ],
-    gradient: "from-blue-500/10 to-cyan-500/10",
-    iconColor: "text-blue-600 dark:text-blue-400",
+    gradient: "from-foreground/[0.03] to-foreground/[0.01]",
+    iconColor: "text-foreground",
   },
   {
     icon: Users,
@@ -56,8 +56,8 @@ const SOLUTIONS = [
       "Custom domains",
       "Priority support",
     ],
-    gradient: "from-violet-500/10 to-purple-500/10",
-    iconColor: "text-violet-600 dark:text-violet-400",
+    gradient: "from-foreground/[0.03] to-foreground/[0.01]",
+    iconColor: "text-foreground",
   },
   {
     icon: Briefcase,
@@ -71,8 +71,8 @@ const SOLUTIONS = [
       "Repeat templates",
       "Client handoff tools",
     ],
-    gradient: "from-emerald-500/10 to-teal-500/10",
-    iconColor: "text-emerald-600 dark:text-emerald-400",
+    gradient: "from-foreground/[0.03] to-foreground/[0.01]",
+    iconColor: "text-foreground",
   },
 ];
 

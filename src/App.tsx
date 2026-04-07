@@ -37,8 +37,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
           <p className="text-foreground/60 text-lg">Please sign in to continue</p>
           <SignInButton
             signInText="Sign In"
-            className="text-white"
-            style={{ background: "linear-gradient(135deg, #3D4EF0, #23A0FF)" }}
+            className="bg-foreground text-background hover:opacity-90"
           />
         </div>
       </Unauthenticated>

@@ -20,9 +20,9 @@ const RESOURCE_CATEGORIES = [
     description:
       "Comprehensive guides, API references, and tutorials to help you get the most out of One Nexium.",
     linkLabel: "Read the docs",
-    color: "text-primary",
-    bg: "bg-primary/10",
-    border: "border-primary/20",
+    color: "text-foreground",
+    bg: "bg-foreground/5",
+    border: "border-foreground/10",
   },
   {
     icon: GraduationCap,
@@ -30,9 +30,9 @@ const RESOURCE_CATEGORIES = [
     description:
       "Step-by-step walkthroughs for building real-world apps, from simple landing pages to full SaaS platforms.",
     linkLabel: "Start learning",
-    color: "text-violet-600 dark:text-violet-400",
-    bg: "bg-violet-50 dark:bg-violet-500/10",
-    border: "border-violet-100 dark:border-violet-500/20",
+    color: "text-foreground",
+    bg: "bg-foreground/5",
+    border: "border-foreground/10",
   },
   {
     icon: Video,
@@ -40,9 +40,9 @@ const RESOURCE_CATEGORIES = [
     description:
       "Watch bite-sized videos covering common patterns, tips, and tricks for building faster with AI.",
     linkLabel: "Watch videos",
-    color: "text-rose-600 dark:text-rose-400",
-    bg: "bg-rose-50 dark:bg-rose-500/10",
-    border: "border-rose-100 dark:border-rose-500/20",
+    color: "text-foreground",
+    bg: "bg-foreground/5",
+    border: "border-foreground/10",
   },
   {
     icon: MessageSquare,
@@ -50,9 +50,9 @@ const RESOURCE_CATEGORIES = [
     description:
       "Join thousands of builders sharing ideas, getting help, and showcasing what they have built on One Nexium.",
     linkLabel: "Join the community",
-    color: "text-sky-600 dark:text-sky-400",
-    bg: "bg-sky-50 dark:bg-sky-500/10",
-    border: "border-sky-100 dark:border-sky-500/20",
+    color: "text-foreground",
+    bg: "bg-foreground/5",
+    border: "border-foreground/10",
   },
 ];
 
@@ -138,7 +138,7 @@ export default function ResourcesPage() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.08, duration: 0.45 }}
-              className="group bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300"
+              className="group bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-lg hover:border-foreground/10 transition-all duration-300"
             >
               <div
                 className={`w-12 h-12 rounded-2xl ${res.bg} ${res.color} border ${res.border} flex items-center justify-center mb-6`}

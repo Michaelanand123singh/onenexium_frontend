@@ -30,9 +30,9 @@ export default function SiteHeader() {
               opacity: 1,
               scale: 1,
               filter: [
-                "drop-shadow(0 0 0px rgba(99,102,241,0))",
-                "drop-shadow(0 0 8px rgba(99,102,241,0.5))",
-                "drop-shadow(0 0 0px rgba(99,102,241,0))",
+                "drop-shadow(0 0 0px rgba(0,0,0,0))",
+                "drop-shadow(0 0 8px rgba(0,0,0,0.3))",
+                "drop-shadow(0 0 0px rgba(0,0,0,0))",
               ],
             }}
             transition={{

@@ -27,7 +27,7 @@ const PRODUCTS = [
     description:
       "Describe what you want in plain language and watch your app come to life. Our AI understands context, design patterns, and best practices to generate production-ready code instantly.",
     badge: "Core Product",
-    badgeColor: "bg-primary/10 text-primary",
+    badgeColor: "bg-foreground/5 text-foreground",
   },
   {
     icon: Code2,
@@ -35,7 +35,7 @@ const PRODUCTS = [
     description:
       "Full-featured VS Code-style editor with syntax highlighting, autocomplete, and real-time error detection. Edit generated code directly or let the AI refine it for you.",
     badge: "Built-in",
-    badgeColor: "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
+    badgeColor: "bg-foreground/5 text-foreground",
   },
   {
     icon: Palette,
@@ -43,7 +43,7 @@ const PRODUCTS = [
     description:
       "Hundreds of pre-built, accessible components with full theme customization. Consistent branding across every page, automatically responsive on all devices.",
     badge: "200+ Components",
-    badgeColor: "bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400",
+    badgeColor: "bg-foreground/5 text-foreground",
   },
   {
     icon: Database,
@@ -51,7 +51,7 @@ const PRODUCTS = [
     description:
       "Managed reactive database with real-time sync, authentication, file storage, and serverless functions. No infrastructure to manage, ever.",
     badge: "Fully Managed",
-    badgeColor: "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400",
+    badgeColor: "bg-foreground/5 text-foreground",
   },
   {
     icon: Rocket,
@@ -59,7 +59,7 @@ const PRODUCTS = [
     description:
       "Publish your app to a global CDN with a single click. Custom domains, SSL certificates, and edge caching included at no extra cost.",
     badge: "One Click",
-    badgeColor: "bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400",
+    badgeColor: "bg-foreground/5 text-foreground",
   },
   {
     icon: Shield,
@@ -67,7 +67,7 @@ const PRODUCTS = [
     description:
       "Enterprise-grade authentication with Google, Microsoft, and email sign-in out of the box. Role-based access control for every endpoint.",
     badge: "Enterprise Ready",
-    badgeColor: "bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400",
+    badgeColor: "bg-foreground/5 text-foreground",
   },
 ];
 
@@ -149,10 +149,10 @@ export default function ProductsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.08, duration: 0.45 }}
-                className="group bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300"
+                className="group bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-lg hover:border-foreground/10 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-foreground/5 text-foreground border border-foreground/10 flex items-center justify-center">
                     <product.icon className="w-5 h-5" />
                   </div>
                   <span

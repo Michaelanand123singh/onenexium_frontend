@@ -27,23 +27,23 @@ const ROLE_CONFIG: Record<TeamRole, { label: string; icon: typeof Crown; color: 
   owner: {
     label: "Owner",
     icon: Crown,
-    color: "text-amber-600 dark:text-amber-400",
-    bgColor: "bg-amber-50 dark:bg-amber-500/10",
-    borderColor: "border-amber-200 dark:border-amber-500/20",
+    color: "text-foreground",
+    bgColor: "bg-foreground/10",
+    borderColor: "border-foreground/15",
   },
   editor: {
     label: "Editor",
     icon: Pencil,
-    color: "text-blue-600 dark:text-blue-400",
-    bgColor: "bg-blue-50 dark:bg-blue-500/10",
-    borderColor: "border-blue-200 dark:border-blue-500/20",
+    color: "text-foreground/70",
+    bgColor: "bg-foreground/5",
+    borderColor: "border-foreground/10",
   },
   viewer: {
     label: "Viewer",
     icon: Eye,
-    color: "text-emerald-600 dark:text-emerald-400",
-    bgColor: "bg-emerald-50 dark:bg-emerald-500/10",
-    borderColor: "border-emerald-200 dark:border-emerald-500/20",
+    color: "text-muted-foreground",
+    bgColor: "bg-muted",
+    borderColor: "border-border",
   },
 };
 
@@ -342,8 +342,8 @@ export default function TeamDialog({
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-              <Users className="w-5 h-5 text-primary" />
+            <div className="w-10 h-10 rounded-2xl bg-foreground/5 border border-foreground/10 flex items-center justify-center">
+              <Users className="w-5 h-5 text-foreground" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-foreground">
@@ -376,7 +376,7 @@ export default function TeamDialog({
                     if (e.key === "Enter") handleInvite();
                   }}
                   placeholder="Invite by email..."
-                  className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 transition-colors"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/30 transition-colors"
                 />
               </div>
 
@@ -505,7 +505,7 @@ export default function TeamDialog({
             className="h-8 px-3 rounded-lg flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
           >
             {copied ? (
-              <Check className="w-3.5 h-3.5 text-emerald-500" />
+              <Check className="w-3.5 h-3.5 text-foreground" />
             ) : (
               <Copy className="w-3.5 h-3.5" />
             )}

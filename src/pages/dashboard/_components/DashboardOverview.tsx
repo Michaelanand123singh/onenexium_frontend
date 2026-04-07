@@ -106,8 +106,8 @@ function DashboardDotGrid() {
             ctx.beginPath();
             ctx.arc(x, y, dotR + 1.5 * proximity, 0, Math.PI * 2);
             ctx.fillStyle = dark
-              ? `rgba(160, 140, 255, ${proximity * 0.25})`
-              : `rgba(99, 102, 241, ${proximity * 0.2})`;
+              ? `rgba(255, 255, 255, ${proximity * 0.25})`
+              : `rgba(0, 0, 0, ${proximity * 0.2})`;
             ctx.fill();
           }
 
@@ -220,9 +220,9 @@ function RecentProjectRow({
       <span
         className={`px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide shrink-0 border ${
           project.status === "active"
-            ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20"
+            ? "bg-foreground/5 text-foreground/80 border-foreground/10"
             : project.status === "generating"
-              ? "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-500/20"
+              ? "bg-foreground/[0.03] text-foreground/60 border-foreground/8"
               : "bg-muted text-muted-foreground border-border"
         }`}
       >
@@ -340,36 +340,36 @@ export default function DashboardOverview() {
             label="Total Projects"
             value={totalProjects}
             icon={FolderOpen}
-            iconBg="bg-primary/10"
-            iconColor="text-primary"
-            iconBorder="border-primary/20"
+            iconBg="bg-foreground/5"
+            iconColor="text-foreground"
+            iconBorder="border-foreground/10"
             delay={0.1}
           />
           <StatCard
             label="Active"
             value={activeProjects}
             icon={Activity}
-            iconBg="bg-emerald-50 dark:bg-emerald-500/10"
-            iconColor="text-emerald-600 dark:text-emerald-400"
-            iconBorder="border-emerald-100 dark:border-emerald-500/20"
+            iconBg="bg-foreground/5"
+            iconColor="text-foreground"
+            iconBorder="border-foreground/10"
             delay={0.15}
           />
           <StatCard
             label="Archived"
             value={archivedProjects}
             icon={Archive}
-            iconBg="bg-blue-50 dark:bg-blue-500/10"
-            iconColor="text-blue-600 dark:text-blue-400"
-            iconBorder="border-blue-100 dark:border-blue-500/20"
+            iconBg="bg-foreground/5"
+            iconColor="text-foreground"
+            iconBorder="border-foreground/10"
             delay={0.2}
           />
           <StatCard
             label="Last Active"
             displayValue={lastActive}
             icon={Clock}
-            iconBg="bg-amber-50 dark:bg-amber-500/10"
-            iconColor="text-amber-600 dark:text-amber-400"
-            iconBorder="border-amber-100 dark:border-amber-500/20"
+            iconBg="bg-foreground/5"
+            iconColor="text-foreground"
+            iconBorder="border-foreground/10"
             delay={0.25}
           />
         </div>
@@ -387,27 +387,27 @@ export default function DashboardOverview() {
               title: "Build with AI",
               desc: "Describe what you need",
               href: "/dashboard/create",
-              iconBg: "bg-primary/10",
-              iconColor: "text-primary",
-              iconBorder: "border-primary/20",
+              iconBg: "bg-foreground/5",
+              iconColor: "text-foreground",
+              iconBorder: "border-foreground/10",
             },
             {
               icon: Layers,
               title: "Browse Templates",
               desc: "Start from a template",
               href: "/templates",
-              iconBg: "bg-blue-50 dark:bg-blue-500/10",
-              iconColor: "text-blue-600 dark:text-blue-400",
-              iconBorder: "border-blue-100 dark:border-blue-500/20",
+              iconBg: "bg-foreground/5",
+              iconColor: "text-foreground",
+              iconBorder: "border-foreground/10",
             },
             {
               icon: Code,
               title: "All Projects",
               desc: "View and manage projects",
               href: "/dashboard/projects",
-              iconBg: "bg-emerald-50 dark:bg-emerald-500/10",
-              iconColor: "text-emerald-600 dark:text-emerald-400",
-              iconBorder: "border-emerald-100 dark:border-emerald-500/20",
+              iconBg: "bg-foreground/5",
+              iconColor: "text-foreground",
+              iconBorder: "border-foreground/10",
             },
           ].map((action, i) => (
             <motion.button
@@ -456,7 +456,7 @@ export default function DashboardOverview() {
 
           {recentProjects.length === 0 ? (
             <div className="bg-card rounded-3xl border border-dashed border-border p-12 text-center shadow-sm">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-foreground/5 border border-foreground/10 text-foreground flex items-center justify-center mx-auto mb-4">
                 <FolderOpen className="w-5 h-5" />
               </div>
               <p className="font-semibold text-foreground mb-1">

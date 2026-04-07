@@ -159,7 +159,7 @@ export default function SettingsContent() {
           className="bg-card rounded-3xl border border-border p-8 shadow-sm"
         >
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-foreground/5 border border-foreground/10 text-foreground flex items-center justify-center">
               <User className="w-4 h-4" />
             </div>
             <h2 className="text-base font-semibold">Profile</h2>
@@ -215,7 +215,7 @@ export default function SettingsContent() {
           className="bg-card rounded-3xl border border-border p-8 shadow-sm"
         >
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-foreground/5 border border-foreground/10 text-foreground flex items-center justify-center">
               <Shield className="w-4 h-4" />
             </div>
             <h2 className="text-base font-semibold">Account</h2>
