@@ -1,7 +1,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { useLocation } from "react-router-dom";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, PanelLeft } from "lucide-react";
 import { APP_NAME } from "@/lib/brand.ts";
 
 /** Map pathname to readable page title */
@@ -20,7 +20,15 @@ function getPageTitle(pathname: string): string {
   return titles[last] ?? APP_NAME;
 }
 
-export default function DashboardNavbar() {
+type DashboardNavbarProps = {
+  collapsed: boolean;
+  onToggleSidebar: () => void;
+};
+
+export default function DashboardNavbar({
+  collapsed,
+  onToggleSidebar,
+}: DashboardNavbarProps) {
   const user = useQuery(api.users.getCurrentUser, {});
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
@@ -35,11 +43,23 @@ export default function DashboardNavbar() {
     : "U";
 
   return (
-    <header className="h-14 border-b border-border bg-background/80 backdrop-blur-sm flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
-      {/* Left: Page title */}
-      <h1 className="text-base font-semibold tracking-tight text-foreground truncate">
-        {pageTitle}
-      </h1>
+    <header className="h-14 border-b border-border bg-background/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0 sticky top-0 z-40 w-full">
+      {/* Left: Sidebar toggle + Page title */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleSidebar}
+          className="w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <PanelLeft className="w-[18px] h-[18px]" />
+        </button>
+
+        <div className="w-px h-6 bg-border" />
+
+        <h1 className="text-base font-semibold tracking-tight text-foreground truncate">
+          {pageTitle}
+        </h1>
+      </div>
 
       {/* Right: Search, notifications, avatar */}
       <div className="flex items-center gap-2">
