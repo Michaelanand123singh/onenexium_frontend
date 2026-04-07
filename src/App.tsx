@@ -15,6 +15,7 @@ import SolutionsPage from "./pages/solutions/page.tsx";
 import ResourcesPage from "./pages/resources/page.tsx";
 import PricingPage from "./pages/pricing/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import MarketingLayout from "./components/layouts/marketing-layout.tsx";
 import DashboardLayout from "./components/dashboard-layout.tsx";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { Skeleton } from "./components/ui/skeleton.tsx";
@@ -51,12 +52,23 @@ export default function App() {
     <DefaultProviders>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          {/* Auth callback — outside all layouts */}
           <Route path="/auth/callback" element={<AuthCallback />} />
+
+          {/* Auth pages — standalone, no shared layout */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
 
-          {/* Dashboard layout routes (sidebar) */}
+          {/* Public / marketing pages — shared header + footer */}
+          <Route element={<MarketingLayout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/solutions" element={<SolutionsPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+          </Route>
+
+          {/* Dashboard pages — sidebar + top navbar */}
           <Route
             element={
               <AuthGate>
@@ -71,12 +83,9 @@ export default function App() {
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
 
-          {/* Standalone pages (no sidebar) */}
+          {/* Standalone pages — no shared layout */}
           <Route path="/project/:projectId" element={<ProjectEditorPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/solutions" element={<SolutionsPage />} />
-          <Route path="/resources" element={<ResourcesPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

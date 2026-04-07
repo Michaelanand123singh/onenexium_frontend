@@ -12,8 +12,6 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import SiteHeader from "@/components/site-header.tsx";
-import SiteFooter from "@/components/site-footer.tsx";
 
 const HERO_FEATURES = [
   "AI-powered builder",
@@ -98,9 +96,7 @@ const CAPABILITIES = [
 
 export default function ProductsPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-background antialiased">
-      <SiteHeader />
-
+    <>
       {/* Hero */}
       <section className="pt-36 pb-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -228,8 +224,6 @@ export default function ProductsPage() {
           </Link>
         </div>
       </section>
-
-      <SiteFooter />
-    </div>
+    </>
   );
 }

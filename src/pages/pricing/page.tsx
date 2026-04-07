@@ -7,8 +7,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import SiteHeader from "@/components/site-header.tsx";
-import SiteFooter from "@/components/site-footer.tsx";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -93,9 +91,7 @@ export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background antialiased">
-      <SiteHeader />
-
+    <>
       {/* Hero */}
       <section className="pt-36 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -293,8 +289,6 @@ export default function PricingPage() {
           </Link>
         </div>
       </section>
-
-      <SiteFooter />
-    </div>
+    </>
   );
 }

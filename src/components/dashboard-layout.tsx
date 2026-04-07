@@ -16,6 +16,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { LOGO_URL, APP_NAME } from "@/lib/brand.ts";
+import DashboardNavbar from "@/components/dashboard-navbar.tsx";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -246,10 +247,13 @@ export default function DashboardLayout() {
         </div>
       </motion.aside>
 
-      {/* Main content area */}
-      <main className="flex-1 overflow-y-auto">
-        <Outlet />
-      </main>
+      {/* Main content area with top navbar */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <DashboardNavbar />
+        <main className="flex-1 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

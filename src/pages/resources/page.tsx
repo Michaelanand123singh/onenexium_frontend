@@ -12,8 +12,6 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import SiteHeader from "@/components/site-header.tsx";
-import SiteFooter from "@/components/site-footer.tsx";
 
 const RESOURCE_CATEGORIES = [
   {
@@ -107,9 +105,7 @@ const HELP_ITEMS = [
 
 export default function ResourcesPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-background antialiased">
-      <SiteHeader />
-
+    <>
       {/* Hero */}
       <section className="pt-36 pb-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -244,8 +240,6 @@ export default function ResourcesPage() {
           </Link>
         </div>
       </section>
-
-      <SiteFooter />
-    </div>
+    </>
   );
 }

@@ -10,8 +10,6 @@ import {
   ArrowRight,
   ShieldCheck,
 } from "lucide-react";
-import SiteHeader from "@/components/site-header.tsx";
-import SiteFooter from "@/components/site-footer.tsx";
 import StatsCounters from "./index/_components/stats-counters.tsx";
 import FeaturesGrid from "./index/_components/features-grid.tsx";
 import SocialProof from "./index/_components/social-proof.tsx";
@@ -218,12 +216,9 @@ export default function Index() {
   const [activeTab, setActiveTab] = useState<"web" | "app">("web");
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-x-hidden bg-background antialiased">
+    <div className="min-h-screen flex flex-col relative overflow-x-hidden bg-background">
       {/* ── Dotted Grid Background ── */}
       <DottedGrid />
-
-      {/* ── Header ── */}
-      <SiteHeader />
 
       {/* ── Main ── */}
       <main className="flex-1 flex flex-col items-center pt-32 pb-24 px-4 w-full max-w-[1440px] mx-auto relative z-10">
@@ -369,9 +364,6 @@ export default function Index() {
         {/* ── Social Proof ── */}
         <SocialProof />
       </main>
-
-      {/* ── Footer ── */}
-      <SiteFooter />
     </div>
   );
 }
