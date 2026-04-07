@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
+import { Navigate } from "react-router-dom";
+import { Authenticated } from "convex/react";
 import {
   BarChart3,
   Store,
@@ -216,7 +218,13 @@ export default function Index() {
   const [activeTab, setActiveTab] = useState<"web" | "app">("web");
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-x-hidden bg-background">
+    <>
+      {/* Redirect authenticated users to the New Project page */}
+      <Authenticated>
+        <Navigate to="/dashboard/create" replace />
+      </Authenticated>
+
+      <div className="min-h-screen flex flex-col relative overflow-x-hidden bg-background">
       {/* ── Dotted Grid Background ── */}
       <DottedGrid />
 
@@ -365,5 +373,6 @@ export default function Index() {
         <SocialProof />
       </main>
     </div>
+    </>
   );
 }
