@@ -1,4 +1,4 @@
-// SVG icon components for the login page
+// SVG icon components for the auth pages
 
 export function BoltIcon({ className }: { className?: string }) {
   return (
@@ -19,10 +19,10 @@ export function GoogleIcon() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       fill="currentColor"
-      className="text-[#475569]"
+      className="text-white/60"
     >
       <path d="M500 261.8C500 403.3 403.1 504 260 504 122.8 504 12 393.2 12 256S122.8 8 260 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9c-88.3-85.2-252.5-21.2-252.5 118.2 0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9l-140.8 0 0-85.3 236.1 0c2.3 12.7 3.9 24.9 3.9 41.4z" />
     </svg>
@@ -34,13 +34,13 @@ export function MicrosoftIcon() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 448 448"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
     >
-      <rect x="0" y="0" width="208" height="208" fill="#F25022" />
-      <rect x="240" y="0" width="208" height="208" fill="#7FBA00" />
-      <rect x="0" y="240" width="208" height="208" fill="#00A4EF" />
-      <rect x="240" y="240" width="208" height="208" fill="#FFB900" />
+      <rect x="0" y="0" width="208" height="208" fill="rgba(255,255,255,0.4)" />
+      <rect x="240" y="0" width="208" height="208" fill="rgba(255,255,255,0.5)" />
+      <rect x="0" y="240" width="208" height="208" fill="rgba(255,255,255,0.5)" />
+      <rect x="240" y="240" width="208" height="208" fill="rgba(255,255,255,0.4)" />
     </svg>
   );
 }

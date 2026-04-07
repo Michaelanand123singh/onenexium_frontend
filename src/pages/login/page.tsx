@@ -2,12 +2,11 @@ import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { motion } from "motion/react";
-import { Shield, Sparkles, Globe } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
-import { BRAND_GRADIENT, BG_GRADIENT, LOGO_URL } from "@/lib/brand.ts";
+import { LOGO_URL, APP_NAME } from "@/lib/brand.ts";
 import { GoogleIcon, MicrosoftIcon } from "./_components/social-icons.tsx";
-import { TrustedLogos } from "./_components/trusted-logos.tsx";
 
 function RedirectIfAuthenticated() {
   const navigate = useNavigate();
@@ -17,383 +16,181 @@ function RedirectIfAuthenticated() {
   return null;
 }
 
-/** Animated dot grid overlay — white dots for the left panel, blue for right */
-function DotGrid({ variant }: { variant: "light" | "blue" }) {
-  const dotColor = variant === "light" ? "rgba(255,255,255,0.35)" : "#3D4EF0";
-  const pulseColor = variant === "light" ? "rgba(255,255,255,0.2)" : "#23A0FF";
-  const maskOpacity = variant === "light" ? "0.5" : "0.4";
-
+/** Subtle crosshatch grid lines */
+function GridBackground() {
   return (
-    <>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Radial gradient overlay for depth */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(255,255,255,0.02), transparent 70%)",
+        }}
+      />
+      {/* Grid pattern */}
       <motion.div
-        className="absolute inset-0 pointer-events-none"
         initial={{ opacity: 0 }}
-        animate={{
-          opacity: 1,
-          backgroundPosition: ["0px 0px", "28px 28px"],
-        }}
-        transition={{
-          opacity: { duration: 2, delay: 0.5 },
-          backgroundPosition: {
-            duration: 12,
-            repeat: Infinity,
-            ease: "linear",
-          },
-        }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2, delay: 0.3 }}
+        className="absolute inset-0"
         style={{
-          backgroundImage: `radial-gradient(circle, ${dotColor} 1.5px, transparent 1.5px)`,
-          backgroundSize: "28px 28px",
-          maskImage: `radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,${maskOpacity}) 0%, transparent 75%)`,
-          WebkitMaskImage: `radial-gradient(ellipse 80% 70% at 50% 40%, rgba(0,0,0,${maskOpacity}) 0%, transparent 75%)`,
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: "60px 60px",
         }}
+      />
+      {/* Floating glow orbs */}
+      <motion.div
+        animate={{ scale: [1, 1.15, 1], opacity: [0.06, 0.12, 0.06] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-white"
+        style={{ filter: "blur(120px)" }}
       />
       <motion.div
-        className="absolute inset-0 pointer-events-none"
-        animate={{
-          opacity: [0, 1, 0],
-          backgroundPosition: ["14px 14px", "-14px -14px"],
-        }}
-        transition={{
-          opacity: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 },
-          backgroundPosition: {
-            duration: 18,
-            repeat: Infinity,
-            ease: "linear",
-          },
-        }}
-        style={{
-          backgroundImage: `radial-gradient(circle, ${pulseColor} 1.5px, transparent 1.5px)`,
-          backgroundSize: "28px 28px",
-          maskImage: `radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.25) 0%, transparent 70%)`,
-          WebkitMaskImage: `radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.25) 0%, transparent 70%)`,
-        }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.04, 0.08, 0.04] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+        className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-white"
+        style={{ filter: "blur(100px)" }}
       />
-    </>
+    </div>
   );
 }
 
-/** Stagger container for child animations */
-const stagger = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.12, delayChildren: 0.2 },
-  },
-};
-
 const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
-
-const fadeDown = {
-  hidden: { opacity: 0, y: -16 },
+  hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
 };
 
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.92 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" as const } },
-};
-
-const fadeIn = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.5 } },
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
 };
 
 function LoginContent() {
   const navigate = useNavigate();
-  const currentYear = new Date().getFullYear();
 
   return (
-    <main className="flex flex-row min-h-screen overflow-hidden max-md:flex-col">
-      {/* ───── LEFT: Brand Section ───── */}
-      <motion.section
-        initial={{ x: -60, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        className="relative hidden md:flex w-1/2 flex-col justify-between p-12 overflow-hidden"
-        style={{
-          background: BG_GRADIENT,
-          backgroundSize: "400% 400%",
-          animation: "gradientShift 12s ease infinite",
-        }}
+    <main className="relative min-h-screen flex items-center justify-center px-6 py-24 bg-[#08090d] text-white overflow-hidden">
+      <GridBackground />
+
+      <motion.div
+        variants={stagger}
+        initial="hidden"
+        animate="show"
+        className="w-full max-w-md relative z-10"
       >
-        {/* Dot grid overlay */}
-        <DotGrid variant="light" />
-
-        {/* Floating orbs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.18, 0.1] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white/10"
-            style={{ filter: "blur(64px)" }}
+        {/* Logo */}
+        <motion.div variants={fadeUp} className="flex items-center justify-center gap-3 mb-12">
+          <motion.img
+            src={LOGO_URL}
+            alt={APP_NAME}
+            className="h-9 w-auto brightness-0 invert"
+            whileHover={{ rotate: 8, scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
           />
-          <motion.div
-            animate={{ scale: [1, 1.15, 1], opacity: [0.12, 0.22, 0.12] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-blue-400/20"
-          />
-          <motion.div
-            animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.2, 0.1] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-            className="absolute top-1/2 right-1/3 w-32 h-32 rounded-full bg-indigo-300/20"
-            style={{ filter: "blur(40px)" }}
-          />
-        </div>
-
-        {/* Staggered left-panel content */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="show"
-          className="relative z-10 flex flex-col justify-between h-full"
-        >
-          {/* Logo */}
-          <motion.div variants={fadeDown} className="flex items-center gap-3">
-            <motion.img
-              src={LOGO_URL}
-              alt="OneNexium"
-              className="h-10 w-auto brightness-0 invert"
-              whileHover={{ rotate: 10, scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            />
-            <span className="text-white text-2xl font-bold tracking-tight">
-              OneNexium
-            </span>
-          </motion.div>
-
-          {/* Headline */}
-          <motion.div variants={fadeUp} className="max-w-lg">
-            <h1 className="text-[3.75rem] leading-[1.15] font-extrabold text-white mb-6">
-              {"Welcome Back to".split(" ").map((word, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.5 + i * 0.1 }}
-                  className="inline-block mr-[0.3em]"
-                >
-                  {word}
-                </motion.span>
-              ))}
-              <br />
-              <motion.span
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 0.9, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.9 }}
-                className="inline-block"
-              >
-                OneNexium
-              </motion.span>
-            </h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 1.1 }}
-              className="text-white/80 text-xl leading-relaxed font-medium"
-            >
-              Build websites and apps instantly using the world{"'"}s most
-              advanced AI platform.
-            </motion.p>
-          </motion.div>
-
-          {/* Footer */}
-          <motion.div
-            variants={fadeIn}
-            className="flex gap-8 text-white/60 text-sm"
-          >
-            <span>{`© ${currentYear} OneNexium Inc.`}</span>
-            <button className="hover:text-white transition-colors cursor-pointer">
-              Privacy Policy
-            </button>
-            <button className="hover:text-white transition-colors cursor-pointer">
-              Terms of Service
-            </button>
-          </motion.div>
+          <span className="text-xl font-bold tracking-tight">{APP_NAME}</span>
         </motion.div>
-      </motion.section>
 
-      {/* ───── RIGHT: Login Section ───── */}
-      <section className="flex-1 flex items-center justify-center py-24 px-6 md:px-24 bg-[#F5F8FF] relative overflow-hidden">
-        {/* Dot grid background on right panel */}
-        <DotGrid variant="blue" />
+        {/* Heading */}
+        <motion.div variants={fadeUp} className="text-center mb-10">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-3">
+            Welcome back
+          </h1>
+          <p className="text-white/40 text-base">
+            Sign in to continue building with {APP_NAME}
+          </p>
+        </motion.div>
 
-        {/* Subtle radial glow behind card */}
+        {/* Auth card */}
         <motion.div
-          className="absolute inset-0 pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5, delay: 0.3 }}
+          variants={fadeUp}
+          className="rounded-2xl border border-white/8 p-8 sm:p-10"
           style={{
-            background: "radial-gradient(ellipse 60% 50% at 50% 45%, rgba(61,78,240,0.04), transparent)",
+            background: "rgba(255,255,255,0.03)",
+            backdropFilter: "blur(20px)",
           }}
-        />
-
-        {/* Mobile logo (top-left) */}
-        <motion.div
-          initial={{ opacity: 0, x: -12 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="absolute top-8 left-8 flex items-center gap-2 z-10"
         >
-          <img src={LOGO_URL} alt="OneNexium" className="h-8 w-auto" />
-          <span className="text-foreground font-bold">OneNexium</span>
-        </motion.div>
-
-        {/* Login card — staggered children */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="show"
-          className="w-full max-w-[28rem] relative z-10"
-        >
-          <motion.div
-            variants={scaleIn}
-            whileHover={{ y: -2, boxShadow: "0 30px 60px -12px rgb(0 0 0 / 0.3)" }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-            className="p-10 max-sm:p-8 rounded-[2rem] border border-white/30"
-            style={{
-              background: "rgba(255, 255, 255, 0.85)",
-              backdropFilter: "blur(16px)",
-              boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.2)",
-            }}
-          >
-            {/* Header */}
-            <motion.div variants={fadeUp} className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-foreground mb-2">
-                Sign in
-              </h2>
-              <p className="text-[#64748b]">
-                Enter your details to access your dashboard
-              </p>
-            </motion.div>
-
-            {/* Social login buttons */}
-            <motion.div variants={fadeUp} className="grid grid-cols-2 gap-4 mb-8">
-              <SignInButton
-                signInText=""
-                className="flex items-center justify-center gap-3 py-3 px-4 border border-[#e2e8f0] rounded-xl bg-transparent hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer text-[#334155] text-sm font-semibold h-auto"
-              >
-                <GoogleIcon />
-                <span>Google</span>
-              </SignInButton>
-              <SignInButton
-                signInText=""
-                className="flex items-center justify-center gap-3 py-3 px-4 border border-[#e2e8f0] rounded-xl bg-transparent hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer text-[#334155] text-sm font-semibold h-auto"
-              >
-                <MicrosoftIcon />
-                <span>Microsoft</span>
-              </SignInButton>
-            </motion.div>
-
-            {/* Divider */}
-            <motion.div variants={fadeIn} className="relative flex items-center mb-8">
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                className="flex-grow border-t border-[#e2e8f0] origin-left"
-              />
-              <span className="shrink mx-4 text-[#94a3b8] text-xs font-medium uppercase tracking-widest">
-                or email
-              </span>
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                className="flex-grow border-t border-[#e2e8f0] origin-right"
-              />
-            </motion.div>
-
-            {/* Email sign-in button */}
-            <motion.div variants={fadeUp}>
-              <SignInButton
-                signInText="Continue with Email"
-                className="w-full py-4 rounded-2xl text-white font-bold text-lg shadow-lg hover:shadow-[0_0_24px_rgba(61,78,240,0.5)] hover:-translate-y-0.5 transition-all cursor-pointer border-0 h-auto"
-                style={{ background: BRAND_GRADIENT }}
-              />
-            </motion.div>
-
-            {/* Create account link */}
-            <motion.div variants={fadeIn} className="mt-6 text-center">
-              <p className="text-[#94a3b8] text-sm">
-                {"Don't have an account? "}
-                <button
-                  onClick={() => navigate("/signup")}
-                  className="text-[#3D4EF0] font-semibold hover:underline cursor-pointer"
-                >
-                  Sign up for free
-                </button>
-              </p>
-            </motion.div>
-
-            {/* Trust indicators */}
-            <motion.div
-              variants={fadeIn}
-              className="mt-6 flex items-center justify-center gap-6 text-[#64748b]/60 text-xs"
+          {/* Social buttons */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <SignInButton
+              signInText=""
+              className="flex items-center justify-center gap-2.5 py-3 px-4 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer text-white text-sm font-medium h-auto"
             >
-              {[
-                { icon: Shield, label: "Secure login" },
-                { icon: Sparkles, label: "AI-powered" },
-                { icon: Globe, label: "100k+ users" },
-              ].map((item, i) => (
-                <motion.div
-                  key={item.label}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 1.2 + i * 0.1 }}
-                  className="flex items-center gap-1.5"
-                >
-                  <item.icon className="w-3.5 h-3.5" />
-                  <span>{item.label}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
+              <GoogleIcon />
+              <span>Google</span>
+            </SignInButton>
+            <SignInButton
+              signInText=""
+              className="flex items-center justify-center gap-2.5 py-3 px-4 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer text-white text-sm font-medium h-auto"
+            >
+              <MicrosoftIcon />
+              <span>Microsoft</span>
+            </SignInButton>
+          </div>
 
-          {/* Trusted by logos */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1.4 }}
+          {/* Divider */}
+          <div className="relative flex items-center my-6">
+            <div className="flex-grow border-t border-white/8" />
+            <span className="shrink mx-4 text-white/25 text-xs font-medium uppercase tracking-widest">
+              or
+            </span>
+            <div className="flex-grow border-t border-white/8" />
+          </div>
+
+          {/* Email button */}
+          <SignInButton
+            signInText="Continue with Email"
+            className="w-full py-3.5 rounded-xl bg-white text-[#08090d] font-semibold text-sm hover:bg-white/90 transition-all cursor-pointer border-0 h-auto flex items-center justify-center gap-2"
           >
-            <TrustedLogos />
-          </motion.div>
-        </motion.div>
-      </section>
+            <span>Continue with Email</span>
+            <ArrowRight className="w-4 h-4" />
+          </SignInButton>
 
-      {/* Gradient animation keyframe */}
-      <style>{`
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
+          {/* Sign up link */}
+          <p className="mt-6 text-center text-white/30 text-sm">
+            {"Don't have an account? "}
+            <button
+              onClick={() => navigate("/signup")}
+              className="text-white font-medium hover:underline cursor-pointer"
+            >
+              Create one
+            </button>
+          </p>
+        </motion.div>
+
+        {/* Bottom trust strip */}
+        <motion.div
+          variants={fadeUp}
+          className="mt-8 flex items-center justify-center gap-6 text-white/20 text-xs"
+        >
+          <span>Secure login</span>
+          <span className="w-1 h-1 rounded-full bg-white/15" />
+          <span>SOC 2 compliant</span>
+          <span className="w-1 h-1 rounded-full bg-white/15" />
+          <span>12k+ users</span>
+        </motion.div>
+      </motion.div>
     </main>
   );
 }
 
 export default function LoginPage() {
   return (
-    <div
-      className="min-h-screen bg-[#F5F8FF] text-foreground antialiased"
-    >
+    <div className="min-h-screen bg-[#08090d] antialiased">
       <Authenticated>
         <RedirectIfAuthenticated />
       </Authenticated>
 
       <AuthLoading>
-        <div className="flex min-h-screen">
-          <div className="hidden md:flex w-1/2" style={{ background: BG_GRADIENT }} />
-          <div className="flex-1 flex items-center justify-center p-6 bg-[#F5F8FF]">
-            <div className="w-full max-w-[28rem] space-y-6">
-              <Skeleton className="h-8 w-48 mx-auto" />
-              <Skeleton className="h-4 w-64 mx-auto" />
-              <Skeleton className="h-14 w-full rounded-2xl" />
-              <Skeleton className="h-14 w-full rounded-2xl" />
-            </div>
+        <div className="min-h-screen bg-[#08090d] flex items-center justify-center p-6">
+          <div className="w-full max-w-md space-y-6">
+            <Skeleton className="h-9 w-36 mx-auto bg-white/5" />
+            <Skeleton className="h-10 w-64 mx-auto bg-white/5" />
+            <Skeleton className="h-4 w-48 mx-auto bg-white/5" />
+            <Skeleton className="h-48 w-full rounded-2xl bg-white/5" />
           </div>
         </div>
       </AuthLoading>
