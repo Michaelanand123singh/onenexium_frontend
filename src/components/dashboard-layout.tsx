@@ -13,7 +13,7 @@ import {
 import { useState, useRef, useEffect, useCallback } from "react";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
-import { LOGO_URL, APP_NAME } from "@/lib/brand.ts";
+
 import DashboardNavbar from "@/components/dashboard-navbar.tsx";
 
 const NAV_ITEMS = [
@@ -153,29 +153,6 @@ export default function DashboardLayout() {
         >
           {/* Subtle dot grid on sidebar */}
           <SidebarDotGrid />
-
-          {/* Logo */}
-          <div className="relative z-10 flex items-center gap-2.5 px-4 py-4 border-b border-border shrink-0">
-            <button
-              onClick={() => navigate("/")}
-              className="flex items-center gap-2.5 cursor-pointer min-w-0"
-            >
-              <img
-                src={LOGO_URL}
-                alt={APP_NAME}
-                className="h-7 w-7 rounded-lg object-cover shrink-0"
-              />
-              {!collapsed && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-[15px] font-semibold text-foreground tracking-tight truncate"
-                >
-                  {APP_NAME}
-                </motion.span>
-              )}
-            </button>
-          </div>
 
           {/* New project button */}
           <div className="relative z-10 px-3 pt-4 pb-2">
