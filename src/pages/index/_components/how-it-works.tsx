@@ -10,7 +10,7 @@ const STEPS = [
     emoji: "\u{1F9E0}",
     title: "Describe your idea",
     description: "Tell OneNexium what you want to build in plain English. No technical skills needed.",
-    color: "#3D4EF0",
+    color: "#000000",
   },
   {
     number: "02",
@@ -18,7 +18,7 @@ const STEPS = [
     emoji: "\u{26A1}",
     title: "OneNexium generates it",
     description: "Our AI builds your complete app or website — frontend, backend, database, and all.",
-    color: "#6366f1",
+    color: "#000000",
   },
   {
     number: "03",
@@ -26,7 +26,7 @@ const STEPS = [
     emoji: "\u{1F680}",
     title: "Publish instantly",
     description: "Go live in seconds with a custom domain. Share it with the world immediately.",
-    color: "#23A0FF",
+    color: "#000000",
   },
 ];
 

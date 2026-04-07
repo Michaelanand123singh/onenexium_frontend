@@ -22,8 +22,8 @@ const TESTIMONIALS = [
     role: "VP of Engineering",
     company: "TechFlow",
     initials: "SC",
-    accentBg: "bg-violet-100 dark:bg-violet-500/20",
-    accentText: "text-violet-700 dark:text-violet-300",
+    accentBg: "bg-foreground/10 dark:bg-foreground/15",
+    accentText: "text-foreground dark:text-foreground",
   },
   {
     quote:
@@ -32,8 +32,8 @@ const TESTIMONIALS = [
     role: "Lead Developer",
     company: "BuildStack",
     initials: "MR",
-    accentBg: "bg-blue-100 dark:bg-blue-500/20",
-    accentText: "text-blue-700 dark:text-blue-300",
+    accentBg: "bg-foreground/10 dark:bg-foreground/15",
+    accentText: "text-foreground dark:text-foreground",
   },
   {
     quote:
@@ -42,8 +42,8 @@ const TESTIMONIALS = [
     role: "CTO",
     company: "NovaBridge",
     initials: "AP",
-    accentBg: "bg-emerald-100 dark:bg-emerald-500/20",
-    accentText: "text-emerald-700 dark:text-emerald-300",
+    accentBg: "bg-foreground/10 dark:bg-foreground/15",
+    accentText: "text-foreground dark:text-foreground",
   },
 ];
 
@@ -99,7 +99,7 @@ function TestimonialCard({
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
-            className="w-4 h-4 fill-amber-400 text-amber-400"
+            className="w-4 h-4 fill-foreground text-foreground"
           />
         ))}
       </div>

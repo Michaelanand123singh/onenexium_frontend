@@ -10,9 +10,9 @@ const STEPS = [
     title: "Describe your idea",
     description:
       "Write a plain-English prompt describing what you want to build. Be as detailed or as brief as you like.",
-    iconBg: "bg-primary/10",
-    iconColor: "text-primary",
-    iconBorder: "border-primary/20",
+    iconBg: "bg-foreground/5 dark:bg-foreground/10",
+    iconColor: "text-foreground dark:text-foreground",
+    iconBorder: "border-foreground/10 dark:border-foreground/15",
   },
   {
     number: "02",
@@ -20,9 +20,9 @@ const STEPS = [
     title: "AI generates your app",
     description:
       "Our AI engine analyzes your prompt and generates production-ready code, components, and infrastructure.",
-    iconBg: "bg-blue-50 dark:bg-blue-500/10",
-    iconColor: "text-blue-600 dark:text-blue-400",
-    iconBorder: "border-blue-100 dark:border-blue-500/20",
+    iconBg: "bg-foreground/5 dark:bg-foreground/10",
+    iconColor: "text-foreground dark:text-foreground",
+    iconBorder: "border-foreground/10 dark:border-foreground/15",
   },
   {
     number: "03",
@@ -30,9 +30,9 @@ const STEPS = [
     title: "Deploy in one click",
     description:
       "Review the generated output, make any tweaks, and deploy to production with a single click.",
-    iconBg: "bg-emerald-50 dark:bg-emerald-500/10",
-    iconColor: "text-emerald-600 dark:text-emerald-400",
-    iconBorder: "border-emerald-100 dark:border-emerald-500/20",
+    iconBg: "bg-foreground/5 dark:bg-foreground/10",
+    iconColor: "text-foreground dark:text-foreground",
+    iconBorder: "border-foreground/10 dark:border-foreground/15",
   },
 ];
 
