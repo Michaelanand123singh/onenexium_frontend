@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import { LOGO_URL, APP_NAME } from "@/lib/brand.ts";
 import { GoogleIcon, MicrosoftIcon } from "../login/_components/social-icons.tsx";
 
@@ -217,12 +218,43 @@ function SignupContent() {
                 <div className="flex-grow border-t border-black/8" />
               </div>
 
-              {/* Email button */}
+              {/* Email & Password fields (display only) */}
+              <div className="space-y-3 mb-4">
+                <div>
+                  <label className="block text-xs font-medium text-black/50 mb-1.5">Full Name</label>
+                  <Input
+                    type="text"
+                    placeholder="John Smith"
+                    readOnly
+                    className="w-full rounded-xl border-black/10 bg-black/[0.02] h-11 text-sm placeholder:text-black/25 cursor-default focus-visible:ring-0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-black/50 mb-1.5">Email</label>
+                  <Input
+                    type="email"
+                    placeholder="example@gmail.com"
+                    readOnly
+                    className="w-full rounded-xl border-black/10 bg-black/[0.02] h-11 text-sm placeholder:text-black/25 cursor-default focus-visible:ring-0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-black/50 mb-1.5">Password</label>
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
+                    readOnly
+                    className="w-full rounded-xl border-black/10 bg-black/[0.02] h-11 text-sm placeholder:text-black/25 cursor-default focus-visible:ring-0"
+                  />
+                </div>
+              </div>
+
+              {/* Sign up button */}
               <SignInButton
-                signInText="Sign Up with Email"
+                signInText="Create Account"
                 className="w-full py-3.5 rounded-xl bg-[#0a0a0a] text-white font-semibold text-sm hover:bg-[#1a1a1a] transition-all cursor-pointer border-0 h-auto flex items-center justify-center gap-2"
               >
-                <span>Sign Up with Email</span>
+                <span>Create Account</span>
                 <ArrowRight className="w-4 h-4" />
               </SignInButton>
 
