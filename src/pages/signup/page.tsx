@@ -47,7 +47,7 @@ const CHECKLIST = [
   "Team collaboration built in",
 ];
 
-/** Subtle crosshatch grid lines */
+/** Subtle grid lines on light background */
 function GridBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -55,7 +55,7 @@ function GridBackground() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(255,255,255,0.02), transparent 70%)",
+            "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0,0,0,0.015), transparent 70%)",
         }}
       />
       <motion.div
@@ -65,22 +65,22 @@ function GridBackground() {
         className="absolute inset-0"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+            linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)
           `,
           backgroundSize: "60px 60px",
         }}
       />
       <motion.div
-        animate={{ scale: [1, 1.15, 1], opacity: [0.06, 0.12, 0.06] }}
+        animate={{ scale: [1, 1.15, 1], opacity: [0.04, 0.08, 0.04] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-white"
+        className="absolute top-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-black"
         style={{ filter: "blur(120px)" }}
       />
       <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.04, 0.08, 0.04] }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.03, 0.06, 0.03] }}
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-        className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-white"
+        className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-black"
         style={{ filter: "blur(100px)" }}
       />
     </div>
@@ -101,7 +101,7 @@ function SignupContent() {
   const navigate = useNavigate();
 
   return (
-    <main className="relative min-h-screen bg-[#08090d] text-white overflow-hidden">
+    <main className="relative min-h-screen bg-[#fafafa] text-[#0a0a0a] overflow-hidden">
       <GridBackground />
 
       <div className="relative z-10 flex flex-col lg:flex-row min-h-screen">
@@ -118,7 +118,7 @@ function SignupContent() {
               <motion.img
                 src={LOGO_URL}
                 alt={APP_NAME}
-                className="h-9 w-auto brightness-0 invert"
+                className="h-9 w-auto"
                 whileHover={{ rotate: 8, scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               />
@@ -132,10 +132,10 @@ function SignupContent() {
             >
               Start building
               <br />
-              <span className="text-white/50">in minutes</span>
+              <span className="text-black/35">in minutes</span>
             </motion.h1>
 
-            <motion.p variants={fadeUp} className="text-white/40 text-lg leading-relaxed mb-12 max-w-sm">
+            <motion.p variants={fadeUp} className="text-black/40 text-lg leading-relaxed mb-12 max-w-sm">
               Join thousands of creators using AI to build production-ready websites and apps.
             </motion.p>
 
@@ -146,14 +146,14 @@ function SignupContent() {
                   key={benefit.title}
                   variants={fadeUp}
                   custom={i}
-                  className="flex items-start gap-4 rounded-xl border border-white/6 bg-white/[0.02] p-4"
+                  className="flex items-start gap-4 rounded-xl border border-black/6 bg-white p-4 shadow-sm"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center shrink-0">
-                    <benefit.icon className="w-4.5 h-4.5 text-white/60" />
+                  <div className="w-10 h-10 rounded-lg bg-black/[0.04] border border-black/6 flex items-center justify-center shrink-0">
+                    <benefit.icon className="w-4.5 h-4.5 text-black/50" />
                   </div>
                   <div>
-                    <p className="text-white/80 font-medium text-sm">{benefit.title}</p>
-                    <p className="text-white/30 text-sm">{benefit.description}</p>
+                    <p className="text-[#0a0a0a] font-medium text-sm">{benefit.title}</p>
+                    <p className="text-black/35 text-sm">{benefit.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -171,7 +171,7 @@ function SignupContent() {
           >
             {/* Mobile logo */}
             <motion.div variants={fadeUp} className="flex items-center justify-center gap-3 mb-10 lg:hidden">
-              <img src={LOGO_URL} alt={APP_NAME} className="h-8 w-auto brightness-0 invert" />
+              <img src={LOGO_URL} alt={APP_NAME} className="h-8 w-auto" />
               <span className="text-lg font-bold tracking-tight">{APP_NAME}</span>
             </motion.div>
 
@@ -180,7 +180,7 @@ function SignupContent() {
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">
                 Create your account
               </h2>
-              <p className="text-white/35 text-base">
+              <p className="text-black/35 text-base">
                 Get started for free — no credit card needed
               </p>
             </motion.div>
@@ -188,24 +188,20 @@ function SignupContent() {
             {/* Auth card */}
             <motion.div
               variants={fadeUp}
-              className="rounded-2xl border border-white/8 p-8 sm:p-10"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                backdropFilter: "blur(20px)",
-              }}
+              className="rounded-2xl border border-black/8 bg-white p-8 sm:p-10 shadow-sm"
             >
               {/* Social buttons */}
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <SignInButton
                   signInText=""
-                  className="flex items-center justify-center gap-2.5 py-3 px-4 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer text-white text-sm font-medium h-auto"
+                  className="flex items-center justify-center gap-2.5 py-3 px-4 border border-black/10 rounded-xl bg-transparent hover:bg-black/[0.03] hover:border-black/15 transition-all cursor-pointer text-[#0a0a0a] text-sm font-medium h-auto"
                 >
                   <GoogleIcon />
                   <span>Google</span>
                 </SignInButton>
                 <SignInButton
                   signInText=""
-                  className="flex items-center justify-center gap-2.5 py-3 px-4 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer text-white text-sm font-medium h-auto"
+                  className="flex items-center justify-center gap-2.5 py-3 px-4 border border-black/10 rounded-xl bg-transparent hover:bg-black/[0.03] hover:border-black/15 transition-all cursor-pointer text-[#0a0a0a] text-sm font-medium h-auto"
                 >
                   <MicrosoftIcon />
                   <span>Microsoft</span>
@@ -214,17 +210,17 @@ function SignupContent() {
 
               {/* Divider */}
               <div className="relative flex items-center my-6">
-                <div className="flex-grow border-t border-white/8" />
-                <span className="shrink mx-4 text-white/25 text-xs font-medium uppercase tracking-widest">
+                <div className="flex-grow border-t border-black/8" />
+                <span className="shrink mx-4 text-black/25 text-xs font-medium uppercase tracking-widest">
                   or
                 </span>
-                <div className="flex-grow border-t border-white/8" />
+                <div className="flex-grow border-t border-black/8" />
               </div>
 
               {/* Email button */}
               <SignInButton
                 signInText="Sign Up with Email"
-                className="w-full py-3.5 rounded-xl bg-white text-[#08090d] font-semibold text-sm hover:bg-white/90 transition-all cursor-pointer border-0 h-auto flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl bg-[#0a0a0a] text-white font-semibold text-sm hover:bg-[#1a1a1a] transition-all cursor-pointer border-0 h-auto flex items-center justify-center gap-2"
               >
                 <span>Sign Up with Email</span>
                 <ArrowRight className="w-4 h-4" />
@@ -235,10 +231,10 @@ function SignupContent() {
                 {CHECKLIST.map((item) => (
                   <div
                     key={item}
-                    className="flex items-center gap-2.5 text-sm text-white/35"
+                    className="flex items-center gap-2.5 text-sm text-black/40"
                   >
-                    <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                      <Check className="w-2.5 h-2.5 text-white/50" />
+                    <div className="w-4 h-4 rounded-full bg-black/[0.06] flex items-center justify-center shrink-0">
+                      <Check className="w-2.5 h-2.5 text-black/40" />
                     </div>
                     {item}
                   </div>
@@ -246,11 +242,11 @@ function SignupContent() {
               </div>
 
               {/* Sign in link */}
-              <p className="mt-8 text-center text-white/30 text-sm">
+              <p className="mt-8 text-center text-black/35 text-sm">
                 Already have an account?{" "}
                 <button
                   onClick={() => navigate("/login")}
-                  className="text-white font-medium hover:underline cursor-pointer"
+                  className="text-[#0a0a0a] font-medium hover:underline cursor-pointer"
                 >
                   Sign in
                 </button>
@@ -260,12 +256,12 @@ function SignupContent() {
             {/* Trust strip */}
             <motion.div
               variants={fadeUp}
-              className="mt-8 flex items-center justify-center gap-6 text-white/20 text-xs"
+              className="mt-8 flex items-center justify-center gap-6 text-black/20 text-xs"
             >
               <span>Secure login</span>
-              <span className="w-1 h-1 rounded-full bg-white/15" />
+              <span className="w-1 h-1 rounded-full bg-black/15" />
               <span>SOC 2 compliant</span>
-              <span className="w-1 h-1 rounded-full bg-white/15" />
+              <span className="w-1 h-1 rounded-full bg-black/15" />
               <span>12k+ users</span>
             </motion.div>
           </motion.div>
@@ -277,18 +273,18 @@ function SignupContent() {
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen bg-[#08090d] antialiased">
+    <div className="min-h-screen bg-[#fafafa] antialiased">
       <Authenticated>
         <RedirectIfAuthenticated />
       </Authenticated>
 
       <AuthLoading>
-        <div className="min-h-screen bg-[#08090d] flex items-center justify-center p-6">
+        <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-6">
           <div className="w-full max-w-md space-y-6">
-            <Skeleton className="h-9 w-36 mx-auto bg-white/5" />
-            <Skeleton className="h-10 w-64 mx-auto bg-white/5" />
-            <Skeleton className="h-4 w-48 mx-auto bg-white/5" />
-            <Skeleton className="h-64 w-full rounded-2xl bg-white/5" />
+            <Skeleton className="h-9 w-36 mx-auto" />
+            <Skeleton className="h-10 w-64 mx-auto" />
+            <Skeleton className="h-4 w-48 mx-auto" />
+            <Skeleton className="h-64 w-full rounded-2xl" />
           </div>
         </div>
       </AuthLoading>
