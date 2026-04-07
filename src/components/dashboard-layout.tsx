@@ -15,6 +15,7 @@ import { SignInButton } from "@/components/ui/signin.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 import DashboardNavbar from "@/components/dashboard-navbar.tsx";
+import AiAssistant from "@/components/ai-assistant.tsx";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -224,6 +225,9 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* AI Assistant floating widget */}
+      <AiAssistant />
     </div>
   );
 }

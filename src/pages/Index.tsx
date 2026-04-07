@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { Authenticated } from "convex/react";
 import {
   BarChart3,
@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ArrowRight,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import StatsCounters from "./index/_components/stats-counters.tsx";
 import FeaturesGrid from "./index/_components/features-grid.tsx";
@@ -371,6 +372,64 @@ export default function Index() {
 
         {/* ── Social Proof ── */}
         <SocialProof />
+
+        {/* ── Final CTA ── */}
+        <section className="w-full max-w-4xl mx-auto mt-20 mb-8 px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="relative rounded-3xl border border-border bg-card p-12 md:p-16 text-center overflow-hidden"
+          >
+            {/* Subtle radial glow */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse 60% 50% at 50% 40%, rgba(0,0,0,0.03), transparent)",
+              }}
+            />
+
+            <div className="relative z-10">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.15, duration: 0.4 }}
+                className="w-14 h-14 rounded-2xl bg-foreground text-background flex items-center justify-center mx-auto mb-6"
+              >
+                <Sparkles className="w-7 h-7" />
+              </motion.div>
+
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight leading-tight mb-4 text-balance">
+                Ready to build something
+                <br />
+                extraordinary?
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-lg mx-auto mb-10 leading-relaxed">
+                Join thousands of creators shipping faster with AI. No credit
+                card required.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-foreground text-background font-semibold shadow-lg hover:opacity-90 transition-all cursor-pointer"
+                >
+                  Start Building Free
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  to="/pricing"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-border font-medium hover:bg-accent transition-all cursor-pointer"
+                >
+                  View Pricing
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </section>
       </main>
     </div>
     </>

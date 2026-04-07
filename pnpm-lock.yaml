@@ -137,6 +137,9 @@ importers:
       oidc-client-ts:
         specifier: ^3.4.1
         version: 3.4.1
+      openai:
+        specifier: ^6.33.0
+        version: 6.33.0(ws@8.18.0)(zod@3.25.76)
       react:
         specifier: ^19.2.4
         version: 19.2.4
@@ -2555,6 +2558,18 @@ packages:
   oidc-client-ts@3.4.1:
     resolution: {integrity: sha512-jNdst/U28Iasukx/L5MP6b274Vr7ftQs6qAhPBCvz6Wt5rPCA+Q/tUmCzfCHHWweWw5szeMy2Gfrm1rITwUKrw==}
     engines: {node: '>=18'}
+
+  openai@6.33.0:
+    resolution: {integrity: sha512-xAYN1W3YsDXJWA5F277135YfkEk6H7D3D6vWwRhJ3OEkzRgcyK8z/P5P9Gyi/wB4N8kK9kM5ZjprfvyHagKmpw==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -5145,6 +5160,11 @@ snapshots:
   oidc-client-ts@3.4.1:
     dependencies:
       jwt-decode: 4.0.0
+
+  openai@6.33.0(ws@8.18.0)(zod@3.25.76):
+    optionalDependencies:
+      ws: 8.18.0
+      zod: 3.25.76
 
   optionator@0.9.4:
     dependencies:
