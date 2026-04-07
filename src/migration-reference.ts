@@ -533,13 +533,19 @@ export const MIGRATION_PATTERNS = {
 export const CHANGE_LOG = [
   {
     date: "2026-04-07",
+    version: "v159",
+    changes: [
+      "Dashboard stripped to flat minimal view — all cards removed.",
+      "Layout: greeting header with project count + 'New' button, then a flat 'Recent' project list with rows (avatar, name, time ago, status badge, hover arrow).",
+      "Empty state: centered icon + text + Create button.",
+      "Removed: BentoCard, WelcomeCard, StatCard, QuickActionCard, RecentProjectsCard, WorkspaceCard, DashboardDotGrid.",
+    ],
+  },
+  {
+    date: "2026-04-07",
     version: "v158",
     changes: [
-      "Dashboard UI redesigned with bento grid layout.",
-      "New components: BentoCard (shared card wrapper), WelcomeCard (greeting + CTA, spans 2 cols), StatCard (compact stat pill), QuickActionCard (icon + title + description + arrow), ProjectRow (compact project row), RecentProjectsCard (spans 2 cols with project list), WorkspaceCard (progress bar + last active).",
-      "Grid: 3-column CSS grid (lg). Row 1: Welcome spans 2 cols. Row 2: 2 stat cards + 1 quick action. Row 3: Recent projects spans 2 cols + stacked column (Templates, All Projects, Workspace info).",
-      "Removed DashboardDotGrid canvas background from dashboard overview.",
-      "Animations: staggered entrance with motion, hover scale on buttons, progress bar animation.",
+      "Dashboard UI redesigned with bento grid layout (subsequently removed in v159).",
     ],
   },
   {
