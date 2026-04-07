@@ -11,6 +11,7 @@ import {
   Phone,
   ShieldCheck,
   X,
+  Mail,
 } from "lucide-react";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
@@ -204,7 +205,7 @@ function OtpVerificationDialog({
                 </div>
                 <h3 className="text-xl font-bold tracking-tight mb-2">Verified</h3>
                 <p className="text-black/40 text-sm mb-6">
-                  Your phone number has been verified successfully.
+                  Your email address has been verified successfully.
                 </p>
                 <Button
                   onClick={handleClose}
@@ -217,11 +218,11 @@ function OtpVerificationDialog({
               /* OTP input state */
               <div className="text-center">
                 <div className="w-14 h-14 rounded-full bg-black/[0.04] border border-black/6 flex items-center justify-center mx-auto mb-5">
-                  <Phone className="w-6 h-6 text-black/50" />
+                  <Mail className="w-6 h-6 text-black/50" />
                 </div>
-                <h3 className="text-xl font-bold tracking-tight mb-1.5">Verify your phone</h3>
+                <h3 className="text-xl font-bold tracking-tight mb-1.5">Verify your email</h3>
                 <p className="text-black/40 text-sm mb-7">
-                  {"We've sent a 6-digit code to your phone number. Enter it below to verify."}
+                  {"We've sent a 6-digit code to your email address. Enter it below to verify."}
                 </p>
 
                 {/* OTP inputs */}
@@ -429,7 +430,9 @@ function SignupContent() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-black/50 mb-1.5">Phone Number</label>
+                  <label className="block text-xs font-medium text-black/50 mb-1.5">
+                    Phone Number <span className="text-black/25 font-normal">(optional)</span>
+                  </label>
                   <div className="flex gap-2">
                     <div className="flex items-center gap-1.5 px-3 border border-black/10 rounded-xl bg-black/[0.02] text-sm text-black/50 shrink-0">
                       <Phone className="w-3.5 h-3.5" />
