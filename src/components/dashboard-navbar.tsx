@@ -1,8 +1,18 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { useLocation } from "react-router-dom";
-import { Search, Bell, PanelLeft } from "lucide-react";
+import { Search, Bell, PanelLeft, Coins } from "lucide-react";
 import { APP_NAME } from "@/lib/brand.ts";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { toast } from "sonner";
 
 /** Map pathname to readable page title */
 function getPageTitle(pathname: string): string {
@@ -32,6 +42,14 @@ export default function DashboardNavbar({
   const user = useQuery(api.users.getCurrentUser, {});
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
+  const [creditsOpen, setCreditsOpen] = useState(false);
+
+  const CREDIT_PLANS = [
+    { amount: 100, price: 5 },
+    { amount: 500, price: 20 },
+    { amount: 1200, price: 40 },
+    { amount: 5000, price: 150 },
+  ];
 
   const initials = user?.name
     ? user.name
@@ -73,6 +91,59 @@ export default function DashboardNavbar({
           <Bell className="w-4 h-4" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" />
         </button>
+
+        {/* Credits */}
+        <button
+          onClick={() => setCreditsOpen(true)}
+          className="h-8 px-3 rounded-lg bg-foreground/5 border border-foreground/10 flex items-center gap-1.5 text-sm font-medium hover:bg-accent transition-colors cursor-pointer"
+        >
+          <Coins className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Credits</span>
+        </button>
+
+        {/* Credits Dialog */}
+        <Dialog open={creditsOpen} onOpenChange={setCreditsOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Credits</DialogTitle>
+              <DialogDescription>
+                Credits power AI generation, deployments, and premium features.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="grid grid-cols-2 gap-3 py-4">
+              {CREDIT_PLANS.map((plan) => (
+                <button
+                  key={plan.amount}
+                  onClick={() => {
+                    toast.info("Payment integration coming soon!");
+                    setCreditsOpen(false);
+                  }}
+                  className="flex flex-col items-center gap-1 p-4 rounded-xl border border-border hover:border-foreground/20 hover:bg-accent transition-all cursor-pointer"
+                >
+                  <span className="text-2xl font-bold tracking-tight">
+                    {plan.amount.toLocaleString()}
+                  </span>
+                  <span className="text-xs text-muted-foreground">credits</span>
+                  <span className="mt-1 text-sm font-semibold">
+                    ${plan.price}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex justify-end">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setCreditsOpen(false)}
+                className="rounded-xl cursor-pointer"
+              >
+                Close
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Divider */}
         <div className="w-px h-6 bg-border mx-1" />
