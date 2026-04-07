@@ -257,7 +257,7 @@ export default function Index() {
 
           {/* Heading */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-medium leading-[1.05] tracking-tight mb-12 text-balance">
-            {"What will you".split("").map((char, i) => (
+            {"Bring your ideas".split("").map((char, i) => (
               <motion.span
                 key={`l1-${i}`}
                 initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
@@ -270,7 +270,7 @@ export default function Index() {
               </motion.span>
             ))}
             <br />
-            {"build today?".split("").map((char, i) => (
+            {"to life.".split("").map((char, i) => (
               <motion.span
                 key={`l2-${i}`}
                 initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
