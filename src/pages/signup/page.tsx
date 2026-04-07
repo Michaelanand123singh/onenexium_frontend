@@ -1,17 +1,21 @@
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { motion } from "motion/react";
+import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Zap,
   Users,
   Globe,
   Check,
   ArrowRight,
+  Phone,
+  ShieldCheck,
+  X,
 } from "lucide-react";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { LOGO_URL, APP_NAME } from "@/lib/brand.ts";
 import { GoogleIcon, MicrosoftIcon } from "../login/_components/social-icons.tsx";
 
@@ -98,12 +102,189 @@ const stagger = {
   show: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
 };
 
+const OTP_LENGTH = 6;
+
+/** Display-only OTP verification dialog */
+function OtpVerificationDialog({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [otpValues, setOtpValues] = useState<string[]>(Array.from({ length: OTP_LENGTH }, () => ""));
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const handleChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return;
+    const newValues = [...otpValues];
+    newValues[index] = value.slice(-1);
+    setOtpValues(newValues);
+
+    // Auto-focus next input
+    if (value && index < OTP_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
+    const newValues = [...otpValues];
+    for (let i = 0; i < pastedData.length; i++) {
+      newValues[i] = pastedData[i];
+    }
+    setOtpValues(newValues);
+    const focusIndex = Math.min(pastedData.length, OTP_LENGTH - 1);
+    inputRefs.current[focusIndex]?.focus();
+  };
+
+  const handleVerify = () => {
+    setIsVerifying(true);
+    // Simulate verification delay
+    setTimeout(() => {
+      setIsVerifying(false);
+      setIsVerified(true);
+    }, 1500);
+  };
+
+  const handleClose = () => {
+    setOtpValues(Array.from({ length: OTP_LENGTH }, () => ""));
+    setIsVerifying(false);
+    setIsVerified(false);
+    onClose();
+  };
+
+  const allFilled = otpValues.every((v) => v !== "");
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+          onClick={handleClose}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ duration: 0.25, ease: "easeOut" as const }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm rounded-2xl border border-black/8 bg-white p-8 shadow-xl relative"
+          >
+            {/* Close button */}
+            <button
+              onClick={handleClose}
+              className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center text-black/30 hover:text-black/60 hover:bg-black/5 transition-all cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {isVerified ? (
+              /* Success state */
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-4"
+              >
+                <div className="w-16 h-16 rounded-full bg-green-50 border border-green-100 flex items-center justify-center mx-auto mb-5">
+                  <ShieldCheck className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold tracking-tight mb-2">Verified</h3>
+                <p className="text-black/40 text-sm mb-6">
+                  Your phone number has been verified successfully.
+                </p>
+                <Button
+                  onClick={handleClose}
+                  className="w-full py-3 rounded-xl bg-[#0a0a0a] text-white font-semibold text-sm hover:bg-[#1a1a1a] h-auto cursor-pointer"
+                >
+                  Continue
+                </Button>
+              </motion.div>
+            ) : (
+              /* OTP input state */
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-full bg-black/[0.04] border border-black/6 flex items-center justify-center mx-auto mb-5">
+                  <Phone className="w-6 h-6 text-black/50" />
+                </div>
+                <h3 className="text-xl font-bold tracking-tight mb-1.5">Verify your phone</h3>
+                <p className="text-black/40 text-sm mb-7">
+                  {"We've sent a 6-digit code to your phone number. Enter it below to verify."}
+                </p>
+
+                {/* OTP inputs */}
+                <div className="flex items-center justify-center gap-2.5 mb-6" onPaste={handlePaste}>
+                  {otpValues.map((value, index) => (
+                    <input
+                      key={index}
+                      ref={(el) => { inputRefs.current[index] = el; }}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={value}
+                      onChange={(e) => handleChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(index, e)}
+                      className="w-11 h-13 text-center text-lg font-semibold border border-black/10 rounded-xl bg-black/[0.02] focus:border-black/30 focus:ring-1 focus:ring-black/10 transition-all outline-none"
+                    />
+                  ))}
+                </div>
+
+                {/* Verify button */}
+                <Button
+                  onClick={handleVerify}
+                  disabled={!allFilled || isVerifying}
+                  className="w-full py-3 rounded-xl bg-[#0a0a0a] text-white font-semibold text-sm hover:bg-[#1a1a1a] disabled:opacity-40 disabled:cursor-not-allowed h-auto cursor-pointer"
+                >
+                  {isVerifying ? (
+                    <span className="flex items-center gap-2">
+                      <motion.span
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                      />
+                      Verifying...
+                    </span>
+                  ) : (
+                    "Verify Code"
+                  )}
+                </Button>
+
+                {/* Resend */}
+                <p className="mt-5 text-black/30 text-xs">
+                  {"Didn't receive the code? "}
+                  <button className="text-[#0a0a0a] font-medium hover:underline cursor-pointer">
+                    Resend
+                  </button>
+                </p>
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function SignupContent() {
   const navigate = useNavigate();
+  const [otpOpen, setOtpOpen] = useState(false);
 
   return (
     <main className="relative min-h-screen bg-[#fafafa] text-[#0a0a0a] overflow-hidden">
       <GridBackground />
+      <OtpVerificationDialog open={otpOpen} onClose={() => setOtpOpen(false)} />
 
       <div className="relative z-10 flex flex-col lg:flex-row min-h-screen">
         {/* ─── LEFT: Value proposition ─── */}
@@ -247,16 +428,31 @@ function SignupContent() {
                     className="w-full rounded-xl border-black/10 bg-black/[0.02] h-11 text-sm placeholder:text-black/25 cursor-default focus-visible:ring-0"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-medium text-black/50 mb-1.5">Phone Number</label>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-1.5 px-3 border border-black/10 rounded-xl bg-black/[0.02] text-sm text-black/50 shrink-0">
+                      <Phone className="w-3.5 h-3.5" />
+                      <span>+1</span>
+                    </div>
+                    <Input
+                      type="tel"
+                      placeholder="(555) 123-4567"
+                      readOnly
+                      className="w-full rounded-xl border-black/10 bg-black/[0.02] h-11 text-sm placeholder:text-black/25 cursor-default focus-visible:ring-0"
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* Sign up button */}
-              <SignInButton
-                signInText="Create Account"
+              {/* Sign up button — opens OTP dialog */}
+              <Button
+                onClick={() => setOtpOpen(true)}
                 className="w-full py-3.5 rounded-xl bg-[#0a0a0a] text-white font-semibold text-sm hover:bg-[#1a1a1a] transition-all cursor-pointer border-0 h-auto flex items-center justify-center gap-2"
               >
                 <span>Create Account</span>
                 <ArrowRight className="w-4 h-4" />
-              </SignInButton>
+              </Button>
 
               {/* Checklist */}
               <div className="mt-6 space-y-2.5">
