@@ -2,8 +2,8 @@ import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { SignInButton } from "@/components/ui/signin.tsx";
-import DashboardContent from "./_components/DashboardContent.tsx";
 import OnboardingGate from "./_components/OnboardingGate.tsx";
+import DashboardOverview from "./_components/DashboardOverview.tsx";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -28,12 +28,11 @@ export default function DashboardPage() {
           <p className="text-foreground/60 text-lg">Please sign in to access the dashboard</p>
           <SignInButton
             signInText="Sign In"
-            className="text-white"
-            style={{ background: "linear-gradient(135deg, #3D4EF0, #23A0FF)" }}
+            className="bg-foreground text-background hover:opacity-90"
           />
           <button
             onClick={() => navigate("/")}
-            className="text-sm text-[#3D4EF0] hover:underline cursor-pointer"
+            className="text-sm text-foreground hover:underline cursor-pointer"
           >
             Back to home
           </button>
@@ -41,7 +40,7 @@ export default function DashboardPage() {
       </Unauthenticated>
       <Authenticated>
         <OnboardingGate>
-          <DashboardContent />
+          <DashboardOverview />
         </OnboardingGate>
       </Authenticated>
     </>

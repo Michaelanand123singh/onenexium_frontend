@@ -35,7 +35,7 @@ export default function ProjectEditor({
   if (project === undefined) {
     return (
       <div className="h-screen bg-white flex flex-col">
-        <div className="h-12 border-b border-[#0C0F18]/5 bg-white flex items-center px-4 gap-3">
+        <div className="h-12 border-b border-border bg-background flex items-center px-4 gap-3">
           <Skeleton className="h-6 w-6 rounded" />
           <Skeleton className="h-5 w-32" />
           <div className="ml-auto flex gap-2">
@@ -44,13 +44,13 @@ export default function ProjectEditor({
           </div>
         </div>
         <div className="flex flex-1">
-          <div className="w-12 bg-[#F9FAFB] border-r border-[#0C0F18]/5" />
-          <div className="w-[380px] border-r border-[#0C0F18]/5 p-4 space-y-3">
+          <div className="w-12 bg-muted border-r border-border" />
+          <div className="w-[380px] border-r border-border p-4 space-y-3">
             <Skeleton className="h-10 w-full rounded-lg" />
             <Skeleton className="h-20 w-3/4 rounded-lg" />
             <Skeleton className="h-16 w-full rounded-lg" />
           </div>
-          <div className="flex-1 bg-[#F9FAFB] p-6">
+          <div className="flex-1 bg-muted p-6">
             <Skeleton className="h-full w-full rounded-xl" />
           </div>
         </div>
@@ -61,14 +61,14 @@ export default function ProjectEditor({
   // Error / not found
   if (project === null) {
     return (
-      <div className="h-screen bg-white flex items-center justify-center">
+      <div className="h-screen bg-background flex items-center justify-center">
         <ErrorState>
           <ErrorStateHeader>
             <ErrorStateMedia variant="icon">
               <AlertTriangle />
             </ErrorStateMedia>
             <ErrorStateTitle>Project not found</ErrorStateTitle>
-            <ErrorStateDescription className="text-[#0C0F18]/40">
+            <ErrorStateDescription className="text-muted-foreground">
               This project may have been deleted or you don't have access.
             </ErrorStateDescription>
           </ErrorStateHeader>
@@ -76,10 +76,7 @@ export default function ProjectEditor({
             <Button
               size="sm"
               onClick={() => navigate("/dashboard")}
-              className="text-white cursor-pointer"
-              style={{
-                background: "linear-gradient(135deg, #3D4EF0, #23A0FF)",
-              }}
+              className="bg-foreground text-background hover:opacity-90 cursor-pointer"
             >
               Back to Dashboard
             </Button>
@@ -90,7 +87,7 @@ export default function ProjectEditor({
   }
 
   return (
-    <div className="h-screen bg-white flex flex-col overflow-hidden">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       <EditorNavbar project={project} />
 
       <div className="flex flex-1 overflow-hidden">

@@ -67,13 +67,47 @@ export const listByUser = query({
       return [];
     }
 
-    const projects = await ctx.db
+    // Get owned projects
+    const ownedProjects = await ctx.db
       .query("projects")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
       .order("desc")
       .collect();
 
-    return projects;
+    // Get shared projects (where user is a team member)
+    const memberships = await ctx.db
+      .query("teamMembers")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .collect();
+
+    const sharedProjects = await Promise.all(
+      memberships.map(async (m) => {
+        const project = await ctx.db.get(m.projectId);
+        return project
+          ? { ...project, _teamRole: m.role as "editor" | "viewer" }
+          : null;
+      })
+    );
+
+    const validShared = sharedProjects.filter(
+      (p): p is NonNullable<typeof p> => p !== null
+    );
+
+    // Combine: owned projects first (with owner role), then shared
+    const owned = ownedProjects.map((p) => ({
+      ...p,
+      _teamRole: "owner" as const,
+    }));
+
+    const combined = [...owned, ...validShared];
+
+    // Sort by lastEditedAt descending
+    combined.sort(
+      (a, b) =>
+        new Date(b.lastEditedAt).getTime() - new Date(a.lastEditedAt).getTime()
+    );
+
+    return combined;
   },
 });
 
@@ -96,7 +130,7 @@ export const getById = query({
       });
     }
 
-    // Verify ownership
+    // Verify ownership or team membership
     const user = await ctx.db
       .query("users")
       .withIndex("by_token", (q) =>
@@ -104,14 +138,35 @@ export const getById = query({
       )
       .unique();
 
-    if (!user || project.userId !== user._id) {
+    if (!user) {
       throw new ConvexError({
         code: "FORBIDDEN",
         message: "You do not have access to this project",
       });
     }
 
-    return project;
+    const isOwner = project.userId === user._id;
+
+    if (!isOwner) {
+      // Check team membership
+      const membership = await ctx.db
+        .query("teamMembers")
+        .withIndex("by_project_and_user", (q) =>
+          q.eq("projectId", args.projectId).eq("userId", user._id)
+        )
+        .unique();
+
+      if (!membership) {
+        throw new ConvexError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this project",
+        });
+      }
+
+      return { ...project, _teamRole: membership.role as "owner" | "editor" | "viewer" };
+    }
+
+    return { ...project, _teamRole: "owner" as const };
   },
 });
 
